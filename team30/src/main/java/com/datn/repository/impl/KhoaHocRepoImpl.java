@@ -4,6 +4,7 @@ import com.datn.entity.KhoaHoc;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
 import com.datn.repository.KhoaHocRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +32,13 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public KhoaHoc findById(String maKhoaHoc) {
-        return null;
+        TypedQuery<KhoaHoc> typedQuery = this.entityManager
+                .createQuery("FROM KhoaHoc AS KH WHERE KH.maKhoaHoc = :maKhoaHoc", this.getEntityClass());
+        typedQuery.setParameter("maKhoaHoc", maKhoaHoc);
+
+        List<KhoaHoc> khoaHocs = typedQuery.getResultList();
+
+        return khoaHocs.isEmpty() ? null : khoaHocs.get(0);
     }
 
     @Override
@@ -68,7 +75,7 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public KhoaHoc update(KhoaHoc khoaHoc) {
-        return null;
+        return this.entityManager.merge(khoaHoc);
     }
 
     @Override
@@ -80,4 +87,9 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
     public Long countTotalKhoaHocs() {
         return null;
     }
+
+    private Class<KhoaHoc> getEntityClass() {
+        return KhoaHoc.class;
+    }
+
 }

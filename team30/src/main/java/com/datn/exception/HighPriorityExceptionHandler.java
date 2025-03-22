@@ -4,6 +4,7 @@ import com.datn.dto.response.ApiResponse;
 import com.datn.exception.chucvu.ChucVuNotFoundException;
 import com.datn.exception.chucvu.LinhVucNotFoundException;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
+import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
@@ -26,7 +27,9 @@ public class HighPriorityExceptionHandler {
     }
 
     @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
-            LinhVucNotFoundException.class, PhongHocNotFoundException.class})
+            LinhVucNotFoundException.class, PhongHocNotFoundException.class,
+            KhoaHocNotFoundException.class}
+    )
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

@@ -5,6 +5,7 @@ import com.datn.dto.request.KhoaHocUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.KhoaHoc;
 import com.datn.entity.LinhVuc;
+import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.linhvuc.LinhVucNotFoundException;
 import com.datn.repository.KhoaHocRepo;
 import com.datn.repository.LinhVucRepo;
@@ -52,8 +53,21 @@ public class KhoaHocServiceImpl implements KhoaHocService {
     }
 
     @Override
+    @Transactional
     public KhoaHoc update(String maKhoaHoc, KhoaHocUpdateDTO khoaHocUpdateDTO) {
-        return null;
+        KhoaHoc khoaHoc = this.khoaHocRepo.findById(maKhoaHoc);
+
+        if(khoaHoc == null) {
+            throw new KhoaHocNotFoundException("Khóa học không tồn tài với mã - " + maKhoaHoc);
+        }
+
+        khoaHoc.setMaKhoaHoc(maKhoaHoc);
+        khoaHoc.setSoBuoi(khoaHocUpdateDTO.getSoBuoi());
+        khoaHoc.setHocPhi(khoaHocUpdateDTO.getHocPhi());
+        khoaHoc.setNoiDungTomTatKhoaHoc(khoaHocUpdateDTO.getNoiDungTomTatKhoaHoc());
+        khoaHoc.setNoiDungKhoaHoc(khoaHocUpdateDTO.getNoiDungKhoaHoc());
+
+        return this.khoaHocRepo.update(khoaHoc);
     }
 
     @Override
