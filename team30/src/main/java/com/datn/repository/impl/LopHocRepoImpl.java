@@ -4,6 +4,7 @@ import com.datn.entity.LopHoc;
 import com.datn.exception.lophoc.DuplicateLopHocException;
 import com.datn.repository.LopHocRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +32,13 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public LopHoc findById(String maLopHoc) {
-        return null;
+        TypedQuery<LopHoc> typedQuery = this.entityManager.createQuery
+                ("FROM LopHoc AS LH WHERE LH.maLopHoc = :maLopHoc", this.getEntityClass());
+        typedQuery.setParameter("maLopHoc", maLopHoc);
+
+        List<LopHoc> lopHocs = typedQuery.getResultList();
+
+        return lopHocs.isEmpty() ? null : lopHocs.get(0);
     }
 
     @Override
@@ -67,7 +74,7 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public LopHoc update(LopHoc lopHoc) {
-        return null;
+        return this.entityManager.merge(lopHoc);
     }
 
     @Override
@@ -78,6 +85,10 @@ public class LopHocRepoImpl implements LopHocRepo {
     @Override
     public Long countTotalLopHocs() {
         return null;
+    }
+
+    private Class<LopHoc> getEntityClass() {
+        return LopHoc.class;
     }
 
 }

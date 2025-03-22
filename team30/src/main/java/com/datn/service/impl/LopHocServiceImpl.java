@@ -10,6 +10,7 @@ import com.datn.entity.PhongHoc;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.lophoc.InvalidLopHocException;
+import com.datn.exception.lophoc.LopHocNotFoundException;
 import com.datn.exception.phonghoc.PhongHocNotFoundException;
 import com.datn.repository.GiangVienRepo;
 import com.datn.repository.KhoaHocRepo;
@@ -17,6 +18,7 @@ import com.datn.repository.LopHocRepo;
 import com.datn.repository.PhongHocRepo;
 import com.datn.service.LopHocService;
 import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,8 +88,49 @@ public class LopHocServiceImpl implements LopHocService {
     }
 
     @Override
+    @Transactional
     public LopHoc update(String maLopHoc, LopHocUpdateDTO lopHocUpdateDTO) {
-        return null;
+        LopHoc lopHoc = this.lopHocRepo.findById(maLopHoc);
+        if(lopHoc == null) {
+            throw new LopHocNotFoundException("Không tồn tại lớp học với mã - " + maLopHoc);
+        }
+
+        lopHoc.setTenLopHoc(lopHocUpdateDTO.getTenLopHoc());
+        lopHoc.setLichHoc(lopHocUpdateDTO.getLichHoc());
+        lopHoc.setTinhTrang(lopHocUpdateDTO.getTinhTrang());
+
+        if(lopHocUpdateDTO.getNgayBatDau().isAfter(lopHocUpdateDTO.getNgayKetThuc())) {
+            throw new InvalidLopHocException("Ngày kết thúc phải trước ngày bắt đầu");
+        }
+
+        lopHoc.setNgayBatDau(lopHocUpdateDTO.getNgayBatDau());
+        lopHoc.setNgayKetThuc(lopHocUpdateDTO.getNgayKetThuc());
+
+        if(lopHocUpdateDTO.getDaThanhToan() > lopHocUpdateDTO.getThuLao()) {
+            throw new InvalidLopHocException("Sao lại trả cho giáo viên nhiều hơn thù lao sẵn có");
+        }
+
+        lopHoc.setThuLao(lopHocUpdateDTO.getThuLao());
+        lopHoc.setDaThanhToan(lopHocUpdateDTO.getDaThanhToan());
+
+        PhongHoc phongHoc = this.phongHocRepo.findById(lopHocUpdateDTO.getMaPhongHoc());
+        if(phongHoc == null) {
+            throw new PhongHocNotFoundException("Phòng học không tồn tại với mã - " + lopHocUpdateDTO.getMaPhongHoc());
+        }
+
+        GiangVien giangVien = this.giangVienRepo.findById(lopHocUpdateDTO.getMaGiangVien());
+        if(giangVien == null) {
+            throw new GiangVienNotFoundException("Giảng viên không tồn tại với mã - " + lopHocUpdateDTO.getMaGiangVien());
+        }
+
+        lopHoc.setPhongHoc(phongHoc);
+        lopHoc.setGiangVien(giangVien);
+
+        lopHoc.setGhiChu(lopHocUpdateDTO.getGhiChu());
+
+        LopHoc updatedLopHoc = this.lopHocRepo.update(lopHoc);
+
+        return updatedLopHoc;
     }
 
     @Override

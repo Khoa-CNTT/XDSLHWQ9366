@@ -35,20 +35,20 @@ public class LopHoc {
     @Column(name = "DATHANHTOAN", columnDefinition = "DOUBLE")
     private double daThanhToan;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MAKHOAHOC")
     private KhoaHoc khoaHoc;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MAPHONGHOC")
     private PhongHoc phongHoc;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MAGIANGVIEN")
     private GiangVien giangVien;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MANHANVIEN")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MANHANVIEN", nullable = true)
     private NhanVien nhanVien;
 
     @Column(name = "GHICHU", columnDefinition = "TEXT")

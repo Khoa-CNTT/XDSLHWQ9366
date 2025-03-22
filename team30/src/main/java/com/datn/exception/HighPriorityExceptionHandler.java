@@ -7,6 +7,7 @@ import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.lophoc.InvalidLopHocException;
+import com.datn.exception.lophoc.LopHocNotFoundException;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
@@ -32,7 +33,7 @@ public class HighPriorityExceptionHandler {
     @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
             LinhVucNotFoundException.class, PhongHocNotFoundException.class,
             KhoaHocNotFoundException.class, com.datn.exception.linhvuc.LinhVucNotFoundException.class,
-            GiangVienNotFoundException.class}
+            GiangVienNotFoundException.class, LopHocNotFoundException.class}
     )
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
