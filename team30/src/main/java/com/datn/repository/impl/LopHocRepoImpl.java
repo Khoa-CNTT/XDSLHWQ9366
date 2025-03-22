@@ -50,7 +50,11 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public List<LopHoc> findByTenLopHoc(String tenLopHoc) {
-        return List.of();
+        TypedQuery<LopHoc> typedQuery = this.entityManager.createQuery
+                ("FROM LopHoc AS LH WHERE LH.tenLopHoc LIKE :tenLopHoc", this.getEntityClass());
+        typedQuery.setParameter("tenLopHoc", "%" + tenLopHoc + "%");
+
+        return typedQuery.getResultList();
     }
 
     @Override

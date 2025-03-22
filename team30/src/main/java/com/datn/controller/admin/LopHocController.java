@@ -72,4 +72,14 @@ public class LopHocController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/search/{tenLopHoc}")
+    public ResponseEntity<ApiResponse<List<LopHoc>>> search(@PathVariable String tenLopHoc) {
+        List<LopHoc> lopHocs = this.lopHocService.findByTenLopHoc(tenLopHoc);
+
+        ApiResponse<List<LopHoc>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các lớp học", lopHocs);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }

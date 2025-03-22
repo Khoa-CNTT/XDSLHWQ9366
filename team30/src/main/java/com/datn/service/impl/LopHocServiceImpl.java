@@ -154,7 +154,7 @@ public class LopHocServiceImpl implements LopHocService {
 
     @Override
     public List<LopHoc> findByTenLopHoc(String tenLopHoc) {
-        return List.of();
+        return this.lopHocRepo.findByTenLopHoc(tenLopHoc);
     }
 
 }
