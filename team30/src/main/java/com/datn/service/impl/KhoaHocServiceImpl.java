@@ -91,7 +91,7 @@ public class KhoaHocServiceImpl implements KhoaHocService {
 
     @Override
     public List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc) {
-        return List.of();
+        return this.khoaHocRepo.findByTenKhoaHoc(tenKhoaHoc);
     }
 
 }

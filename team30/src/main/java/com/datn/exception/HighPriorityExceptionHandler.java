@@ -28,7 +28,7 @@ public class HighPriorityExceptionHandler {
 
     @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
             LinhVucNotFoundException.class, PhongHocNotFoundException.class,
-            KhoaHocNotFoundException.class}
+            KhoaHocNotFoundException.class, com.datn.exception.linhvuc.LinhVucNotFoundException.class}
     )
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);

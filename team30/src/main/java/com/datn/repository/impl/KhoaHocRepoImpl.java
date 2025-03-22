@@ -50,7 +50,13 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc) {
-        return List.of();
+        TypedQuery<KhoaHoc> typedQuery = this.entityManager
+                .createQuery("FROM KhoaHoc AS KH WHERE KH.tenKhoaHoc LIKE :tenKhoaHoc", this.getEntityClass());
+        typedQuery.setParameter("tenKhoaHoc", "%" + tenKhoaHoc + "%");
+
+        List<KhoaHoc> khoaHocs = typedQuery.getResultList();
+
+        return khoaHocs;
     }
 
     @Override
