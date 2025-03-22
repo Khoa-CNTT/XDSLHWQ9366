@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/phonghoc")
 public class PhongHocController {
@@ -72,6 +74,16 @@ public class PhongHocController {
 
         ApiResponse<PaginationResponse<PhongHoc>> apiResponse = new ApiResponse<>
                 (HttpStatus.OK.value(), "Danh sách phòng học", paginationResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search/{tenPhongHoc}")
+    public ResponseEntity<ApiResponse<List<PhongHoc>>> getByTenPhongHoc(@PathVariable String tenPhongHoc) {
+        List<PhongHoc> phongHocs = this.phongHocService.findByTenPhongHoc(tenPhongHoc);
+
+        ApiResponse<List<PhongHoc>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Tìm kiếm thành công", phongHocs);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

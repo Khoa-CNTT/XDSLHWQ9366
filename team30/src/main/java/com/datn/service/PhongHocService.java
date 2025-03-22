@@ -17,4 +17,6 @@ public interface PhongHocService {
 
     PaginationResponse<PhongHoc> pagination(int pageNumber, int pageSize);
 
+    List<PhongHoc> findByTenPhongHoc(String tenPhongHoc);
+
 }

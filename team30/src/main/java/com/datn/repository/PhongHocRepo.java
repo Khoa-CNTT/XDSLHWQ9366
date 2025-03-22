@@ -12,6 +12,8 @@ public interface PhongHocRepo {
 
     PhongHoc findById(String maPhongHoc);
 
+    List<PhongHoc> findByTenPhongHoc(String tenPhongHoc);
+
     void checkPhongHocExists(String tenPhongHoc);
 
     PhongHoc add(PhongHoc phongHoc);

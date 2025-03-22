@@ -67,4 +67,9 @@ public class PhongHocServiceImpl implements PhongHocService {
 
         return new PaginationResponse<>(pageNumber, pageSize, totalElements, phongHocs);
     }
+
+    @Override
+    public List<PhongHoc> findByTenPhongHoc(String tenPhongHoc) {
+        return this.phongHocRepo.findByTenPhongHoc(tenPhongHoc);
+    }
 }

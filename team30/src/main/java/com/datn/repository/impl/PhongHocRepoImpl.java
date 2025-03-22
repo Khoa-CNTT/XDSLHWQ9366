@@ -60,6 +60,17 @@ public class PhongHocRepoImpl implements PhongHocRepo {
     }
 
     @Override
+    public List<PhongHoc> findByTenPhongHoc(String tenPhongHoc) {
+        TypedQuery<PhongHoc> typedQuery = this.entityManager
+                .createQuery("FROM PhongHoc AS PH WHERE PH.tenPhongHoc LIKE :tenPhongHoc", this.getEntityClass());
+        typedQuery.setParameter("tenPhongHoc", "%" + tenPhongHoc + "%");
+
+        List<PhongHoc> phongHocs = typedQuery.getResultList();
+
+        return phongHocs;
+    }
+
+    @Override
     public void checkPhongHocExists(String tenPhongHoc) {
         Long count = (Long) entityManager.createQuery(
                         "SELECT COUNT(*) FROM PhongHoc AS PH WHERE PH.tenPhongHoc = :tenPhongHoc"
