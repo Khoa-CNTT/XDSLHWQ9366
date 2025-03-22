@@ -20,19 +20,19 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class , DuplicatePhongHocException.class})
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateNhanVienException(RuntimeException ex) {
-        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-
-    @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
-            LinhVucNotFoundException.class, PhongHocNotFoundException.class})
-    public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
-        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
+//    @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class , DuplicatePhongHocException.class})
+//    public ResponseEntity<ApiResponse<Void>> handleDuplicateNhanVienException(RuntimeException ex) {
+//        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
+//
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//    }
+//
+//    @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
+//            LinhVucNotFoundException.class, PhongHocNotFoundException.class,})
+//    public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
+//        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {
