@@ -71,8 +71,9 @@ public class KhoaHocServiceImpl implements KhoaHocService {
     }
 
     @Override
+    @Transactional
     public void delete(String maKhoaHoc) {
-
+        this.khoaHocRepo.delete(maKhoaHoc);
     }
 
     @Override

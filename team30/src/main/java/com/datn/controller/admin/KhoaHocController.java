@@ -43,4 +43,14 @@ public class KhoaHocController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @DeleteMapping("/delete/{maKhoaHoc}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String maKhoaHoc) {
+        this.khoaHocService.delete(maKhoaHoc);
+
+        ApiResponse<Void> apiResponse =
+                new ApiResponse<>(HttpStatus.OK.value(), "Xóa khóa học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }

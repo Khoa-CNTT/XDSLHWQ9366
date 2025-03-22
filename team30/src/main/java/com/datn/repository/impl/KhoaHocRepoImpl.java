@@ -1,6 +1,7 @@
 package com.datn.repository.impl;
 
 import com.datn.entity.KhoaHoc;
+import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
 import com.datn.repository.KhoaHocRepo;
 import jakarta.persistence.EntityManager;
@@ -80,7 +81,12 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public void delete(String maKhoaHoc) {
-
+        KhoaHoc khoaHoc = this.findById(maKhoaHoc);
+        if(khoaHoc == null) {
+            throw  new KhoaHocNotFoundException("Không tìm thấy khóa học với mã - " + maKhoaHoc);
+        } else {
+            this.entityManager.remove(khoaHoc);
+        }
     }
 
     @Override
