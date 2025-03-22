@@ -1,6 +1,7 @@
 package com.datn.service.impl;
 
 import com.datn.dto.request.PhongHocAddDTO;
+import com.datn.dto.request.PhongHocUpdateDTO;
 import com.datn.entity.PhongHoc;
 import com.datn.repository.PhongHocRepo;
 import com.datn.service.PhongHocService;
@@ -31,4 +32,17 @@ public class PhongHocServiceImpl implements PhongHocService {
         return this.phongHocRepo.add(phongHoc);
     }
 
+    @Override
+    @Transactional
+    public PhongHoc update(String maPhongHoc, PhongHocUpdateDTO phongHocUpdateDTO) {
+        this.phongHocRepo.checkPhongHocExists(phongHocUpdateDTO.getTenPhongHoc());
+
+        PhongHoc phongHoc = new PhongHoc();
+        phongHoc.setMaPhongHoc(maPhongHoc);
+        phongHoc.setTenPhongHoc(phongHocUpdateDTO.getTenPhongHoc());
+        phongHoc.setSoChoNgoi(phongHocUpdateDTO.getSoChoNgoi());
+        phongHoc.setGhiChu(phongHocUpdateDTO.getGhiChu());
+
+        return this.phongHocRepo.update(phongHoc);
+    }
 }

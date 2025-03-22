@@ -63,7 +63,7 @@ public class PhongHocRepoImpl implements PhongHocRepo {
 
     @Override
     public PhongHoc update(PhongHoc phongHoc) {
-        return null;
+        return this.entityManager.merge(phongHoc);
     }
 
     @Override
