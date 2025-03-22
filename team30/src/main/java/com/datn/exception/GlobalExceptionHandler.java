@@ -6,6 +6,7 @@ import com.datn.exception.chucvu.LinhVucNotFoundException;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
+import com.datn.exception.phonghoc.DuplicatePhongHocException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,7 +19,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class})
+    @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class , DuplicatePhongHocException.class})
     public ResponseEntity<ApiResponse<Void>> handleDuplicateNhanVienException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
 
