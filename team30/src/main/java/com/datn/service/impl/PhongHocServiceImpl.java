@@ -45,4 +45,10 @@ public class PhongHocServiceImpl implements PhongHocService {
 
         return this.phongHocRepo.update(phongHoc);
     }
+
+    @Override
+    @Transactional
+    public void delete(String maPhongHoc) {
+        this.phongHocRepo.delete(maPhongHoc);
+    }
 }

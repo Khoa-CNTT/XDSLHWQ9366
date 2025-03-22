@@ -7,6 +7,7 @@ import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
+import com.datn.exception.phonghoc.PhongHocNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,7 +27,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class, LinhVucNotFoundException.class})
+    @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
+            LinhVucNotFoundException.class, PhongHocNotFoundException.class})
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

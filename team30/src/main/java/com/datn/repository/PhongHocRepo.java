@@ -8,9 +8,9 @@ public interface PhongHocRepo {
 
     List<PhongHoc> findAll();
 
-    List<PhongHoc> findAll(int pageNumber, int pageSize);
+    List<PhongHoc> pagination(int pageNumber, int pageSize);
 
-    PhongHoc findById(int id);
+    PhongHoc findById(String maPhongHoc);
 
     void checkPhongHocExists(String tenPhongHoc);
 
@@ -18,6 +18,6 @@ public interface PhongHocRepo {
 
     PhongHoc update(PhongHoc phongHoc);
 
-    void delete(PhongHoc phongHoc);
+    void delete(String maPhongHoc);
 
 }

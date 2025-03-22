@@ -2,8 +2,10 @@ package com.datn.repository.impl;
 
 import com.datn.entity.PhongHoc;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
+import com.datn.exception.phonghoc.PhongHocNotFoundException;
 import com.datn.repository.PhongHocRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,13 +27,19 @@ public class PhongHocRepoImpl implements PhongHocRepo {
     }
 
     @Override
-    public List<PhongHoc> findAll(int pageNumber, int pageSize) {
+    public List<PhongHoc> pagination(int pageNumber, int pageSize) {
         return List.of();
     }
 
     @Override
-    public PhongHoc findById(int id) {
-        return null;
+    public PhongHoc findById(String maPhongHoc) {
+        TypedQuery<PhongHoc> typedQuery = this.entityManager.createQuery
+                ("FROM PhongHoc AS PH WHERE PH.maPhongHoc = :maPhongHoc", this.getEntityClass());
+        typedQuery.setParameter("maPhongHoc", maPhongHoc);
+
+        List<PhongHoc> phongHocs = typedQuery.getResultList();
+
+        return phongHocs.isEmpty() ? null : phongHocs.get(0);
     }
 
     @Override
@@ -67,8 +75,14 @@ public class PhongHocRepoImpl implements PhongHocRepo {
     }
 
     @Override
-    public void delete(PhongHoc phongHoc) {
+    public void delete(String maPhongHoc) {
+        PhongHoc phongHoc = this.findById(maPhongHoc);
 
+        if(phongHoc == null) {
+            throw new PhongHocNotFoundException("Không tìm thấy phòng học với mã - " + maPhongHoc);
+        } else {
+            this.entityManager.remove(phongHoc);
+        }
     }
 
     public Class<PhongHoc> getEntityClass() {

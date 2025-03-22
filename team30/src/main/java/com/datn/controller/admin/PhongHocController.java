@@ -52,4 +52,14 @@ public class PhongHocController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @DeleteMapping("/delete/{maPhongHoc}")
+    public ResponseEntity<ApiResponse<Void>> delete
+            (@PathVariable String maPhongHoc) {
+        this.phongHocService.delete(maPhongHoc);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(HttpStatus.OK.value(), "Xóa phòng học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }

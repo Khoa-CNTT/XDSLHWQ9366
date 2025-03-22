@@ -10,4 +10,6 @@ public interface PhongHocService {
 
     PhongHoc update(String maPhongHoc, PhongHocUpdateDTO phongHocUpdateDTO);
 
+    void delete(String maPhongHoc);
+
 }

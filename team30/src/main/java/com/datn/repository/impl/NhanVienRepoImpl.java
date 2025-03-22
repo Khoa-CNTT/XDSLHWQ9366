@@ -85,7 +85,7 @@ public class NhanVienRepoImpl implements NhanVienRepo {
             throw new NhanVienNotFoundException("Không tìm thấy nhân viên với mã: " + maNhanVien);
         }
 
-        // xóa liên kết
+        // xóa liên kết - do CasadeType.All
         nhanVien.setChucVu(null);
         this.entityManager.merge(nhanVien);
 
