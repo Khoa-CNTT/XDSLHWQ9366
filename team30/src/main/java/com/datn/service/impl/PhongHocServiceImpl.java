@@ -72,4 +72,9 @@ public class PhongHocServiceImpl implements PhongHocService {
     public List<PhongHoc> findByTenPhongHoc(String tenPhongHoc) {
         return this.phongHocRepo.findByTenPhongHoc(tenPhongHoc);
     }
+
+    @Override
+    public PhongHoc findById(String maPhongHoc) {
+        return this.phongHocRepo.findById(maPhongHoc);
+    }
 }

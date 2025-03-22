@@ -8,6 +8,8 @@ public interface GiangVienRepo {
 
     List<GiangVien> findAll();
 
+    GiangVien findById(String maGiangVien);
+
     GiangVien add(GiangVien giangVien);
 
     GiangVien update(GiangVien giangVien);

@@ -6,4 +6,6 @@ public interface GiangVienService {
 
     GiangVien add(GiangVien giangVien);
 
+    GiangVien findById(String maGiangVien);
+
 }

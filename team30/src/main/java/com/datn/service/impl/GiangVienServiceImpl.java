@@ -18,6 +18,11 @@ public class GiangVienServiceImpl implements GiangVienService {
     }
 
     @Override
+    public GiangVien findById(String maGiangVien) {
+        return this.giangVienRepo.findById(maGiangVien);
+    }
+
+    @Override
     @Transactional
     public GiangVien add(GiangVien giangVien) {
         this.giangVienRepo.checkEmailExists(giangVien.getEmail());

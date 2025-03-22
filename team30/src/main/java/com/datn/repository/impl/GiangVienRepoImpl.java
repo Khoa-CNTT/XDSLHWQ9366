@@ -4,6 +4,7 @@ import com.datn.entity.GiangVien;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.repository.GiangVienRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,17 @@ public class GiangVienRepoImpl implements GiangVienRepo {
     @Override
     public List<GiangVien> findAll() {
         return List.of();
+    }
+
+    @Override
+    public GiangVien findById(String maGiangVien) {
+        TypedQuery<GiangVien> typedQuery = this.entityManager
+                .createQuery("FROM GiangVien AS GV WHERE GV.maGiangVien = :maGiangVien", this.getEntityClass());
+        typedQuery.setParameter("maGiangVien", maGiangVien);
+
+        List<GiangVien> giangViens = typedQuery.getResultList();
+
+        return giangViens.isEmpty() ? null : giangViens.get(0);
     }
 
     @Override
@@ -84,6 +96,10 @@ public class GiangVienRepoImpl implements GiangVienRepo {
         if (count > 0) {
             throw new DuplicateGiangVienException("Email đã tồn tại.");
         }
+    }
+
+    private Class<GiangVien> getEntityClass() {
+        return GiangVien.class;
     }
 
 }

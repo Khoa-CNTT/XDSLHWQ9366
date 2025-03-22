@@ -90,6 +90,11 @@ public class KhoaHocServiceImpl implements KhoaHocService {
     }
 
     @Override
+    public KhoaHoc findById(String maKhoaHoc) {
+        return this.khoaHocRepo.findById(maKhoaHoc);
+    }
+
+    @Override
     public List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc) {
         return this.khoaHocRepo.findByTenKhoaHoc(tenKhoaHoc);
     }

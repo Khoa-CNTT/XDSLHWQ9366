@@ -47,6 +47,10 @@ public class LopHoc {
     @JoinColumn(name = "MAGIANGVIEN")
     private GiangVien giangVien;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MANHANVIEN")
+    private NhanVien nhanVien;
+
     @Column(name = "GHICHU", columnDefinition = "TEXT")
     private String ghiChu;
 
@@ -140,6 +144,14 @@ public class LopHoc {
 
     public void setGiangVien(GiangVien giangVien) {
         this.giangVien = giangVien;
+    }
+
+    public NhanVien getNhanVien() {
+        return nhanVien;
+    }
+
+    public void setNhanVien(NhanVien nhanVien) {
+        this.nhanVien = nhanVien;
     }
 
     public String getGhiChu() {

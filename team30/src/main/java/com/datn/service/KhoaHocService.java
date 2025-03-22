@@ -20,4 +20,6 @@ public interface KhoaHocService {
 
     List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc);
 
+    KhoaHoc findById(String maKhoaHoc);
+
 }

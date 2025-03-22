@@ -39,7 +39,7 @@ public class GiangVien {
     private String coQuanCongTac;
 
     @Column(name = "TINHTRANGCONGTAC", columnDefinition = "VARCHAR(255)")
-    private String tinhTrangCongTac;
+    private String tinhTrangCongTac; // Đang giảng dạy, Đã nghỉ
 
     @Lob
     @Column(name = "GHICHU")

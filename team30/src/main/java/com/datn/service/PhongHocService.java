@@ -19,4 +19,6 @@ public interface PhongHocService {
 
     List<PhongHoc> findByTenPhongHoc(String tenPhongHoc);
 
+    PhongHoc findById(String maPhongHoc);
+
 }
