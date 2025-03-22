@@ -3,12 +3,15 @@ package com.datn.controller.admin;
 import com.datn.dto.request.KhoaHocAddDTO;
 import com.datn.dto.request.KhoaHocUpdateDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.KhoaHoc;
 import com.datn.service.KhoaHocService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/khoahoc")
@@ -49,6 +52,18 @@ public class KhoaHocController {
 
         ApiResponse<Void> apiResponse =
                 new ApiResponse<>(HttpStatus.OK.value(), "Xóa khóa học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<ApiResponse<PaginationResponse<KhoaHoc>>> pagination
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size) {
+        PaginationResponse<KhoaHoc> paginationResponse = this.khoaHocService.pagination(page, size);
+
+        ApiResponse<PaginationResponse<KhoaHoc>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các khóa học", paginationResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

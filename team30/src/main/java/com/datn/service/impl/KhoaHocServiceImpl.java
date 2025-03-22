@@ -78,7 +78,15 @@ public class KhoaHocServiceImpl implements KhoaHocService {
 
     @Override
     public PaginationResponse<KhoaHoc> pagination(int pageNumber, int pageSize) {
-        return null;
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.khoaHocRepo.countTotalKhoaHocs();
+
+        List<KhoaHoc> khoaHocs = this.khoaHocRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, khoaHocs);
     }
 
     @Override

@@ -28,7 +28,13 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public List<KhoaHoc> pagination(int pageNumber, int pageSize) {
-        return List.of();
+        TypedQuery<KhoaHoc> typedQuery = this.entityManager.createQuery
+                ("FROM KhoaHoc AS KH ORDER BY KH.maKhoaHoc", this.getEntityClass());
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -91,7 +97,10 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
 
     @Override
     public Long countTotalKhoaHocs() {
-        return null;
+        TypedQuery<Long> typedQuery = this.entityManager.createQuery
+                ("SELECT COUNT(KH) FROM KhoaHoc AS KH", Long.class);
+
+        return typedQuery.getSingleResult();
     }
 
     private Class<KhoaHoc> getEntityClass() {
