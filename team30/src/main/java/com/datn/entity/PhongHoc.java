@@ -25,40 +25,36 @@ public class PhongHoc {
 
     }
 
-    public String maPhongHoc() {
+    public String getMaPhongHoc() {
         return maPhongHoc;
     }
 
-    public PhongHoc setMaPhongHoc(String maPhongHoc) {
+    public void setMaPhongHoc(String maPhongHoc) {
         this.maPhongHoc = maPhongHoc;
-        return this;
     }
 
-    public String tenPhongHoc() {
+    public String getTenPhongHoc() {
         return tenPhongHoc;
     }
 
-    public PhongHoc setTenPhongHoc(String tenPhongHoc) {
+    public void setTenPhongHoc(String tenPhongHoc) {
         this.tenPhongHoc = tenPhongHoc;
-        return this;
     }
 
-    public int soChoNgoi() {
+    public int getSoChoNgoi() {
         return soChoNgoi;
     }
 
-    public PhongHoc setSoChoNgoi(int soChoNgoi) {
+    public void setSoChoNgoi(int soChoNgoi) {
         this.soChoNgoi = soChoNgoi;
-        return this;
     }
 
-    public String ghiChu() {
+    public String getGhiChu() {
         return ghiChu;
     }
 
-    public PhongHoc setGhiChu(String ghiChu) {
+    public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
-        return this;
     }
 
     @Override

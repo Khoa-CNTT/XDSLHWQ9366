@@ -20,4 +20,6 @@ public interface PhongHocRepo {
 
     void delete(String maPhongHoc);
 
+    Long countTotalPhongHocs();
+
 }

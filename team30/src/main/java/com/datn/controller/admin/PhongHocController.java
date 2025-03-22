@@ -3,6 +3,7 @@ package com.datn.controller.admin;
 import com.datn.dto.request.PhongHocAddDTO;
 import com.datn.dto.request.PhongHocUpdateDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.PhongHoc;
 import com.datn.service.PhongHocService;
 import jakarta.validation.Valid;
@@ -58,6 +59,19 @@ public class PhongHocController {
         this.phongHocService.delete(maPhongHoc);
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(HttpStatus.OK.value(), "Xóa phòng học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<ApiResponse<PaginationResponse<PhongHoc>>> pagination
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size)
+    {
+        PaginationResponse<PhongHoc> paginationResponse = this.phongHocService.pagination(page, size);
+
+        ApiResponse<PaginationResponse<PhongHoc>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách phòng học", paginationResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

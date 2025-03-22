@@ -2,12 +2,15 @@ package com.datn.service.impl;
 
 import com.datn.dto.request.PhongHocAddDTO;
 import com.datn.dto.request.PhongHocUpdateDTO;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.PhongHoc;
 import com.datn.repository.PhongHocRepo;
 import com.datn.service.PhongHocService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PhongHocServiceImpl implements PhongHocService {
@@ -50,5 +53,18 @@ public class PhongHocServiceImpl implements PhongHocService {
     @Transactional
     public void delete(String maPhongHoc) {
         this.phongHocRepo.delete(maPhongHoc);
+    }
+
+    @Override
+    public PaginationResponse<PhongHoc> pagination(int pageNumber, int pageSize) {
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.phongHocRepo.countTotalPhongHocs();
+
+        List<PhongHoc> phongHocs = this.phongHocRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, phongHocs);
     }
 }

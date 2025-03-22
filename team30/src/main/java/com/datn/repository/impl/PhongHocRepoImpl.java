@@ -23,12 +23,29 @@ public class PhongHocRepoImpl implements PhongHocRepo {
 
     @Override
     public List<PhongHoc> findAll() {
-        return List.of();
+        TypedQuery<PhongHoc> typedQuery =
+                this.entityManager.createQuery("FROM PhongHoc", this.getEntityClass());
+
+        return typedQuery.getResultList();
     }
 
     @Override
     public List<PhongHoc> pagination(int pageNumber, int pageSize) {
-        return List.of();
+        TypedQuery<PhongHoc> typedQuery = this.entityManager.createQuery
+                ("FROM PhongHoc AS PH ORDER BY PH.maPhongHoc", this.getEntityClass());
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
+    }
+
+    @Override
+    public Long countTotalPhongHocs() {
+        TypedQuery<Long> typedQuery = this.entityManager.createQuery
+                ("SELECT COUNT(PH) FROM PhongHoc AS PH", Long.class);
+
+        return typedQuery.getSingleResult();
     }
 
     @Override
