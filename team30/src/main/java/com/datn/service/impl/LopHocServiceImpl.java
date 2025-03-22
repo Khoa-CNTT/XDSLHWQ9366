@@ -134,8 +134,9 @@ public class LopHocServiceImpl implements LopHocService {
     }
 
     @Override
+    @Transactional
     public void delete(String maLopHoc) {
-
+        this.lopHocRepo.delete(maLopHoc);
     }
 
     @Override

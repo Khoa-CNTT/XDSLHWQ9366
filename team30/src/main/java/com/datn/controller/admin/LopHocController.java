@@ -47,4 +47,14 @@ public class LopHocController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @DeleteMapping("/delete/{maLopHoc}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String maLopHoc) {
+        this.lopHocService.delete(maLopHoc);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Xóa lớp học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.datn.repository.impl;
 
 import com.datn.entity.LopHoc;
 import com.datn.exception.lophoc.DuplicateLopHocException;
+import com.datn.exception.lophoc.LopHocNotFoundException;
 import com.datn.repository.LopHocRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -79,7 +80,12 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public void delete(String maLopHoc) {
-
+        LopHoc lopHoc = this.findById(maLopHoc);
+        if(lopHoc == null) {
+            throw new LopHocNotFoundException("Không tìm thấy lớp học với mã - " + maLopHoc);
+        } else {
+            this.entityManager.remove(lopHoc);
+        }
     }
 
     @Override

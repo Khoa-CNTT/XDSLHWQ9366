@@ -6,6 +6,7 @@ import com.datn.exception.chucvu.LinhVucNotFoundException;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.exception.khoahoc.KhoaHocNotFoundException;
+import com.datn.exception.lophoc.DuplicateLopHocException;
 import com.datn.exception.lophoc.InvalidLopHocException;
 import com.datn.exception.lophoc.LopHocNotFoundException;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
@@ -24,7 +25,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class HighPriorityExceptionHandler {
 
     @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class,
-            DuplicatePhongHocException.class, InvalidLopHocException.class})
+            DuplicatePhongHocException.class, InvalidLopHocException.class,
+            DuplicateLopHocException.class})
     public ResponseEntity<ApiResponse<Void>> handleDuplicateNhanVienException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
