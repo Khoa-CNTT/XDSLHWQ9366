@@ -3,6 +3,7 @@ package com.datn.controller.admin;
 import com.datn.dto.request.LopHocAddDTO;
 import com.datn.dto.request.LopHocUpdateDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.LopHoc;
 import com.datn.service.LopHocService;
 import jakarta.validation.Valid;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/lophoc")
@@ -53,6 +56,18 @@ public class LopHocController {
 
         ApiResponse<Void> apiResponse = new ApiResponse<>
                 (HttpStatus.OK.value(), "Xóa lớp học thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<ApiResponse<PaginationResponse<LopHoc>>> pagination
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size) {
+        PaginationResponse<LopHoc> lopHocs = this.lopHocService.pagination(page,size);
+
+        ApiResponse<PaginationResponse<LopHoc>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các lớp học", lopHocs);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -28,7 +28,13 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public List<LopHoc> pagination(int pageNumber, int pageSize) {
-        return List.of();
+        TypedQuery<LopHoc> typedQuery = this.entityManager.createQuery
+                ("FROM LopHoc AS LH ORDER BY LH.maLopHoc", this.getEntityClass());
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -90,7 +96,10 @@ public class LopHocRepoImpl implements LopHocRepo {
 
     @Override
     public Long countTotalLopHocs() {
-        return null;
+        TypedQuery<Long> typedQuery = this.entityManager.createQuery
+                ("SELECT COUNT(LH) FROM LopHoc AS LH", Long.class);
+
+        return typedQuery.getSingleResult();
     }
 
     private Class<LopHoc> getEntityClass() {

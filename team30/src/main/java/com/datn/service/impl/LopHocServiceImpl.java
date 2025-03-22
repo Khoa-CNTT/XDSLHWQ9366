@@ -141,7 +141,15 @@ public class LopHocServiceImpl implements LopHocService {
 
     @Override
     public PaginationResponse<LopHoc> pagination(int pageNumber, int pageSize) {
-        return null;
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.lopHocRepo.countTotalLopHocs();
+
+        List<LopHoc> lopHocs = this.lopHocRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, lopHocs);
     }
 
     @Override
