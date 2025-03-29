@@ -3,6 +3,7 @@ package com.datn.controller.admin;
 import com.datn.dto.request.HocVienAddDTO;
 import com.datn.dto.request.HocVienUpdateDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.HocVien;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.service.HocVienService;
@@ -22,6 +23,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -111,6 +113,29 @@ public class HocVienController {
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(
                 HttpStatus.OK.value(), "Xóa học viên thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("pagination")
+    public ResponseEntity<ApiResponse<PaginationResponse<HocVien>>> pagination
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size) {
+        PaginationResponse<HocVien> paginationResponse = this.hocVienService.pagination(page, size);
+
+        ApiResponse<PaginationResponse<HocVien>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các học viên", paginationResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search/{tenHocVien}")
+    public ResponseEntity<ApiResponse<List<HocVien>>> search
+            (@PathVariable(name = "tenHocVien")String tenHocVien) {
+        List<HocVien> hocViens = this.hocVienService.findByTenHocVien(tenHocVien);
+
+        ApiResponse<List<HocVien>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các học viên", hocViens);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

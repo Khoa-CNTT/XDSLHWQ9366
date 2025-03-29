@@ -23,12 +23,21 @@ public class HocVienRepoImpl implements HocVienRepo {
 
     @Override
     public List<HocVien> findAll() {
-        return List.of();
+        TypedQuery<HocVien> typedQuery = this.entityManager.createQuery
+            ("FROM HocVien", HocVien.class);
+
+        return typedQuery.getResultList();
     }
 
     @Override
     public List<HocVien> pagination(int pageNumber, int pageSize) {
-        return List.of();
+        TypedQuery<HocVien> typedQuery = this.entityManager.createQuery
+                ("FROM HocVien", HocVien.class);
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -44,7 +53,13 @@ public class HocVienRepoImpl implements HocVienRepo {
 
     @Override
     public List<HocVien> findByTenHocVien(String tenHocVien) {
-        return List.of();
+        TypedQuery<HocVien> typedQuery = this.entityManager
+                .createQuery("FROM HocVien AS GV WHERE GV.tenHocVien LIKE :tenHocVien",
+                        this.getEntityClass());
+        typedQuery.setParameter("tenHocVien", "%" + tenHocVien + "%");
+
+        return typedQuery.getResultList();
+
     }
 
     @Override

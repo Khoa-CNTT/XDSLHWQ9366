@@ -73,11 +73,17 @@ public class HocVienServiceImpl implements HocVienService {
 
     @Override
     public PaginationResponse<HocVien> pagination(int pageNumber, int pageSize) {
-        return null;
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+        long totalElements = this.hocVienRepo.findAll().size();
+        List<HocVien> hocViens = this.hocVienRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, hocViens);
     }
 
     @Override
     public List<HocVien> findByTenHocVien(String tenHocVien) {
-        return List.of();
+        return this.hocVienRepo.findByTenHocVien(tenHocVien);
     }
 }
