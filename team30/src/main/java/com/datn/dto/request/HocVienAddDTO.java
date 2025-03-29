@@ -1,66 +1,46 @@
-package com.datn.entity;/*
- * @project team30
- * @author Huy
- */
+package com.datn.dto.request;
 
-
-import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "HOCVIENS")
-public class HocVien {
-    @Id
-    @Column(name = "MAHOCVIEN", columnDefinition = "VARCHAR(255)")
-    private String maHocVien;
+public class HocVienAddDTO {
 
-    @Column(name = "TENHOCVIEN", columnDefinition = "VARCHAR(255)")
+    @NotBlank(message = "Tên học viên không được để trống")
+    @Size(min = 5, max = 255, message = "Tên học viên phải có độ dài từ 5 đến 255 ký tự")
     private String tenHocVien;
 
-    @Column(name = "NGAYSINH", columnDefinition = "DATE")
+    @NotNull(message = "Ngày sinh không được để trống")
+    @Past(message = "Ngày sinh phải nhỏ hơn ngày hiện tại")
     private LocalDate ngaySinh;
 
-    @Column(name = "GIOITINH", columnDefinition = "BOOLEAN")
     private boolean gioiTinh;
 
-    @Column(name = "SOCMND", columnDefinition = "VARCHAR(255)")
+    @NotBlank(message = "Số CMND không được để trống")
+    @Size(min = 9, max = 9, message = "Số CMND phải có đúng 9 ký tự")
     private String soCMND;
 
-    @Column(name = "SODIENTHOAI", columnDefinition = "VARCHAR(255)")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có đúng 10 chữ số")
     private String soDienThoai;
 
-    @Column(name = "EMAIL", columnDefinition = "VARCHAR(255)")
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
     private String email;
 
-    @Column(name = "DIACHI", columnDefinition = "VARCHAR(255)")
+    @Size(min = 5, max = 255, message = "Địa chỉ phải có độ dài từ 5 đến 255 ký tự")
     private String diaChi;
 
-    @Column(name = "TINHTRANGHOCTAP", columnDefinition = "VARCHAR(255)")
+    @Pattern(regexp = "Đang học|Nghỉ học|Đã tốt nghiệp",
+            message = "Trạng thái phải là 'Đang học', 'Nghỉ học' hoặc 'Đã tốt nghiệp'")
     private String tinhTrangHocTap; //  Đang học, Nghỉ học, Đã tốt nghiệp
 
-    @Column(name = "NGUOINHAPTHONGTIN", columnDefinition = "VARCHAR(255)")
     private String nguoiNhapThongTin;
 
-    @Column(name = "GHICHU", columnDefinition = "TEXT")
     private String ghiChu;
 
-    @Column(name = "URIHINHDAIDIEN", columnDefinition = "VARCHAR(255)")
-    private String uriHinhDaiDien;
+    public HocVienAddDTO() {
 
-    @Column(name = "NGAYCAPNHATGANNHAT", columnDefinition = "DATE")
-    private LocalDate ngayCapNhatGanNhat = LocalDate.now();
-
-    public HocVien() {
-
-    }
-
-    public String getMaHocVien() {
-        return maHocVien;
-    }
-
-    public void setMaHocVien(String maHocVien) {
-        this.maHocVien = maHocVien;
     }
 
     public String getTenHocVien() {
@@ -142,21 +122,4 @@ public class HocVien {
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
-
-    public String getUriHinhDaiDien() {
-        return uriHinhDaiDien;
-    }
-
-    public void setUriHinhDaiDien(String uriHinhDaiDien) {
-        this.uriHinhDaiDien = uriHinhDaiDien;
-    }
-
-    public LocalDate getNgayCapNhatGanNhat() {
-        return ngayCapNhatGanNhat;
-    }
-
-    public void setNgayCapNhatGanNhat(LocalDate ngayCapNhatGanNhat) {
-        this.ngayCapNhatGanNhat = ngayCapNhatGanNhat;
-    }
-
 }

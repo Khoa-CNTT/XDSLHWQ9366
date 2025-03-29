@@ -5,6 +5,8 @@ import com.datn.exception.chucvu.ChucVuNotFoundException;
 import com.datn.exception.chucvu.LinhVucNotFoundException;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
+import com.datn.exception.hocvien.DuplicateHocVienException;
+import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.lophoc.DuplicateLopHocException;
 import com.datn.exception.lophoc.InvalidLopHocException;
@@ -26,7 +28,7 @@ public class HighPriorityExceptionHandler {
 
     @ExceptionHandler({DuplicateNhanVienException.class, DuplicateGiangVienException.class,
             DuplicatePhongHocException.class, InvalidLopHocException.class,
-            DuplicateLopHocException.class})
+            DuplicateLopHocException.class, DuplicateHocVienException.class})
     public ResponseEntity<ApiResponse<Void>> handleDuplicateNhanVienException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -35,7 +37,8 @@ public class HighPriorityExceptionHandler {
     @ExceptionHandler({NhanVienNotFoundException.class, ChucVuNotFoundException.class,
             LinhVucNotFoundException.class, PhongHocNotFoundException.class,
             KhoaHocNotFoundException.class, com.datn.exception.linhvuc.LinhVucNotFoundException.class,
-            GiangVienNotFoundException.class, LopHocNotFoundException.class}
+            GiangVienNotFoundException.class, LopHocNotFoundException.class,
+            HocVienNotFoundException.class}
     )
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(RuntimeException ex) {
         ApiResponse<Void> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
