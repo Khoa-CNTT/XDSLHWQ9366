@@ -1,5 +1,6 @@
 package com.datn.service.impl;
 
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.GiangVien;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.repository.GiangVienRepo;
@@ -7,6 +8,8 @@ import com.datn.service.GiangVienService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class GiangVienServiceImpl implements GiangVienService {
@@ -52,5 +55,17 @@ public class GiangVienServiceImpl implements GiangVienService {
     @Transactional
     public void delete(String maGiangVien) {
         this.giangVienRepo.delete(maGiangVien);
+    }
+
+    @Override
+    public PaginationResponse<GiangVien> pagination(int pageNumber, int pageSize) {
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.giangVienRepo.findAll().size();
+        List<GiangVien> giangViens = this.giangVienRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, giangViens);
     }
 }

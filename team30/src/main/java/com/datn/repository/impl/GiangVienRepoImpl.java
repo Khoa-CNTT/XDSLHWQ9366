@@ -23,7 +23,20 @@ public class GiangVienRepoImpl implements GiangVienRepo {
 
     @Override
     public List<GiangVien> findAll() {
-        return List.of();
+        TypedQuery<GiangVien> typedQuery = this.entityManager
+                .createQuery("FROM GiangVien", this.getEntityClass());
+
+        return typedQuery.getResultList();
+    }
+
+    @Override
+    public List<GiangVien> pagination(int pageNumber, int pageSize) {
+        TypedQuery<GiangVien> typedQuery = this.entityManager
+                .createQuery("FROM GiangVien AS GV ORDER BY GV.maGiangVien", this.getEntityClass());
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
     }
 
     @Override

@@ -8,6 +8,8 @@ public interface GiangVienRepo {
 
     List<GiangVien> findAll();
 
+    List<GiangVien> pagination(int pageNumber, int pageSize);
+
     GiangVien findById(String maGiangVien);
 
     GiangVien add(GiangVien giangVien);

@@ -1,5 +1,6 @@
 package com.datn.service;
 
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.GiangVien;
 
 public interface GiangVienService {
@@ -11,5 +12,7 @@ public interface GiangVienService {
     GiangVien update(GiangVien giangVien);
 
     void delete(String maGiangVien);
+
+    PaginationResponse<GiangVien> pagination(int pageNumber, int pageSize);
 
 }

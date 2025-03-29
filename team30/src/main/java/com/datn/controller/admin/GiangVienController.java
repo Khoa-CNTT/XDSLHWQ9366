@@ -3,6 +3,7 @@ package com.datn.controller.admin;
 import com.datn.dto.request.GiangVienAddDTO;
 import com.datn.dto.request.GiangVienUpdateDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.GiangVien;
 import com.datn.entity.LinhVuc;
 import com.datn.exception.chucvu.LinhVucNotFoundException;
@@ -120,6 +121,18 @@ public class GiangVienController {
         this.giangVienService.delete(maGiangVien);
         ApiResponse<Void> apiResponse = new ApiResponse<>
                 (HttpStatus.OK.value(), "Xóa giảng viên thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<ApiResponse<PaginationResponse<GiangVien>>> pagination
+            (@RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size) {
+        PaginationResponse<GiangVien> paginationResponse = this.giangVienService.pagination(page, size);
+
+        ApiResponse<PaginationResponse<GiangVien>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các giảng viên", paginationResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
