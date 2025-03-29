@@ -61,7 +61,7 @@ public class HocVienRepoImpl implements HocVienRepo {
 
     @Override
     public HocVien update(HocVien hocVien) {
-        return null;
+        return this.entityManager.merge(hocVien);
     }
 
     @Override

@@ -60,8 +60,9 @@ public class HocVienServiceImpl implements HocVienService {
     }
 
     @Override
+    @Transactional
     public HocVien update(HocVien hocVien) {
-        return null;
+        return this.hocVienRepo.update(hocVien);
     }
 
     @Override
