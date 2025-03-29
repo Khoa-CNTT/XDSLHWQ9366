@@ -1,6 +1,7 @@
 package com.datn.service.impl;
 
 import com.datn.entity.GiangVien;
+import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.repository.GiangVienRepo;
 import com.datn.service.GiangVienService;
 import jakarta.transaction.Transactional;
@@ -19,7 +20,12 @@ public class GiangVienServiceImpl implements GiangVienService {
 
     @Override
     public GiangVien findById(String maGiangVien) {
-        return this.giangVienRepo.findById(maGiangVien);
+        GiangVien giangVien = this.giangVienRepo.findById(maGiangVien);
+        if(giangVien == null) {
+            throw new GiangVienNotFoundException("Không tìm thấy giảng viên với mã - " + maGiangVien);
+        }
+
+        return giangVien;
     }
 
     @Override
@@ -40,5 +46,11 @@ public class GiangVienServiceImpl implements GiangVienService {
         this.giangVienRepo.checkSoDienThoaiExists(giangVien.getSoDienThoai());
 
         return this.giangVienRepo.update(giangVien);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String maGiangVien) {
+        this.giangVienRepo.delete(maGiangVien);
     }
 }

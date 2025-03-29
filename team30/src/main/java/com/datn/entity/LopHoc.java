@@ -44,7 +44,7 @@ public class LopHoc {
     private PhongHoc phongHoc;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MAGIANGVIEN")
+    @JoinColumn(name = "MAGIANGVIEN", nullable = true)
     private GiangVien giangVien;
 
     @ManyToOne(fetch = FetchType.EAGER)

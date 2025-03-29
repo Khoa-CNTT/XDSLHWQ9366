@@ -2,6 +2,7 @@ package com.datn.repository.impl;
 
 import com.datn.entity.GiangVien;
 import com.datn.exception.giangvien.DuplicateGiangVienException;
+import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.repository.GiangVienRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -56,7 +57,12 @@ public class GiangVienRepoImpl implements GiangVienRepo {
 
     @Override
     public void delete(String maGiangVien) {
+        GiangVien giangVien = this.findById(maGiangVien);
+        if(giangVien == null) {
+            throw new GiangVienNotFoundException("Không tìm thấy giảng viên với mã - " + maGiangVien);
+        }
 
+        this.entityManager.remove(giangVien);
     }
 
     @Override

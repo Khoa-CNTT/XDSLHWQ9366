@@ -10,4 +10,6 @@ public interface GiangVienService {
 
     GiangVien update(GiangVien giangVien);
 
+    void delete(String maGiangVien);
+
 }

@@ -44,6 +44,16 @@ public class GiangVienController {
         this.linhVucService = linhVucService;
     }
 
+    @GetMapping("/getById/{maGiangVien}")
+    public ResponseEntity<ApiResponse<GiangVien>> getById
+            (@PathVariable(name = "maGiangVien")String maGiangVien) {
+        GiangVien giangVien = this.giangVienService.findById(maGiangVien);
+        ApiResponse<GiangVien> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Lấy thông tin giảng viên thành công", giangVien);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<GiangVien>> add(@Valid @RequestBody GiangVienAddDTO giangVienAddDTO) {
         GiangVien giangVien = new GiangVien();
@@ -102,6 +112,16 @@ public class GiangVienController {
                 "Cập nhật giảng viên thành công", gvResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/delete/{maGiangVien}")
+    public ResponseEntity<ApiResponse<Void>> delete
+            (@PathVariable(name = "maGiangVien")String maGiangVien) {
+        this.giangVienService.delete(maGiangVien);
+        ApiResponse<Void> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Xóa giảng viên thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PostMapping("/upload-avatar/{maGiangVien}")
