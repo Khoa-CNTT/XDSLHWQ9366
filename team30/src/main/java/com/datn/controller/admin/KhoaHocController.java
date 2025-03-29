@@ -23,6 +23,16 @@ public class KhoaHocController {
         this.khoaHocService = khoaHocService;
     }
 
+    @GetMapping("/getById/{maKhoaHoc}")
+    public ResponseEntity<ApiResponse<KhoaHoc>> getById
+            (@PathVariable(name = "maKhoaHoc") String maKhoaHoc) {
+        KhoaHoc khoaHoc = this.khoaHocService.findById(maKhoaHoc);
+        ApiResponse<KhoaHoc> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Lấy chi tiết khóa học thành công", khoaHoc);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<KhoaHoc>> add(@Valid @RequestBody KhoaHocAddDTO khoaHocAddDTO) {
         KhoaHoc khoaHoc = this.khoaHocService.add(khoaHocAddDTO);
