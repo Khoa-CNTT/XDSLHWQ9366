@@ -32,6 +32,11 @@ public class GiangVienServiceImpl implements GiangVienService {
     }
 
     @Override
+    public List<GiangVien> findAll() {
+        return this.giangVienRepo.findAll();
+    }
+
+    @Override
     @Transactional
     public GiangVien add(GiangVien giangVien) {
         this.giangVienRepo.checkEmailExists(giangVien.getEmail());
@@ -67,5 +72,10 @@ public class GiangVienServiceImpl implements GiangVienService {
         List<GiangVien> giangViens = this.giangVienRepo.pagination(pageNumber, pageSize);
 
         return new PaginationResponse<>(pageNumber, pageSize, totalElements, giangViens);
+    }
+
+    @Override
+    public List<GiangVien> findByTenGiangVien(String tenGiangVien) {
+        return this.giangVienRepo.findByTenGiangVien(tenGiangVien);
     }
 }

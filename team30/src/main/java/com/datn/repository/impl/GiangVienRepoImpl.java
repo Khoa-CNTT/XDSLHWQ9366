@@ -30,6 +30,16 @@ public class GiangVienRepoImpl implements GiangVienRepo {
     }
 
     @Override
+    public List<GiangVien> findByTenGiangVien(String tenGiangVien) {
+        TypedQuery<GiangVien> typedQuery = this.entityManager
+                .createQuery("FROM GiangVien AS GV WHERE GV.tenGiangVien LIKE :tenGiangVien",
+                        this.getEntityClass());
+        typedQuery.setParameter("tenGiangVien", "%" + tenGiangVien + "%");
+
+        return typedQuery.getResultList();
+    }
+
+    @Override
     public List<GiangVien> pagination(int pageNumber, int pageSize) {
         TypedQuery<GiangVien> typedQuery = this.entityManager
                 .createQuery("FROM GiangVien AS GV ORDER BY GV.maGiangVien", this.getEntityClass());

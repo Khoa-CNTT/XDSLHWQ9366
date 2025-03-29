@@ -12,6 +12,8 @@ public interface GiangVienRepo {
 
     GiangVien findById(String maGiangVien);
 
+    List<GiangVien> findByTenGiangVien(String tenGiangVien);
+
     GiangVien add(GiangVien giangVien);
 
     GiangVien update(GiangVien giangVien);

@@ -10,22 +10,26 @@ import com.datn.exception.chucvu.LinhVucNotFoundException;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.service.GiangVienService;
 import com.datn.service.LinhVucService;
+import com.datn.utils.ExcelExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,13 +40,16 @@ public class GiangVienController {
             "D:/DATN/Demo_DATN_2025/team30/src/main/java/com/datn/uploads";
 
     private final GiangVienService giangVienService;
-
     private final LinhVucService linhVucService;
 
+    private final ExcelExportService excelExportService;
+
     @Autowired
-    public GiangVienController(GiangVienService giangVienService, LinhVucService linhVucService) {
+    public GiangVienController(GiangVienService giangVienService, LinhVucService linhVucService,
+                               ExcelExportService excelExportService) {
         this.giangVienService = giangVienService;
         this.linhVucService = linhVucService;
+        this.excelExportService = excelExportService;
     }
 
     @GetMapping("/getById/{maGiangVien}")
@@ -135,6 +142,32 @@ public class GiangVienController {
                 (HttpStatus.OK.value(), "Danh sách các giảng viên", paginationResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search/{tenGiangVien}")
+    public ResponseEntity<ApiResponse<List<GiangVien>>> search
+            (@PathVariable(name = "tenGiangVien")String tenGiangVien) {
+        List<GiangVien> giangViens = this.giangVienService.findByTenGiangVien(tenGiangVien);
+
+        ApiResponse<List<GiangVien>> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Danh sách các giảng viên", giangViens);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> export() {
+        List<GiangVien> giangViens = this.giangVienService.findAll();
+        ByteArrayInputStream in = this.excelExportService.exportGiangViensToExcel(giangViens);
+
+        byte[] bytes = in.readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=giangviens.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(bytes);
     }
 
     @PostMapping("/upload-avatar/{maGiangVien}")
