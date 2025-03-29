@@ -87,6 +87,34 @@ public class HocVienController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @DeleteMapping("/delete/{maHocVien}")
+    public ResponseEntity<ApiResponse<Void>> delete
+            (@PathVariable(name = "maHocVien")String maHocVien) {
+        HocVien hocVien = this.hocVienService.findById(maHocVien);
+        if (hocVien == null) {
+            throw new HocVienNotFoundException("Không tìm thấy học viên với mã - " + maHocVien);
+        }
+
+        String filePath = hocVien.getUriHinhDaiDien();
+        if (filePath != null && !filePath.isEmpty()) {
+            File file = new File(PATH_UPLOADS, filePath.replace("/uploads/", ""));
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("Xóa ảnh đại diện thành công: " + file.getAbsolutePath());
+                } else {
+                    System.out.println("Không thể xóa ảnh đại diện: " + file.getAbsolutePath());
+                }
+            }
+        }
+        
+        this.hocVienService.delete(maHocVien);
+
+        ApiResponse<Void> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(), "Xóa học viên thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @PostMapping("/upload-avatar/{maHocVien}")
     public ResponseEntity<ApiResponse<String>> uploadAvatar(
             @PathVariable String maHocVien, @RequestParam("file") MultipartFile file) {

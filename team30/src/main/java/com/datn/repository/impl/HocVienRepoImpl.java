@@ -2,6 +2,7 @@ package com.datn.repository.impl;
 
 import com.datn.entity.HocVien;
 import com.datn.exception.hocvien.DuplicateHocVienException;
+import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.repository.HocVienRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -66,7 +67,12 @@ public class HocVienRepoImpl implements HocVienRepo {
 
     @Override
     public void delete(String maHocVien) {
+        HocVien hocVien = this.findById(maHocVien);
+        if (hocVien == null) {
+            throw new HocVienNotFoundException("Không tìm thấy học viên với mã - " + maHocVien);
+        }
 
+        this.entityManager.remove(hocVien);
     }
 
     @Override

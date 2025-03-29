@@ -3,7 +3,6 @@ package com.datn.entity;/*
  * @author Huy
  */
 
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

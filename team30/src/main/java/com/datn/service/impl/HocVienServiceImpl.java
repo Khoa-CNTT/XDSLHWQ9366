@@ -66,8 +66,9 @@ public class HocVienServiceImpl implements HocVienService {
     }
 
     @Override
+    @Transactional
     public void delete(String maHocVien) {
-
+        this.hocVienRepo.delete(maHocVien);
     }
 
     @Override
