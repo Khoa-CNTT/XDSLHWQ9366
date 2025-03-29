@@ -11,6 +11,8 @@ public interface NhanVienService {
 
     NhanVien update(String maNhanVien, NhanVienUpdateDTO nhanVienUpdateDTO);
 
+    NhanVien update(NhanVien nhanVien);
+
     void delete(String maNhanVien);
 
     List<NhanVien> findAll();
@@ -18,5 +20,7 @@ public interface NhanVienService {
     List<NhanVien> findAll(int pageNumber, int pageSize);
 
     List<NhanVien> findByTenNhanVien(String tenNhanVien);
+
+    NhanVien findById(String maNhanVien);
 
 }

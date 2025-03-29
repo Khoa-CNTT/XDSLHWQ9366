@@ -59,7 +59,6 @@ public class NhanVienServiceImpl implements NhanVienService {
         nhanVien.setDiaChi(nhanVienUpdateDTO.getDiaChi());
         nhanVien.setNguoiNhapThongTin(nhanVienUpdateDTO.getNguoiNhapThongTin());
         nhanVien.setGhiChu(nhanVienUpdateDTO.getGhiChu());
-        nhanVien.setUriHinhDaiDien(nhanVienUpdateDTO.getUriHinhDaiDien());
 
         if(nhanVienUpdateDTO.getMaChucVu() != null) {
             checkChucVuExists(nhanVienUpdateDTO.getMaChucVu());
@@ -67,6 +66,12 @@ public class NhanVienServiceImpl implements NhanVienService {
 
         return this.nhanvienRepo.update(nhanVien);
 
+    }
+
+    @Override
+    @Transactional
+    public NhanVien update(NhanVien nhanVien) {
+        return this.nhanvienRepo.update(nhanVien);
     }
 
     @Override
@@ -82,6 +87,11 @@ public class NhanVienServiceImpl implements NhanVienService {
     @Override
     public List<NhanVien> findByTenNhanVien(String tenNhanVien) {
         return this.nhanvienRepo.findByTenNhanVien(tenNhanVien);
+    }
+
+    @Override
+    public NhanVien findById(String maNhanVien) {
+        return this.nhanvienRepo.findById(maNhanVien);
     }
 
     @Override

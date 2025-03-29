@@ -27,13 +27,11 @@ public class NhanVienUpdateDTO {
 
     private String ghiChu;
 
-    private String uriHinhDaiDien;
-
     public NhanVienUpdateDTO() {
 
     }
 
-    public NhanVienUpdateDTO(String soCMND, String soDienThoai, String email, String diaChi, String maChucVu, String nguoiNhapThongTin, String ghiChu, String uriHinhDaiDien) {
+    public NhanVienUpdateDTO(String soCMND, String soDienThoai, String email, String diaChi, String maChucVu, String nguoiNhapThongTin, String ghiChu) {
         this.soCMND = soCMND;
         this.soDienThoai = soDienThoai;
         this.email = email;
@@ -41,30 +39,29 @@ public class NhanVienUpdateDTO {
         this.maChucVu = maChucVu;
         this.nguoiNhapThongTin = nguoiNhapThongTin;
         this.ghiChu = ghiChu;
-        this.uriHinhDaiDien = uriHinhDaiDien;
     }
 
-    public @NotBlank(message = "Số CMND không được để trống") @Size(min = 9, max = 9, message = "Số CMND phải có đúng 9 ký tự") String getSoCMND() {
+    public String getSoCMND() {
         return soCMND;
     }
 
-    public void setSoCMND(@NotBlank(message = "Số CMND không được để trống") @Size(min = 9, max = 9, message = "Số CMND phải có đúng 9 ký tự") String soCMND) {
+    public void setSoCMND(String soCMND) {
         this.soCMND = soCMND;
     }
 
-    public @NotBlank(message = "Số điện thoại không được để trống") @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có đúng 10 chữ số") String getSoDienThoai() {
+    public String getSoDienThoai() {
         return soDienThoai;
     }
 
-    public void setSoDienThoai(@NotBlank(message = "Số điện thoại không được để trống") @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có đúng 10 chữ số") String soDienThoai) {
+    public void setSoDienThoai(String soDienThoai) {
         this.soDienThoai = soDienThoai;
     }
 
-    public @NotBlank(message = "Email không được để trống") @Email(message = "Email không đúng định dạng") String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotBlank(message = "Email không được để trống") @Email(message = "Email không đúng định dạng") String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
@@ -99,13 +96,4 @@ public class NhanVienUpdateDTO {
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
-
-    public String getUriHinhDaiDien() {
-        return uriHinhDaiDien;
-    }
-
-    public void setUriHinhDaiDien(String uriHinhDaiDien) {
-        this.uriHinhDaiDien = uriHinhDaiDien;
-    }
-
 }

@@ -38,7 +38,7 @@ public class GiangVienServiceImpl implements GiangVienService {
         this.giangVienRepo.checkEmailExists(giangVien.getEmail());
         this.giangVienRepo.checkSoCMNDExists(giangVien.getSoCMND());
         this.giangVienRepo.checkSoDienThoaiExists(giangVien.getSoDienThoai());
-        
+
         return this.giangVienRepo.update(giangVien);
     }
 }
