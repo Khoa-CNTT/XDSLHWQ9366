@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-public class GiangVienAddDTO {
+public class GiangVienUpdateDTO {
 
     @NotBlank(message = "Tên giảng viên không được để trống")
     @Size(min = 5, max = 255, message = "Tên giảng viên phải có độ dài từ 5 đến 255 ký tự")
@@ -40,28 +40,11 @@ public class GiangVienAddDTO {
     @NotBlank(message = "Mã lĩnh vực không được để trống")
     private String maLinhVuc;
 
-    private String urlHinhDaiDien;
-
     @Pattern(regexp = "Đang giảng dạy|Đã nghỉ", message = "Trạng thái phải là 'Đang giảng dạy' hoặc 'Đã nghỉ'")
     private String tinhTrangCongTac;
 
-    public GiangVienAddDTO() {
+    public GiangVienUpdateDTO() {
 
-    }
-
-    public GiangVienAddDTO(String tenGiangVien, LocalDate ngaySinh, boolean gioiTinh, String soCMND, String soDienThoai, String email, String diaChi, String coQuanCongTac, String ghiChu, String maLinhVuc, String urlHinhDaiDien, String tinhTrangCongTac) {
-        this.tenGiangVien = tenGiangVien;
-        this.ngaySinh = ngaySinh;
-        this.gioiTinh = gioiTinh;
-        this.soCMND = soCMND;
-        this.soDienThoai = soDienThoai;
-        this.email = email;
-        this.diaChi = diaChi;
-        this.coQuanCongTac = coQuanCongTac;
-        this.ghiChu = ghiChu;
-        this.maLinhVuc = maLinhVuc;
-        this.urlHinhDaiDien = urlHinhDaiDien;
-        this.tinhTrangCongTac = tinhTrangCongTac;
     }
 
     public String getTenGiangVien() {
@@ -142,14 +125,6 @@ public class GiangVienAddDTO {
 
     public void setMaLinhVuc(String maLinhVuc) {
         this.maLinhVuc = maLinhVuc;
-    }
-
-    public String getUrlHinhDaiDien() {
-        return urlHinhDaiDien;
-    }
-
-    public void setUrlHinhDaiDien(String urlHinhDaiDien) {
-        this.urlHinhDaiDien = urlHinhDaiDien;
     }
 
     public String getTinhTrangCongTac() {

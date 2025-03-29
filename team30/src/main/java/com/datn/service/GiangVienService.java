@@ -8,4 +8,6 @@ public interface GiangVienService {
 
     GiangVien findById(String maGiangVien);
 
+    GiangVien update(GiangVien giangVien);
+
 }

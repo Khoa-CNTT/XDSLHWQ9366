@@ -51,7 +51,7 @@ public class GiangVienRepoImpl implements GiangVienRepo {
 
     @Override
     public GiangVien update(GiangVien giangVien) {
-        return null;
+        return this.entityManager.merge(giangVien);
     }
 
     @Override
