@@ -52,6 +52,16 @@ public class NhanVienController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/getById/{maNhanVien}")
+    public ResponseEntity<ApiResponse<NhanVien>> getById(
+            @PathVariable(name = "maNhanVien")String maNhanVien) {
+        NhanVien nhanVien = this.nhanvienService.findById(maNhanVien);
+        ApiResponse<NhanVien> response = new ApiResponse<>(HttpStatus.OK.value(),
+                "Lấy thông tin nhân viên thành công", nhanVien);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/pagination")
     public ResponseEntity<ApiResponse<List<NhanVien>>> pagination(
             @RequestParam(defaultValue = "1") int page,

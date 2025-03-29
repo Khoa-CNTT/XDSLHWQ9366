@@ -91,7 +91,12 @@ public class NhanVienServiceImpl implements NhanVienService {
 
     @Override
     public NhanVien findById(String maNhanVien) {
-        return this.nhanvienRepo.findById(maNhanVien);
+        NhanVien nhanVien =  this.nhanvienRepo.findById(maNhanVien);
+        if(nhanVien == null) {
+            throw new NhanVienNotFoundException("Không tìm thấy nhân viên với mã - " + maNhanVien);
+        }
+
+        return nhanVien;
     }
 
     @Override
