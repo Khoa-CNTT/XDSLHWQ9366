@@ -7,16 +7,19 @@ import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.HocVien;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.service.HocVienService;
+import com.datn.utils.ExcelExportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,9 +38,12 @@ public class HocVienController {
 
     private final HocVienService hocVienService;
 
+    private final ExcelExportService excelExportService;
+
     @Autowired
-    public HocVienController(HocVienService hocVienService) {
+    public HocVienController(HocVienService hocVienService, ExcelExportService excelExportService) {
         this.hocVienService = hocVienService;
+        this.excelExportService = excelExportService;
     }
 
     @PostMapping("/add")
@@ -138,6 +144,21 @@ public class HocVienController {
                 (HttpStatus.OK.value(), "Danh sách các học viên", hocViens);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> export() {
+        List<HocVien> hocViens = this.hocVienService.findAll();
+        ByteArrayInputStream in = this.excelExportService.exportHocViensToExcel(hocViens);
+
+        byte[] bytes = in.readAllBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=giangviens.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(bytes);
     }
 
     @PostMapping("/upload-avatar/{maHocVien}")

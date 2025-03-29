@@ -1,6 +1,7 @@
 package com.datn.utils;
 
 import com.datn.entity.GiangVien;
+import com.datn.entity.HocVien;
 import com.datn.entity.NhanVien;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -89,5 +91,47 @@ public class ExcelExportService {
         }
     }
 
+    public ByteArrayInputStream exportHocViensToExcel(List<HocVien> hocViens) {
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Học Viên");
+
+            // Tạo hàng tiêu đề
+            Row headerRow = sheet.createRow(0);
+            String[] columns = {
+                    "Mã HV", "Tên Học Viên", "Ngày Sinh", "Giới Tính", "Số CMND",
+                    "SĐT", "Email", "Địa Chỉ", "Tình Trạng Học Tập", "Người Nhập TT", "Ghi Chú", "Ngày Cập Nhật"
+            };
+
+            for (int i = 0; i < columns.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(columns[i]);
+            }
+
+            // Ghi dữ liệu học viên vào sheet
+            int rowIdx = 1;
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            for (HocVien hv : hocViens) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(hv.getMaHocVien());
+                row.createCell(1).setCellValue(hv.getTenHocVien());
+                row.createCell(2).setCellValue(hv.getNgaySinh() != null ? hv.getNgaySinh().format(dateFormatter) : "");
+                row.createCell(3).setCellValue(hv.isGioiTinh() ? "Nam" : "Nữ");
+                row.createCell(4).setCellValue(hv.getSoCMND());
+                row.createCell(5).setCellValue(hv.getSoDienThoai());
+                row.createCell(6).setCellValue(hv.getEmail());
+                row.createCell(7).setCellValue(hv.getDiaChi());
+                row.createCell(8).setCellValue(hv.getTinhTrangHocTap());
+                row.createCell(9).setCellValue(hv.getNguoiNhapThongTin());
+                row.createCell(10).setCellValue(hv.getGhiChu());
+                row.createCell(11).setCellValue(hv.getNgayCapNhatGanNhat() != null ? hv.getNgayCapNhatGanNhat().format(dateFormatter) : "");
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi xuất Excel", e);
+        }
+    }
 
 }

@@ -56,7 +56,7 @@ public class HocVienServiceImpl implements HocVienService {
 
     @Override
     public List<HocVien> findAll() {
-        return List.of();
+        return this.hocVienRepo.findAll();
     }
 
     @Override
