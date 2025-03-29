@@ -125,6 +125,22 @@ public class GiangVienController {
     @DeleteMapping("/delete/{maGiangVien}")
     public ResponseEntity<ApiResponse<Void>> delete
             (@PathVariable(name = "maGiangVien")String maGiangVien) {
+        GiangVien giangVien = this.giangVienService.findById(maGiangVien);
+        if (giangVien == null) {
+            throw new GiangVienNotFoundException("Không tìm thấy giảng viên với mã - " + maGiangVien);
+        }
+
+        String filePath = giangVien.getUrlHinhDaiDien();
+        if (filePath != null && !filePath.isEmpty()) {
+            File file = new File(PATH_UPLOADS, filePath.replace("/uploads/", ""));
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("Xóa ảnh đại diện thành công: " + file.getAbsolutePath());
+                } else {
+                    System.out.println("Không thể xóa ảnh đại diện: " + file.getAbsolutePath());
+                }
+            }
+        }
         this.giangVienService.delete(maGiangVien);
         ApiResponse<Void> apiResponse = new ApiResponse<>
                 (HttpStatus.OK.value(), "Xóa giảng viên thành công", null);

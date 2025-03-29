@@ -106,7 +106,7 @@ public class HocVienController {
                 }
             }
         }
-        
+
         this.hocVienService.delete(maHocVien);
 
         ApiResponse<Void> apiResponse = new ApiResponse<>(
