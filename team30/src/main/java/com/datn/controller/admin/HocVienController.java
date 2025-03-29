@@ -1,6 +1,7 @@
 package com.datn.controller.admin;
 
 import com.datn.dto.request.HocVienAddDTO;
+import com.datn.dto.request.HocVienUpdateDTO;
 import com.datn.dto.response.ApiResponse;
 import com.datn.entity.HocVien;
 import com.datn.exception.hocvien.HocVienNotFoundException;
@@ -55,6 +56,33 @@ public class HocVienController {
 
         ApiResponse<HocVien> apiResponse = new ApiResponse<>
                 (HttpStatus.OK.value(), "Lấy thông tin học viên thành công", hocVien);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PutMapping("/update/{maHocVien}")
+    public ResponseEntity<ApiResponse<HocVien>> update
+            (@PathVariable(name = "maHocVien") String maHocVien,
+             @Valid @RequestBody HocVienUpdateDTO hocVienUpdateDTO)  {
+        HocVien hocVien = this.hocVienService.findById(maHocVien);
+        if(hocVien == null) {
+            throw new HocVienNotFoundException("Không tìm thấy giảng viên với mã - " + maHocVien);
+        }
+        hocVien.setTenHocVien(hocVienUpdateDTO.getTenHocVien());
+        hocVien.setNgaySinh(hocVienUpdateDTO.getNgaySinh());
+        hocVien.setGioiTinh(hocVienUpdateDTO.isGioiTinh());
+        hocVien.setSoCMND(hocVienUpdateDTO.getSoCMND());
+        hocVien.setSoDienThoai(hocVienUpdateDTO.getSoDienThoai());
+        hocVien.setEmail(hocVienUpdateDTO.getEmail());
+        hocVien.setDiaChi(hocVienUpdateDTO.getDiaChi());
+        hocVien.setTinhTrangHocTap(hocVienUpdateDTO.getTinhTrangHocTap());
+        hocVien.setNguoiNhapThongTin(hocVienUpdateDTO.getNguoiNhapThongTin());
+        hocVien.setGhiChu(hocVienUpdateDTO.getGhiChu());
+
+        HocVien updatedHocVien = this.hocVienService.update(hocVien);
+
+        ApiResponse<HocVien> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Cập nhật học viên thành công", updatedHocVien);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
