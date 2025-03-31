@@ -13,12 +13,17 @@ import lombok.Setter;
 @Setter
 public class PhongHoc {
     @Id
+    @Column(name = "MAPHONGHOC")
     private String maPhongHoc;
 
+    @Column(name = "TENPHONGHOC", columnDefinition = "VARCHAR(255)")
     private String tenPhongHoc;
+
+    @Column(name = "SOCHONGOI")
     private int soChoNgoi;
 
     @Lob
+    @Column(name = "GHICHU")
     private String ghiChu;
 
 }
