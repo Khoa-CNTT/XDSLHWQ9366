@@ -4,6 +4,7 @@ package com.datn.service.impl;/*
  */
 
 import com.datn.dto.request.LichThiAddDTO;
+import com.datn.dto.request.LichThiUpdateDTO;
 import com.datn.entity.LichThi;
 import com.datn.repository.LichThiRepo;
 import com.datn.service.LichThiService;
@@ -30,17 +31,17 @@ public class LichThiServiceImpl implements LichThiService {
     }
 
     @Override
-    public LichThi update(String id, LichThiAddDTO lichThi) {
-        return null;
+    public LichThi update(String id, LichThiUpdateDTO lichThi) {
+        return lichThiRepo.update(id, lichThi);
     }
 
     @Override
     public void delete(String id) {
-
+        lichThiRepo.delete(id);
     }
 
     @Override
     public List<LichThi> search(String maLichThi, String tenChungChi) {
-        return null;
+        return lichThiRepo.search(maLichThi, tenChungChi);
     }
 }

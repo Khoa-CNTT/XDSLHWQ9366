@@ -32,7 +32,7 @@ public class LichThi {
     @Column(name = "LEPHITHI")
     private double lePhiThi;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "lichThi")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lichThi")
     private List<ThiSinhDuThi> thiSinhDuThi;
 
 

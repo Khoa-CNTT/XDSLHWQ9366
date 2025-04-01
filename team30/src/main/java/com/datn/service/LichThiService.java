@@ -4,6 +4,7 @@ package com.datn.service;/*
  */
 
 import com.datn.dto.request.LichThiAddDTO;
+import com.datn.dto.request.LichThiUpdateDTO;
 import com.datn.entity.LichThi;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface LichThiService {
 
     LichThi add(LichThiAddDTO lichThi);
 
-    LichThi update(String id, LichThiAddDTO lichThi);
+    LichThi update(String id, LichThiUpdateDTO lichThi);
 
     void delete(String id);
 
