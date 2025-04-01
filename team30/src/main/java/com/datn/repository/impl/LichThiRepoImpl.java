@@ -67,7 +67,12 @@
 
         @Override
         public List<LichThi> search(String maLichThi, String tenChungChi) {
-            return null;
+            String jpql = "SELECT l FROM LichThi l WHERE (:maLichThi IS NULL OR l.maLichThi = :maLichThi) " +
+                    "AND (:tenChungChi IS NULL OR l.tenChungChi LIKE :tenChungChi)";
+            return entityManager.createQuery(jpql, getEntityClass())
+                    .setParameter("maLichThi", maLichThi)
+                    .setParameter("tenChungChi", tenChungChi != null ? "%" + tenChungChi + "%" : null)
+                    .getResultList();
         }
 
         private LinhVuc getLinhVucById(String maLinhVuc) {
@@ -76,6 +81,10 @@
                 throw new IllegalArgumentException("Lĩnh vực không tồn tại: " + maLinhVuc);
             }
             return linhVuc;
+        }
+
+        private Class<LichThi> getEntityClass() {
+            return LichThi.class;
         }
 
     }
