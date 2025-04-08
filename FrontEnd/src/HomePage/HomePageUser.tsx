@@ -1,6 +1,7 @@
 import Banner from "../components/Banner/Banner";
 import Hero from "../components/Hero/Hero";
 import Services from "../components/Services/Services";
+import Subscribe from "../components/Subscribe/Subscribe";
 
 const HomePageUsers = () => {
   return (
@@ -8,6 +9,7 @@ const HomePageUsers = () => {
       <Hero />
       <Services />
       <Banner />
+      <Subscribe />
     </div>
   );
 };
