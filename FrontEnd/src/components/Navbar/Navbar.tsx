@@ -2,6 +2,7 @@ import React from "react";
 import { FiShoppingCart } from "react-icons/fi";
 import { IoMdMenu } from "react-icons/io";
 import { motion } from "framer-motion";
+import ShoppingCart from "../Cart/Cart";
 import { useState } from "react";
 const NavbarMenu = [
   {
@@ -74,6 +75,9 @@ const Navbar = () => {
           <IoMdMenu className="text-4xl" />
         </div>
       </motion.div>
+
+      {/*Hiển thị shoppingCart khi showCart=true*/}
+      {showCart && <ShoppingCart onClose={() => setShowCart(false)} />}
     </nav>
   );
 };
