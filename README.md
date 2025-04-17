@@ -2,11 +2,11 @@
 
 VERSION	STATUS	LICENSE	PRs
 1.0.0	🚧 IN DEVELOPMENT	MIT	✅ WELCOME
-💻 Công Nghệ Sử Dụng
+VERSION | STATUS | LICENSE | PRs
+1.0.0 | 🚧 IN DEVELOPMENT | MIT | ✅ WELCOME
 
-Backend	Frontend	AI	Auth	Database
-☕ Spring Boot	⚛️ ReactJS / Angular	🤖 Python (ML/AI)	🔐 JWT / OAuth2	🐘 MySQL / PostgreSQL
 🚀 Tính Năng Nổi Bật
+
 🎯 AI Gợi Ý Khóa Học: theo năng lực và sở thích cá nhân
 
 📚 Quản lý học viên, giảng viên, khóa học, lịch học, điểm số
