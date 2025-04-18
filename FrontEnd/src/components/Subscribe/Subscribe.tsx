@@ -1,4 +1,3 @@
-import React from "react";
 import { FaBell } from "react-icons/fa";
 import BgImage from "../../assets/bg.png";
 import { motion } from "framer-motion";
