@@ -3,6 +3,7 @@ import Hero from "./Hero/Hero";
 import Services from "./Services/Services";
 import Banner from "./Banner/Banner";
 import Subscribe from "./Subscribe/Subscribe";
+import Category from "./Category/Category";
 const Home = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -17,7 +18,7 @@ const Home = () => {
         <Services />
       </div>
       {/* Category section */}
-
+      <Category />
       <Banner />
       <Subscribe />
     </div>
