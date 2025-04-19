@@ -3,6 +3,8 @@ package com.datn.entity;/*
  * @author Huy
  */
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -15,8 +17,9 @@ public class LichThi {
     @Column(name = "MALICHTHI")
     private String maLichThi;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "MALINHVUC") // foreign key
+    @JsonManagedReference
     private LinhVuc linhVuc;
 
     @Column(name = "TENCHUNGCHI")

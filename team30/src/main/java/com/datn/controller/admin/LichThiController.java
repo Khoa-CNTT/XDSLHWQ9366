@@ -7,6 +7,7 @@ import com.datn.dto.request.LichThiAddDTO;
 import com.datn.dto.request.LichThiUpdateDTO;
 import com.datn.dto.response.ApiResponse;
 import com.datn.entity.LichThi;
+import com.datn.exception.lichthi.LichThiException;
 import com.datn.service.LichThiService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/lichthi")
+@RequestMapping("/lichthi")
 public class LichThiController {
 
     private final LichThiService lichThiService;
@@ -30,8 +31,14 @@ public class LichThiController {
     public ResponseEntity<ApiResponse<LichThi>> add(@Valid @RequestBody LichThiAddDTO lichThi) {
         try {
             LichThi addedLichThi = lichThiService.add(lichThi);
+
+            // Ensure all relationships are fully loaded
+            if (addedLichThi.getLinhVuc() != null) {
+                addedLichThi.getLinhVuc().getTenLinhVuc(); // Trigger lazy loading if necessary
+            }
+
             return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Thêm lịch thi thành công", addedLichThi));
-        } catch (Exception e) {
+        } catch (LichThiException e) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
         }
     }
