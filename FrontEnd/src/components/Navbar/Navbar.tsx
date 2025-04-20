@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import ShoppingCart from "../Cart/Cart";
 import { useEffect, useState } from "react";
 import navItems from "../../constants/navbarData";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [showCart, setShowCart] = useState(false);
@@ -73,7 +73,9 @@ const Navbar = () => {
             >
               <FiShoppingCart className="text-xl" />
             </button>
-            <button className="primary-btn">Sign in</button>
+            <Link to="/signin" className="primary-btn">
+              Sign in
+            </Link>
           </div>
         </div>
 
