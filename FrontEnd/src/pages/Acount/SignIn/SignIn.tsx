@@ -109,7 +109,7 @@ const SignIn = () => {
             </p>
             <Link to="/signup" className="text-sm text-neutral-800 font-medium">
               {" "}
-              sign
+              Sign Up
             </Link>
           </div>
         </div>
