@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import StudentDetail from "./StudentDetail";
+import * as XLSX from "xlsx";
 
 export default function StudentList() {
   const [search, setSearch] = useState("");
@@ -69,6 +70,13 @@ export default function StudentList() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [handleClickOutside]);
+  const handleExportExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(classList);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachHocVien");
+
+    XLSX.writeFile(workbook, "danh_sach_hoc_vien.xlsx");
+  };
 
   const classList = useMemo(
     () => [
@@ -247,6 +255,14 @@ export default function StudentList() {
               ))}
           </tbody>
         </table>
+        <div className="flex justify-end p-2">
+          <button
+            onClick={handleExportExcel}
+            className="items-center font-medium bg-green-500 text-white text-md py-2 px-4 rounded-md hover:bg-green-600"
+          >
+            Export Excel
+          </button>
+        </div>
       </div>
       {/* Sidebar Button*/}
       <div
