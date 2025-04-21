@@ -6,23 +6,34 @@ const navItems = [
   },
   {
     id: 2,
-    title: "Services",
-    link: "#",
+    title: "Introduce",
+    path: "/introduce",
   },
   {
     id: 3,
-    title: "About us",
-    link: "#",
+
+    title: "Courses",
+    path: "/courses",
   },
   {
     id: 4,
-    title: "Our Team",
-    link: "#",
+    title: "Exam schedule",
+    path: "/exam-schedule",
   },
   {
     id: 5,
-    title: "Contact us",
-    link: "#",
+    title: "Contact",
+    path: "/contact",
+  },
+  {
+    id: 6,
+    title: "Result",
+    path: "/result",
+  },
+  {
+    id: 7,
+    title: "Test scores",
+    path: "/test-scores",
   },
 ];
 

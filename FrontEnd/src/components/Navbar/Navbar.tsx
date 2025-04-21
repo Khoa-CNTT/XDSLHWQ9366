@@ -50,8 +50,8 @@ const Navbar = () => {
           <ul className="flex items-center gap-6">
             {navItems.map((menu) => (
               <li key={menu.id} className="cursor-pointer">
-                <a
-                  href={menu.path}
+                <Link
+                  to={menu.path}
                   onClick={closeNavbar}
                   className={`inline-block px-3 py-2 hover:text-secondary transition duration-200 ${
                     location.pathname === menu.path
@@ -60,7 +60,7 @@ const Navbar = () => {
                   }`}
                 >
                   {menu.title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -103,8 +103,8 @@ const Navbar = () => {
         <ul className="flex flex-col gap-6 p-6 text-lg text-gray-700">
           {navItems.map((menu) => (
             <li key={menu.id}>
-              <a
-                href={menu.path}
+              <Link
+                to={menu.path}
                 onClick={closeNavbar}
                 className={`block hover:text-secondary ${
                   location.pathname === menu.path
@@ -113,7 +113,7 @@ const Navbar = () => {
                 }`}
               >
                 {menu.title}
-              </a>
+              </Link>
             </li>
           ))}
           <button
