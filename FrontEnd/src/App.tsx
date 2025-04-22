@@ -7,6 +7,7 @@ import SignUp from "./pages/Account/SignUp/SignUp";
 import About from "./pages/About/About";
 import ForgotPassword from "./pages/Account/ForgotPass/ForgotPass";
 import ExamSchedule from "./pages/ExamSchedule/ExamSchedule";
+import ExamDetail from "./pages/ExamSchedule/ExamDetail";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/exam-schedule" element={<ExamSchedule />} />
+            <Route path="/exam/:id" element={<ExamDetail />} />
           </Routes>
           <Footer />
         </main>
