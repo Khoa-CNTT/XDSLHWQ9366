@@ -8,6 +8,8 @@ import About from "./pages/About/About";
 import ForgotPassword from "./pages/Account/ForgotPass/ForgotPass";
 import ExamSchedule from "./pages/ExamSchedule/ExamSchedule";
 import ExamDetail from "./pages/ExamSchedule/ExamDetail";
+import Courses from "./pages/Courses/Courses";
+import CourseDetail from "./pages/Courses/CourseDetail";
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/exam-schedule" element={<ExamSchedule />} />
             <Route path="/exam/:id" element={<ExamDetail />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/course/:id" element={<CourseDetail />} />
           </Routes>
           <Footer />
         </main>
