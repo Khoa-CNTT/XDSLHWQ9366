@@ -10,6 +10,7 @@ import ExamSchedule from "./pages/ExamSchedule/ExamSchedule";
 import ExamDetail from "./pages/ExamSchedule/ExamDetail";
 import Courses from "./pages/Courses/Courses";
 import CourseDetail from "./pages/Courses/CourseDetail";
+import Contact from "./pages/Contact/Contact";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/exam/:id" element={<ExamDetail />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/course/:id" element={<CourseDetail />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
           <Footer />
         </main>
