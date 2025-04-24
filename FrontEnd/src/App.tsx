@@ -11,12 +11,14 @@ import ExamDetail from "./pages/ExamSchedule/ExamDetail";
 import Courses from "./pages/Courses/Courses";
 import CourseDetail from "./pages/Courses/CourseDetail";
 import Contact from "./pages/Contact/Contact";
+import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 
 function App() {
   return (
     <>
       <Router>
         <main className="overflow-x-hidden bg-white text-dark">
+          <ScrollToTop />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
