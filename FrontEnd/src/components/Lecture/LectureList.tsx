@@ -100,7 +100,7 @@ export default function LectureList() {
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Danh mục khóa học</h2>
+        <h2 className="text-xl font-bold mx-4">Danh mục Giảng viên</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"

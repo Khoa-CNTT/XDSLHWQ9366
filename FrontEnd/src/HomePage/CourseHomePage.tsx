@@ -2,10 +2,8 @@ import { useState } from "react";
 import CourseCategory from "../components/Course/CourseCategory";
 import CourseList from "../components/Course/CourseList";
 import ExamList from "../components/Exam/ExamList";
-import TestDetails from "../components/Question/TestDetails";
-import Courses from "./HomePage";
 import AccountSetting from "../components/Account/AccountSetting";
-import ClassList from "../components/Class/ClassList";
+import ClassList from "../components/Class/Classes";
 import ClassDetail from "../components/Class/ClassDetail";
 import LectureList from "../components/Lecture/LectureList";
 import LectureDetail from "../components/Lecture/LectureDetail";
@@ -14,6 +12,12 @@ import EmployeeDetail from "../components/Employees/EmployeeDetail";
 import StudentList from "../components/Student/StudentList";
 import StudentDetail from "../components/Student/StudentDetail";
 import Contestants from "../components/Exam/Contestants";
+import Receipts from "../components/Finance/Receipts";
+import Disbursements from "../components/Finance/Disbursements";
+import Articles from "../components/Contact/Articles";
+import Contacts from "../components/Contact/Contacts";
+import Roles from "../components/Role/Roles";
+import Courses from "./HomePage";
 
 export default function CourseHomePage() {
   const [activeDropdown, setActiveDropdown] = useState("");
@@ -689,7 +693,15 @@ export default function CourseHomePage() {
             {activeDropdown === "danhSachLT" && <ExamList />}
             {activeDropdown === "quanLyTS" && <Contestants />}
 
-            {activeDropdown === "deThi" && <TestDetails />}
+            {activeDropdown === "QLPhieuThu" && <Receipts />}
+            {activeDropdown === "QLPhieuChi" && <Disbursements />}
+
+            {activeDropdown === "QLBaiViet" && <Articles />}
+            {activeDropdown === "QLLienHe" && <Contacts />}
+
+            {activeDropdown === "QLChucVu" && <Roles />}
+            {activeDropdown === "QLLinhVuc" && <Contacts />}
+
             {activeDropdown === "QLTaiKhoan" && <AccountSetting />}
             {activeDropdown === "" && <Courses />}
           </div>

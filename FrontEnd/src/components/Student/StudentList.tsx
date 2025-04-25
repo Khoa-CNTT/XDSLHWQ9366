@@ -108,7 +108,7 @@ export default function StudentList() {
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Quản lý Học Viên</h2>
+        <h2 className="text-xl font-bold mx-4">Danh sách Học Viên</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -208,7 +208,7 @@ export default function StudentList() {
               <th className="p-2 border">Tên Học viên</th>
               <th className="p-2 border">Số điện thoại</th>
               <th className="p-2 border">Email</th>
-              <th className="p-2 border">Tình trạn</th>
+              <th className="p-2 border">Tình trạng</th>
             </tr>
           </thead>
           <tbody>
@@ -227,7 +227,7 @@ export default function StudentList() {
                   <td className="p-2 text-center">{classList.id}</td>
                   <td className="p-2 text-center">{classList.name}</td>
 
-                  <td className="p-2">{classList.SDT}</td>
+                  <td className="p-2 text-center">{classList.SDT}</td>
                   <td className="p-2 text-center">{classList.email}</td>
                   <td className="p-2 text-center">{classList.tinhTrang}</td>
                   <td className="p-2 text-center">

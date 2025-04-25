@@ -1,45 +1,24 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
-import RoleDetail from "./RoleDetail";
-interface Roles {
-  id: string;
-  name: string;
-  status: string;
-}
-export default function Roles() {
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import ContactDetail from "./ContactDetail";
+
+export default function Contacts() {
   const [search, setSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenShare, setIsOpenShare] = useState(false);
   const [isOpenType, setIsOpenType] = useState(false);
-  const [dataList, setDataList] = useState<Roles[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
   const shareRef = useRef<HTMLDivElement | null>(null);
   const typeRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/linhvuc/linhvucs");
-      const data = await response.json();
-      setDataList(data);
-    } catch (err) {
-      console.error(err);
-      setError("Không thể tải dữ liệu.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (loading) {
-      setError(null);
-    }
-  }, [loading]);
   const handleViewClick = (e: MouseEvent) => {
     e.stopPropagation();
     setIsSidebarOpen((prev) => !prev);
@@ -91,10 +70,37 @@ export default function Roles() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [handleClickOutside]);
 
+  const classList = useMemo(
+    () => [
+      {
+        id: "NV01",
+        name: "Lê Văn A",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        ngayLH: "2025-01-01",
+      },
+      {
+        id: "NV02",
+        name: "Lê Văn B",
+        SDT: "0385665243",
+        email: "zxc456@gmail.com",
+        ngayLH: "2025-01-02",
+      },
+      {
+        id: "NV03",
+        name: "Lê Văn C",
+        SDT: "0385665243",
+        email: "xyz789@gmail.com",
+        ngayLH: "2025-01-03",
+      },
+    ],
+    []
+  );
+
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Quản lý Học Viên</h2>
+        <h2 className="text-xl font-bold mx-4">Quản lý nhân viên</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -109,7 +115,7 @@ export default function Roles() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
-              Tất cả học viên
+              Tất cả danh mục
               <svg
                 className="w-4 h-4 ml-12 -mr-1 inline"
                 xmlns="http://www.w3.org/2000/svg"
@@ -124,12 +130,12 @@ export default function Roles() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {dataList.map((dataList) => (
+                  {classList.map((classList) => (
                     <button
-                      key={dataList.id}
+                      key={classList.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {dataList.name}
+                      {classList.name}
                     </button>
                   ))}
                 </div>
@@ -186,31 +192,36 @@ export default function Roles() {
         </div>
       </div>
       <div className="bg-white  shadow-md h-auto">
-        {error && <div className="text-red-500 text-center my-2">{error}</div>}
         <table className="w-full border-collapse border rounded-md ">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Chức Vụ</th>
-              <th className="p-2 border">Tên Chức Vụ</th>
-              <th className="p-2 border">Trạng Thái</th>
+              <th>Mã Nhân viên</th>
+              <th className="p-2 border">Tên Nhân viên</th>
+              <th className="p-2 border">SĐT </th>
+              <th className="p-2 border">Email</th>
+              <th className="p-2 border">Ngày Liên Hệ</th>
             </tr>
           </thead>
           <tbody>
-            {dataList
+            {classList
               .filter(
                 (c) =>
                   c.name.toLowerCase().includes(search.toLowerCase()) ||
                   c.id.toLowerCase().includes(search.toLowerCase()) ||
-                  c.status.toLowerCase().includes(search.toLowerCase())
+                  c.ngayLH.toLowerCase().includes(search.toLowerCase()) ||
+                  c.email.toLowerCase().includes(search.toLowerCase()) ||
+                  c.SDT.toLowerCase().includes(search.toLowerCase())
               )
-              .map((c, index) => (
-                <tr key={c.id} className="border-b">
+              .map((classList, index) => (
+                <tr key={classList.id} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{c.id}</td>
-                  <td className="p-2 text-center">{c.name}</td>
+                  <td className="p-2 text-center">{classList.id}</td>
+                  <td className="p-2 text-center">{classList.name}</td>
 
-                  <td className="p-2 text-center">{c.status}</td>
+                  <td className="p-2 text-center">{classList.SDT}</td>
+                  <td className="p-2 text-center">{classList.email}</td>
+                  <td className="p-2 text-center">{classList.ngayLH}</td>
                   <td className="p-2 text-center">
                     <button
                       onClick={handleViewClick}
@@ -244,7 +255,7 @@ export default function Roles() {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <RoleDetail />
+        <ContactDetail />
       </div>
     </div>
   );
