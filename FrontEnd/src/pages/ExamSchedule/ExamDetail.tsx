@@ -1,9 +1,12 @@
 import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
 import examItems from "../../constants/examData";
+import RegisterModal from "./ExamRegister"; // nhớ sửa đường dẫn đúng thư mục bạn nhé
 
 const ExamDetail = () => {
   const { id } = useParams();
   const exam = examItems.find((e) => String(e.malichthi) === id);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!exam) {
     return (
@@ -12,7 +15,7 @@ const ExamDetail = () => {
       </div>
     );
   }
-  // Các chứng chỉ khác
+
   const otherExams = examItems.filter(
     (e) => e.tenchungchi !== exam.tenchungchi
   );
@@ -58,12 +61,12 @@ const ExamDetail = () => {
 
           {/* Button */}
           <div className="pt-4">
-            <Link
-              to={`/register/${exam.malichthi}`}
+            <button
+              onClick={() => setIsModalOpen(true)}
               className="block w-full text-center bg-secondary text-white py-3 rounded-lg font-medium text-lg hover:bg-primary transition"
             >
               Register now
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -92,6 +95,13 @@ const ExamDetail = () => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      <RegisterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        examName={exam.tenchungchi}
+      />
     </div>
   );
 };

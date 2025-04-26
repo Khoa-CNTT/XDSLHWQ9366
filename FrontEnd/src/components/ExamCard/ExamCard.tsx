@@ -29,12 +29,6 @@ const ExamCard = ({ item }: { item: (typeof examItems)[0] }) => (
       >
         Detail
       </Link>
-      <Link
-        to={`/register/${item.malichthi}`}
-        className="flex-1 text-center bg-secondary text-white py-2 rounded-lg text-sm font-medium hover:bg-primary transition"
-      >
-        Register
-      </Link>
     </div>
   </div>
 );
