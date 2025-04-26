@@ -62,7 +62,7 @@ const ResultDetail = () => {
                 <td className="p-2">{course.id}</td>
                 <td className="p-2">{course.tenkhoahoc}</td>
                 <td className="p-2">{course.diem}</td>
-                <td className="p-2">{course.ketqua}</td>
+                <td className="p-2">{course.xeploai}</td>
               </tr>
             </tbody>
           </table>
