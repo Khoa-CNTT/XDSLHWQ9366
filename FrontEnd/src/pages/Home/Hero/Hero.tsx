@@ -2,6 +2,7 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import Blob from "../../../assets/blob.svg";
 import HeroPng from "../../../assets/hero.png";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export const FadeUp = (delay: number) => {
   return {
@@ -45,10 +46,13 @@ const Hero = () => {
               animate="animate"
               className="flex justify-center md:justify-start "
             >
-              <button className="primary-btn flex items-center gap-2">
+              <Link
+                to="/courses"
+                className="primary-btn flex items-center gap-2"
+              >
                 Get started
                 <IoIosArrowRoundForward className="text-xl group-hover:translate-x-2 group-hover:-rotate-45 duration-300" />
-              </button>
+              </Link>
             </motion.div>
           </div>
         </div>
