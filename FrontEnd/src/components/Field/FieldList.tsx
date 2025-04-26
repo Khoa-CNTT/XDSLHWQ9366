@@ -6,17 +6,68 @@ import {
   useRef,
   useState,
 } from "react";
-import StudentDetail from "./StudentDetail";
-import * as XLSX from "xlsx";
-
-export default function StudentList() {
+import FieldDetail from "./FieldDetail";
+// interface Fileds {
+//   id: string;
+//   name: string;
+// }
+export default function FieldList() {
   const [search, setSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [isOpenShare, setIsOpenShare] = useState(false);
   const [isOpenType, setIsOpenType] = useState(false);
+  //   const [dataList, setDataList] = useState<Roles[]>([]);
+  //   const [loading, setLoading] = useState(true);
+  //   const [error, setError] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const shareRef = useRef<HTMLDivElement | null>(null);
   const typeRef = useRef<HTMLDivElement | null>(null);
+
+  const fieldList = useMemo(
+    () => [
+      {
+        id: "LV01",
+        name: "Lập trình",
+      },
+      {
+        id: "LV02",
+        name: "Thiết kế đồ họa",
+      },
+      {
+        id: "LV03",
+        name: "Quản trị mạng",
+      },
+      {
+        id: "LV04",
+        name: "Quản trị hệ thống",
+      },
+    ],
+    []
+  );
+
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:8080/linhvuc/linhvucs");
+  //       const data = await response.json();
+  //       setDataList(data);
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError("Không thể tải dữ liệu.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     fetchData();
+  //   }, []);
+  //   useEffect(() => {
+  //     if (loading) {
+  //       setError(null);
+  //     }
+  //   }, [loading]);
 
   const handleViewClick = (e: MouseEvent) => {
     e.stopPropagation();
@@ -39,7 +90,13 @@ export default function StudentList() {
       ) {
         setIsOpenMenu(false);
       }
-
+      if (
+        shareRef.current &&
+        !shareRef.current.contains(event.target as Node) &&
+        isOpenShare
+      ) {
+        setIsOpenShare(false);
+      }
       if (
         typeRef.current &&
         !typeRef.current.contains(event.target as Node) &&
@@ -54,52 +111,18 @@ export default function StudentList() {
         setIsOpenType(false);
       }
     },
-    [isOpenMenu, isOpenType]
+    [isOpenMenu, isOpenShare, isOpenType]
   );
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [handleClickOutside]);
-  const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(classList);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachHocVien");
-
-    XLSX.writeFile(workbook, "danh_sach_hoc_vien.xlsx");
-  };
-
-  const classList = useMemo(
-    () => [
-      {
-        id: "HV01",
-        name: "Lê Văn A",
-        SDT: "0385665243",
-        email: "abc123@gmail.com",
-        tinhTrang: "Đang học",
-      },
-      {
-        id: "NV02",
-        name: "Lê Văn B",
-        SDT: "0385665243",
-        email: "zxc456@gmail.com",
-        tinhTrang: "Đang học",
-      },
-      {
-        id: "NV03",
-        name: "Lê Văn C",
-        SDT: "0385665243",
-        email: "xyz789@gmail.com",
-        tinhTrang: "Hoàn thành",
-      },
-    ],
-    []
-  );
 
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Danh sách Học Viên</h2>
+        <h2 className="text-xl font-bold mx-4">Danh mục Lĩnh vực</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -114,7 +137,7 @@ export default function StudentList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
-              Tất cả học viên
+              Tất cả Lĩnh vực
               <svg
                 className="w-4 h-4 ml-12 -mr-1 inline"
                 xmlns="http://www.w3.org/2000/svg"
@@ -129,12 +152,12 @@ export default function StudentList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {classList.map((classList) => (
+                  {fieldList.map((fieldList) => (
                     <button
-                      key={classList.id}
+                      key={fieldList.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {classList.name}
+                      {fieldList.name}
                     </button>
                   ))}
                 </div>
@@ -148,36 +171,28 @@ export default function StudentList() {
         </div>
       </div>
       <div className="bg-white  shadow-md h-auto">
+        {/* {error && <div className="text-red-500 text-center my-2">{error}</div>} */}
         <table className="w-full border-collapse border rounded-md ">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Học viên</th>
-              <th className="p-2 border">Tên Học viên</th>
-              <th className="p-2 border">Số điện thoại</th>
-              <th className="p-2 border">Email</th>
-              <th className="p-2 border">Tình trạng</th>
+              <th>Mã Lĩnh vực</th>
+              <th className="p-2 border">Tên Lĩnh vực</th>
             </tr>
           </thead>
           <tbody>
-            {classList
+            {fieldList
               .filter(
                 (c) =>
                   c.name.toLowerCase().includes(search.toLowerCase()) ||
-                  c.id.toLowerCase().includes(search.toLowerCase()) ||
-                  c.tinhTrang.toLowerCase().includes(search.toLowerCase()) ||
-                  c.email.toLowerCase().includes(search.toLowerCase()) ||
-                  c.SDT.toLowerCase().includes(search.toLowerCase())
+                  c.id.toLowerCase().includes(search.toLowerCase())
               )
-              .map((classList, index) => (
-                <tr key={classList.id} className="border-b">
+              .map((c, index) => (
+                <tr key={c.id} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{classList.id}</td>
-                  <td className="p-2 text-center">{classList.name}</td>
+                  <td className="p-2 text-center">{c.id}</td>
+                  <td className="p-2 text-center">{c.name}</td>
 
-                  <td className="p-2 text-center">{classList.SDT}</td>
-                  <td className="p-2 text-center">{classList.email}</td>
-                  <td className="p-2 text-center">{classList.tinhTrang}</td>
                   <td className="p-2 text-center">
                     <button
                       onClick={handleViewClick}
@@ -203,14 +218,6 @@ export default function StudentList() {
               ))}
           </tbody>
         </table>
-        <div className="flex justify-end p-2">
-          <button
-            onClick={handleExportExcel}
-            className="items-center font-medium bg-green-500 text-white text-md py-2 px-4 rounded-md hover:bg-green-600"
-          >
-            Export Excel
-          </button>
-        </div>
       </div>
       {/* Sidebar Button*/}
       <div
@@ -219,7 +226,7 @@ export default function StudentList() {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <StudentDetail />
+        <FieldDetail />
       </div>
     </div>
   );

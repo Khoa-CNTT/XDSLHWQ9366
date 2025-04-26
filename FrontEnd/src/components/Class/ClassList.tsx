@@ -1,51 +1,27 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
-import RoleDetail from "./RoleDetail";
-interface Roles {
-  id: string;
-  name: string;
-  status: string;
-}
-export default function Roles() {
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import ClassDetail from "./ClassDetail";
+
+export default function ClassList() {
   const [search, setSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenShare, setIsOpenShare] = useState(false);
   const [isOpenType, setIsOpenType] = useState(false);
-  const [dataList, setDataList] = useState<Roles[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const shareRef = useRef<HTMLDivElement | null>(null);
   const typeRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/linhvuc/linhvucs");
-      const data = await response.json();
-      setDataList(data);
-    } catch (err) {
-      console.error(err);
-      setError("Không thể tải dữ liệu.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-  useEffect(() => {
-    if (loading) {
-      setError(null);
-    }
-  }, [loading]);
   const handleViewClick = (e: MouseEvent) => {
     e.stopPropagation();
     setIsSidebarOpen((prev) => !prev);
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const toggleShare = useCallback(() => setIsOpenShare((prev) => !prev), []);
 
   const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
     if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
@@ -62,13 +38,7 @@ export default function Roles() {
       ) {
         setIsOpenMenu(false);
       }
-      if (
-        shareRef.current &&
-        !shareRef.current.contains(event.target as Node) &&
-        isOpenShare
-      ) {
-        setIsOpenShare(false);
-      }
+
       if (
         typeRef.current &&
         !typeRef.current.contains(event.target as Node) &&
@@ -83,7 +53,7 @@ export default function Roles() {
         setIsOpenType(false);
       }
     },
-    [isOpenMenu, isOpenShare, isOpenType]
+    [isOpenMenu, isOpenType]
   );
 
   useEffect(() => {
@@ -91,10 +61,40 @@ export default function Roles() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [handleClickOutside]);
 
+  const classList = useMemo(
+    () => [
+      {
+        id: "C01",
+        name: "Class C01",
+        schedule: "2-4-6",
+        dateStart: "01/01/2025",
+        dateEnd: "01/04/2025",
+        Status: "Đang học",
+      },
+      {
+        id: "C02",
+        name: "Class C02",
+        schedule: "2-4-6",
+        dateStart: "01/02/2025",
+        dateEnd: "01/04/2025",
+        Status: "Đang học",
+      },
+      {
+        id: "C03",
+        name: "Class C03",
+        schedule: "2-4-6",
+        dateStart: "01/01/2025",
+        dateEnd: "01/04/2025",
+        Status: "Đang học",
+      },
+    ],
+    []
+  );
+
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Quản lý Học Viên</h2>
+        <h2 className="text-xl font-bold mx-4">Danh mục lớp học</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -109,7 +109,7 @@ export default function Roles() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
-              Tất cả học viên
+              Tất cả danh mục
               <svg
                 className="w-4 h-4 ml-12 -mr-1 inline"
                 xmlns="http://www.w3.org/2000/svg"
@@ -124,93 +124,52 @@ export default function Roles() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {dataList.map((dataList) => (
+                  {classList.map((classList) => (
                     <button
-                      key={dataList.id}
+                      key={classList.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {dataList.name}
+                      {classList.name}
                     </button>
                   ))}
                 </div>
               </div>
             )}
           </div>
-          <div className="relative" ref={shareRef}>
-            <button
-              onClick={toggleShare}
-              className="inline-flex rounded-md items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
-            >
-              Chia sẻ
-              <svg
-                className="w-4 h-4 ml-2 -mr-1"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
 
-            {/* Dropdown Share */}
-            {isOpenShare && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 1
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 2
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 3
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
           <button className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600">
             Thêm
           </button>
         </div>
       </div>
       <div className="bg-white  shadow-md h-auto">
-        {error && <div className="text-red-500 text-center my-2">{error}</div>}
         <table className="w-full border-collapse border rounded-md ">
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Chức Vụ</th>
-              <th className="p-2 border">Tên Chức Vụ</th>
-              <th className="p-2 border">Trạng Thái</th>
+              <th>Mã lớp học</th>
+              <th className="p-2 border">Tên Lớp Học</th>
+              <th className="p-2 border">Lịch Học</th>
+              <th className="p-2 border">Ngày Bắt Đầu</th>
+              <th className="p-2 border">Ngày Kết Thúc</th>
+              <th className="p-2 border">Tình Trạng</th>
             </tr>
           </thead>
           <tbody>
-            {dataList
-              .filter(
-                (c) =>
-                  c.name.toLowerCase().includes(search.toLowerCase()) ||
-                  c.id.toLowerCase().includes(search.toLowerCase()) ||
-                  c.status.toLowerCase().includes(search.toLowerCase())
+            {classList
+              .filter((c) =>
+                c.name.toLowerCase().includes(search.toLowerCase())
               )
-              .map((c, index) => (
-                <tr key={c.id} className="border-b">
+              .map((classList, index) => (
+                <tr key={classList.id} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{c.id}</td>
-                  <td className="p-2 text-center">{c.name}</td>
+                  <td className="p-2 text-center">{classList.id}</td>
+                  <td className="p-2 text-center">{classList.name}</td>
 
-                  <td className="p-2 text-center">{c.status}</td>
+                  <td className="p-2">{classList.schedule}</td>
+                  <td className="p-2 text-center">{classList.dateStart}</td>
+                  <td className="p-2 text-center">{classList.dateEnd}</td>
+                  <td className="p-2 text-center">{classList.Status}</td>
                   <td className="p-2 text-center">
                     <button
                       onClick={handleViewClick}
@@ -244,7 +203,7 @@ export default function Roles() {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <RoleDetail />
+        <ClassDetail />
       </div>
     </div>
   );

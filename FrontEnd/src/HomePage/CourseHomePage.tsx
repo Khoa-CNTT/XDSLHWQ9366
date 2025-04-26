@@ -3,10 +3,8 @@ import CourseCategory from "../components/Course/CourseCategory";
 import CourseList from "../components/Course/CourseList";
 import ExamList from "../components/Exam/ExamList";
 import AccountSetting from "../components/Account/AccountSetting";
-import ClassList from "../components/Class/Classes";
-import ClassDetail from "../components/Class/ClassDetail";
+import ClassList from "../components/Class/ClassList";
 import LectureList from "../components/Lecture/LectureList";
-import LectureDetail from "../components/Lecture/LectureDetail";
 import EmployeeList from "../components/Employees/EmployeeList";
 import EmployeeDetail from "../components/Employees/EmployeeDetail";
 import StudentList from "../components/Student/StudentList";
@@ -14,10 +12,13 @@ import StudentDetail from "../components/Student/StudentDetail";
 import Contestants from "../components/Exam/Contestants";
 import Receipts from "../components/Finance/Receipts";
 import Disbursements from "../components/Finance/Disbursements";
-import Articles from "../components/Contact/Articles";
 import Contacts from "../components/Contact/Contacts";
-import Roles from "../components/Role/Roles";
 import Courses from "./HomePage";
+import AddLecture from "../components/Lecture/AddLecture";
+import Articles from "../components/Article/Articles";
+import FieldList from "../components/Field/FieldList";
+import RoleList from "../components/Role/RoleList";
+import RoomList from "../components/Room/RoomList";
 
 export default function CourseHomePage() {
   const [activeDropdown, setActiveDropdown] = useState("");
@@ -679,7 +680,7 @@ export default function CourseHomePage() {
             {activeDropdown === "khoaHoc" && <CourseList />}
 
             {activeDropdown === "danhSachGV" && <LectureList />}
-            {activeDropdown === "chiTietGV" && <LectureDetail />}
+            {activeDropdown === "chiTietGV" && <AddLecture />}
 
             {activeDropdown === "QLNhanVien" && <EmployeeList />}
             {activeDropdown === "chiTietNV" && <EmployeeDetail />}
@@ -688,7 +689,7 @@ export default function CourseHomePage() {
             {activeDropdown === "chiTietHV" && <StudentDetail />}
 
             {activeDropdown === "QLLopHoc" && <ClassList />}
-            {activeDropdown === "QLPhongHoc" && <ClassDetail />}
+            {activeDropdown === "QLPhongHoc" && <RoomList />}
 
             {activeDropdown === "danhSachLT" && <ExamList />}
             {activeDropdown === "quanLyTS" && <Contestants />}
@@ -699,8 +700,8 @@ export default function CourseHomePage() {
             {activeDropdown === "QLBaiViet" && <Articles />}
             {activeDropdown === "QLLienHe" && <Contacts />}
 
-            {activeDropdown === "QLChucVu" && <Roles />}
-            {activeDropdown === "QLLinhVuc" && <Contacts />}
+            {activeDropdown === "QLChucVu" && <RoleList />}
+            {activeDropdown === "QLLinhVuc" && <FieldList />}
 
             {activeDropdown === "QLTaiKhoan" && <AccountSetting />}
             {activeDropdown === "" && <Courses />}

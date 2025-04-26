@@ -24,7 +24,6 @@ export default function Contacts() {
     setIsSidebarOpen((prev) => !prev);
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const toggleShare = useCallback(() => setIsOpenShare((prev) => !prev), []);
 
   const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
     if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
@@ -100,7 +99,7 @@ export default function Contacts() {
   return (
     <div onClick={handleCloseSidebar} className="h-full">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Quản lý nhân viên</h2>
+        <h2 className="text-xl font-bold mx-4">Quản lý Liên hệ</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -142,50 +141,6 @@ export default function Contacts() {
               </div>
             )}
           </div>
-          <div className="relative" ref={shareRef}>
-            <button
-              onClick={toggleShare}
-              className="inline-flex rounded-md items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
-            >
-              Chia sẻ
-              <svg
-                className="w-4 h-4 ml-2 -mr-1"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
-
-            {/* Dropdown Share */}
-            {isOpenShare && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 1
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 2
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 3
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
           <button className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600">
             Thêm
           </button>
@@ -196,8 +151,8 @@ export default function Contacts() {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Nhân viên</th>
-              <th className="p-2 border">Tên Nhân viên</th>
+              <th>Mã Khách</th>
+              <th className="p-2 border">Họ tên</th>
               <th className="p-2 border">SĐT </th>
               <th className="p-2 border">Email</th>
               <th className="p-2 border">Ngày Liên Hệ</th>

@@ -1,22 +1,13 @@
 import { useState } from "react";
 
-export default function ContactDetail() {
+export default function ExamDetail() {
   const [formData, setFormData] = useState({
     id: "NV01",
     name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "HANTA",
-    tinhTrang: "dangLam",
-    linhVuc: "keToan",
-    datestart: "2025-01-01",
-    dateend: "2025-01-10",
-    dateLH: "2025-01-01",
-    ghiChu: "",
+    ngayThi: "2023-10-01",
+    lePhiThi: "500.000",
+    linhVuc: "iot",
+    chiTiet: "Chứng chỉ tin học",
   });
 
   const handleChange = (
@@ -30,7 +21,7 @@ export default function ContactDetail() {
 
   const handleAdd = () => {
     console.log("Thêm giảng viên:", formData);
-    alert("Thêm giảng viên thành công!");
+    alert("Thêm lịch thi thành công!");
   };
 
   const handleSave = () => {
@@ -39,26 +30,15 @@ export default function ContactDetail() {
   };
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
-    );
+    const confirmDelete = window.confirm("Bạn có chắc muốn xóa mục này?");
     if (confirmDelete) {
       setFormData({
         id: "",
         name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
+        ngayThi: "",
+        lePhiThi: "",
         linhVuc: "",
-        datestart: "",
-        dateend: "",
-        dateLH: "",
-        ghiChu: "",
+        chiTiet: "",
       });
       alert("Đã xóa thông tin giảng viên.");
     }
@@ -68,7 +48,7 @@ export default function ContactDetail() {
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Liên hệ
+          Chi tiết lịch thi
         </h2>
 
         <div className="grid grid-cols-2 gap-2">
@@ -76,9 +56,9 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="examDetail"
               >
-                Mã Khách
+                Mã lịch thi
               </label>
               <input
                 type="text"
@@ -91,45 +71,35 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="examDetail"
               >
-                SĐT
+                Lĩnh vực
               </label>
-
+              <div className="w-full">
+                <select
+                  name="linhVuc"
+                  value={formData.linhVuc}
+                  onChange={handleChange}
+                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">-- Lĩnh vực --</option>
+                  <option value="iot">IOT</option>
+                  <option value="data">Data</option>
+                  <option value="ai">AI</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label
+                className="w-1/2 text-gray-700 text-sm font-bold"
+                htmlFor="examDetail"
+              >
+                Thông tin chi tiết
+              </label>
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày bắt đầu
-              </label>
-              <input
-                type="date"
-                name="datestart"
-                value={formData.datestart}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày kết thúc
-              </label>
-              <input
-                type="date"
-                name="dateend"
-                value={formData.dateend}
+                name="chiTiet"
+                value={formData.chiTiet}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -140,9 +110,9 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="examDetail"
               >
-                Họ tên
+                Tên chưng chỉ
               </label>
               <input
                 type="text"
@@ -154,51 +124,37 @@ export default function ContactDetail() {
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
+                className=" w-1/2 text-gray-700 text-sm font-bold"
                 htmlFor="classDetail"
               >
-                Email
+                Ngày thi
               </label>
               <input
-                type="text"
-                name="email"
-                value={formData.email}
+                type="date"
+                name="ngàyThi"
+                value={formData.ngayThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                className="w-1/2 text-gray-700 text-sm font-bold"
+                htmlFor="examDetail"
               >
-                Ngày liên hệ
+                Lệ phí thi
               </label>
               <input
-                type="date"
-                name="dateLH"
-                value={formData.dateLH}
+                type="text"
+                name="lePhiThi"
+                value={formData.lePhiThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
         </div>
-        <div className="flex p-1 w-full justify-center border">
-          <label
-            className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
-          >
-            Ghi chú
-          </label>
 
-          <textarea
-            name="description"
-            rows={4}
-            placeholder="Nhập nội dung..."
-            className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"

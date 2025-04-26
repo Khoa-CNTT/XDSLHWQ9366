@@ -1,10 +1,17 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CourseHomePage from "./HomePage/CourseHomePage";
+import AddLecture from "./components/Lecture/AddLecture";
 
 function App() {
   return (
-    <div className="">
-      <CourseHomePage />
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<CourseHomePage />} />
+          <Route path="/Lecture/add-lecture" element={<AddLecture />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

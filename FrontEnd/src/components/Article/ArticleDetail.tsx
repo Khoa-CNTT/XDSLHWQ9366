@@ -1,22 +1,17 @@
 import { useState } from "react";
 
-export default function ContactDetail() {
+export default function ArticleDetail() {
   const [formData, setFormData] = useState({
     id: "NV01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "HANTA",
-    tinhTrang: "dangLam",
-    linhVuc: "keToan",
-    datestart: "2025-01-01",
-    dateend: "2025-01-10",
-    dateLH: "2025-01-01",
-    ghiChu: "",
+    title: "google",
+    tomTat: "",
+    ngayDang: "2025-01-01",
+    lanTruyCapCuoi: "2025-01-01",
+    nguoiViet: "Lê Văn A",
+    soLuong: 0,
+    nemu: "tinTuc",
+    trangThai: "true",
+    hinhAnh: "https://example.com/image.jpg",
   });
 
   const handleChange = (
@@ -44,23 +39,18 @@ export default function ContactDetail() {
     );
     if (confirmDelete) {
       setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        datestart: "",
-        dateend: "",
-        dateLH: "",
-        ghiChu: "",
+        id: " ",
+        title: " ",
+        tomTat: "",
+        ngayDang: " ",
+        lanTruyCapCuoi: " ",
+        nguoiViet: " ",
+        soLuong: 0,
+        nemu: " ",
+        trangThai: " ",
+        hinhAnh: " ",
       });
-      alert("Đã xóa thông tin giảng viên.");
+      alert("Đã xóa bài đăng.");
     }
   };
 
@@ -68,7 +58,7 @@ export default function ContactDetail() {
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Liên hệ
+          Quản lý Bài đăng
         </h2>
 
         <div className="grid grid-cols-2 gap-2">
@@ -76,9 +66,9 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="articleDetail"
               >
-                Mã Khách
+                Mã
               </label>
               <input
                 type="text"
@@ -91,15 +81,15 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="articleDetail"
               >
-                SĐT
+                Người viết bài
               </label>
 
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
+                name="nguoiViet"
+                value={formData.nguoiViet}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -107,29 +97,14 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="articleDetail"
               >
-                Ngày bắt đầu
+                Ngày đăng
               </label>
               <input
                 type="date"
-                name="datestart"
-                value={formData.datestart}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày kết thúc
-              </label>
-              <input
-                type="date"
-                name="dateend"
-                value={formData.dateend}
+                name="ngayDang"
+                value={formData.ngayDang}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -140,14 +115,14 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="articleDetail"
               >
-                Họ tên
+                Tiêu đề
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -155,14 +130,14 @@ export default function ContactDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="articleDetail"
               >
-                Email
+                Số lượng truy cập
               </label>
               <input
                 type="text"
-                name="email"
-                value={formData.email}
+                name="soLuong"
+                value={formData.soLuong}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -172,12 +147,12 @@ export default function ContactDetail() {
                 className=" w-1/2 text-gray-700 text-sm font-bold"
                 htmlFor="classDetail"
               >
-                Ngày liên hệ
+                Lần truy cập cuối
               </label>
               <input
                 type="date"
-                name="dateLH"
-                value={formData.dateLH}
+                name="lanTruyCapCuoi"
+                value={formData.lanTruyCapCuoi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
