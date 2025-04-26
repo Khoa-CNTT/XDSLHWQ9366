@@ -16,6 +16,8 @@ import Results from "./pages/Result/Result";
 import ResultDetail from "./pages/Result/ResultDetail";
 import TestScores from "./pages/TestScores/TestScores";
 import TestScoreDetail from "./pages/TestScores/TestScoreDetail";
+import News from "./pages/News/News";
+import NewsDetail from "./pages/News/NewsDetail";
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
             <Route path="/result/:id" element={<ResultDetail />} />
             <Route path="/test-scores" element={<TestScores />} />
             <Route path="/test-scores/:id" element={<TestScoreDetail />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:mabaiviet" element={<NewsDetail />} />
           </Routes>
           <Footer />
         </main>

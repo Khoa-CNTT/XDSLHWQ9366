@@ -24,7 +24,7 @@ const serviceItems = [
   },
   {
     id: 3,
-    title: "Software Development",
+    title: "SQL",
     link: "#",
     icon: <RiComputerLine />,
     delay: 0.2,
@@ -32,7 +32,7 @@ const serviceItems = [
   },
   {
     id: 4,
-    title: "Satisfied Clients",
+    title: "DevOps",
     link: "#",
     icon: <IoMdHappy />,
     delay: 0.2,
@@ -40,7 +40,7 @@ const serviceItems = [
   },
   {
     id: 5,
-    title: "SEO optimization",
+    title: "Computer Network",
     link: "#",
     icon: <IoPulseOutline />,
     delay: 0.2,
