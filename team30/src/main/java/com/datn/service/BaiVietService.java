@@ -3,6 +3,8 @@ package com.datn.service;/*
  * @author Huy
  */
 
+import com.datn.dto.request.BaiVietAddDTO;
+import com.datn.dto.request.BaiVietUpdateDTO;
 import com.datn.entity.BaiViet;
 
 import java.util.List;
@@ -12,5 +14,6 @@ public interface BaiVietService {
     BaiViet getBaiVietById(String id);
     BaiViet createBaiViet(BaiVietAddDTO baiViet);
     BaiViet updateBaiViet(String id, BaiVietUpdateDTO baiViet);
+
     void deleteBaiViet(String id);
 }

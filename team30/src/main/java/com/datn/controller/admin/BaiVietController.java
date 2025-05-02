@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/baiviet")
 public class BaiVietController {
 
-    private final BaiVietService baiVietService;
+    private BaiVietService baiVietService;
 
     public BaiVietController(BaiVietService baiVietService) {
         this.baiVietService = baiVietService;
@@ -36,7 +36,7 @@ public class BaiVietController {
         BaiViet baiViet = baiVietService.getBaiVietById(id);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy bài viết thành công", baiViet));
     }
-    @PostMapping("/create")
+    @PostMapping("/add")
     public ResponseEntity<ApiResponse<BaiViet>> createBaiViet(@Valid @RequestBody BaiVietAddDTO baiViet) {
         BaiViet createdBaiViet = baiVietService.createBaiViet(baiViet);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Tạo bài viết thành công", createdBaiViet));

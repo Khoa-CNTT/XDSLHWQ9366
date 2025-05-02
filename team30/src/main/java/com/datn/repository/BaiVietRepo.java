@@ -3,6 +3,8 @@ package com.datn.repository;/*
  * @author Huy
  */
 
+import com.datn.dto.request.BaiVietAddDTO;
+import com.datn.dto.request.BaiVietUpdateDTO;
 import com.datn.entity.BaiViet;
 
 import java.util.List;
