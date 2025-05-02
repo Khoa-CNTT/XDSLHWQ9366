@@ -31,7 +31,7 @@ public class BaiVietUpdateDTO {
     private LocalDate ngayDang;
 
     @NotNull(message = "Mã nhân viên viết bài không được để trống")
-    private Long nhanVienId; // ID của nhân viên viết bài
+    private String nhanVienId; // ID của nhân viên viết bài
 
     @NotNull(message = "Lần cập nhật cuối cùng không được để trống")
     @FutureOrPresent(message = "Lần cập nhật cuối cùng phải là ngày hiện tại hoặc trong tương lai")
@@ -52,7 +52,7 @@ public class BaiVietUpdateDTO {
 
     // Full constructor
     public BaiVietUpdateDTO(String maBaiViet, String tieuDe, String uriHinhAnhMinhHoa, String noiDungTomTat, String noiDung,
-                            LocalDate ngayDang, Long nhanVienId, LocalDate lanCapNhatCuoiCung, int soLuongTruyCap, String menu,
+                            LocalDate ngayDang, String nhanVienId, LocalDate lanCapNhatCuoiCung, int soLuongTruyCap, String menu,
                             Boolean trangThai) {
         this.maBaiViet = maBaiViet;
         this.tieuDe = tieuDe;
@@ -115,11 +115,11 @@ public class BaiVietUpdateDTO {
         this.ngayDang = ngayDang;
     }
 
-    public Long getNhanVienId() {
+    public String getNhanVienId() {
         return nhanVienId;
     }
 
-    public void setNhanVienId(Long nhanVienId) {
+    public void setNhanVienId(String nhanVienId) {
         this.nhanVienId = nhanVienId;
     }
 

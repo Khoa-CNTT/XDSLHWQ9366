@@ -53,6 +53,7 @@ public class BaiVietRepoImpl implements BaiVietRepo {
     }
 
     @Override
+    @Transactional
     public BaiViet updateBaiViet(String id, BaiVietUpdateDTO baiVietDTO) {
         BaiViet baiViet = entityManager.find(BaiViet.class, id);
         if (baiViet != null) {
