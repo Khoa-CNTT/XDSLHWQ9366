@@ -1,52 +1,20 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home/Home";
-import Navbar from "./components/Navbar/Navbar";
-import Footer from "./components/Footer/Footer";
-import SignIn from "./pages/Account/SignIn/SignIn";
-import SignUp from "./pages/Account/SignUp/SignUp";
-import About from "./pages/About/About";
-import ForgotPassword from "./pages/Account/ForgotPass/ForgotPass";
-import ExamSchedule from "./pages/ExamSchedule/ExamSchedule";
-import ExamDetail from "./pages/ExamSchedule/ExamDetail";
-import Courses from "./pages/Courses/Courses";
-import CourseDetail from "./pages/Courses/CourseDetail";
-import Contact from "./pages/Contact/Contact";
-import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
-import Results from "./pages/Result/Result";
-import ResultDetail from "./pages/Result/ResultDetail";
-import TestScores from "./pages/TestScores/TestScores";
-import TestScoreDetail from "./pages/TestScores/TestScoreDetail";
-import News from "./pages/News/News";
-import NewsDetail from "./pages/News/NewsDetail";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CourseHomePage from "./HomePage/CourseHomePage";
+import AddLecture from "./components/Lecture/AddLecture";
+import LectureList from "./components/Lecture/LectureList";
+import LectureDetail from "./components/Lecture/LectureDetail";
 
 function App() {
   return (
     <>
-      <Router>
-        <main className="overflow-x-hidden bg-white text-dark">
-          <ScrollToTop />
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/exam-schedule" element={<ExamSchedule />} />
-            <Route path="/exam/:id" element={<ExamDetail />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/course/:id" element={<CourseDetail />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/result" element={<Results />} />
-            <Route path="/result/:id" element={<ResultDetail />} />
-            <Route path="/test-scores" element={<TestScores />} />
-            <Route path="/test-scores/:id" element={<TestScoreDetail />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:mabaiviet" element={<NewsDetail />} />
-          </Routes>
-          <Footer />
-        </main>
-      </Router>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<CourseHomePage />} />
+          <Route path="/Lecture/add-lecture" element={<AddLecture />} />
+          <Route path="/Lecture/lectures" element={<LectureList />} />
+          <Route path="/Lecture/get-lecture" element={<LectureDetail />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
