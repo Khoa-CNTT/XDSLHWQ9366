@@ -68,7 +68,11 @@ public class BaiVietRepoImpl implements BaiVietRepo {
             baiViet.setNoiDungTomTat(baiVietDTO.getNoiDungTomTat());
             baiViet.setNoiDung(baiVietDTO.getNoiDung());
             baiViet.setNgayDang(baiVietDTO.getNgayDang());
-            baiViet.setNhanVien(entityManager.find(NhanVien.class, baiVietDTO.getNhanVienId()));
+            NhanVien nhanVien = entityManager.find(NhanVien.class, baiVietDTO.getNhanVienId());
+            if (nhanVien == null) {
+                throw new IllegalArgumentException("NhanVien with ID " + baiVietDTO.getNhanVienId() + " does not exist");
+            }
+            baiViet.setNhanVien(nhanVien);
             baiViet.setLanCapNhatCuoiCung(baiVietDTO.getLanCapNhatCuoiCung());
             baiViet.setSoLuongTruyCap(baiVietDTO.getSoLuongTruyCap());
             baiViet.setMenu(baiVietDTO.getMenu());
