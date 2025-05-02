@@ -98,11 +98,11 @@ function AddLecture() {
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Giảng viên
-        </h2>
+        <div className="flex justify-between items-center  p-4 rounded-md bg-orange-300">
+          <h1 className="text-2xl font-bold text-gray-800">Thêm Giảng viên</h1>
+        </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2 py-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
               <label

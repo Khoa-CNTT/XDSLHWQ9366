@@ -99,7 +99,7 @@ export default function AddEmployee() {
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Nhân viên
+          Thêm Nhân viên
         </h2>
 
         <div className="grid grid-cols-2 gap-2">

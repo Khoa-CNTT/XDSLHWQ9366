@@ -11,11 +11,9 @@ export default function CourseList() {
   const [search, setSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenShare, setIsOpenShare] = useState(false);
   const [isOpenType, setIsOpenType] = useState(false);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const shareRef = useRef<HTMLDivElement | null>(null);
   const typeRef = useRef<HTMLDivElement | null>(null);
 
   const handleViewClick = (e: MouseEvent) => {
@@ -23,7 +21,6 @@ export default function CourseList() {
     setIsSidebarOpen((prev) => !prev);
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const toggleShare = useCallback(() => setIsOpenShare((prev) => !prev), []);
   const toggleType = useCallback((e: React.MouseEvent) => {
     e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
     setIsOpenType((prev) => !prev);
@@ -43,13 +40,7 @@ export default function CourseList() {
       ) {
         setIsOpenMenu(false);
       }
-      if (
-        shareRef.current &&
-        !shareRef.current.contains(event.target as Node) &&
-        isOpenShare
-      ) {
-        setIsOpenShare(false);
-      }
+
       if (
         typeRef.current &&
         !typeRef.current.contains(event.target as Node) &&
@@ -64,7 +55,7 @@ export default function CourseList() {
         setIsOpenType(false);
       }
     },
-    [isOpenMenu, isOpenShare, isOpenType]
+    [isOpenMenu, isOpenType]
   );
 
   useEffect(() => {
@@ -166,50 +157,7 @@ export default function CourseList() {
               </div>
             )}
           </div>
-          <div className="relative" ref={shareRef}>
-            <button
-              onClick={toggleShare}
-              className="inline-flex rounded-md items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
-            >
-              Chia sẻ
-              <svg
-                className="w-4 h-4 ml-2 -mr-1"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
 
-            {/* Dropdown Share */}
-            {isOpenShare && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 1
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 2
-                  </button>
-
-                  <button
-                    // onClick={}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Share 3
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
           <button className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600">
             Thêm
           </button>

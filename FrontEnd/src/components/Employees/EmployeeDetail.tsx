@@ -25,37 +25,9 @@ export default function EmployeeDetail() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
-    console.log("Thêm giảng viên:", formData);
-    alert("Thêm giảng viên thành công!");
-  };
-
   const handleSave = () => {
     console.log("Lưu thông tin giảng viên:", formData);
     alert("Lưu thông tin thành công!");
-  };
-
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
-    );
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
-    }
   };
 
   return (
@@ -275,24 +247,10 @@ export default function EmployeeDetail() {
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"
-            onClick={handleAdd}
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm
-          </button>
-          <button
-            type="button"
             onClick={handleSave}
             className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
           >
             Lưu
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Xoá
           </button>
         </div>
       </div>
