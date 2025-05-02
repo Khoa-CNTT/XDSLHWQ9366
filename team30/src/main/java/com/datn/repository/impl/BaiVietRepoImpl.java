@@ -73,6 +73,7 @@ public class BaiVietRepoImpl implements BaiVietRepo {
     }
 
     @Override
+    @Transactional
     public void deleteBaiViet(String id) {
         BaiViet baiViet = entityManager.find(BaiViet.class, id);
         if (baiViet != null) {
