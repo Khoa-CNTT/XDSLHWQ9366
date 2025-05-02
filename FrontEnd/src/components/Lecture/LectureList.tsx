@@ -118,12 +118,12 @@ export default function LectureList() {
     () => [
       {
         id: "GV01",
-        name: "Lê Văn A",
+        name: "Lê Đức Thảo",
         dob: "1997-08-15",
         gioiTinh: "true",
         CCCD: "048097000077",
         SDT: "0385665243",
-        email: "abc123@gmail.com",
+        email: "Thao123@gmail.com",
         address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
         coQuan: "DTU",
         tinhTrang: "dangDay",
@@ -132,43 +132,43 @@ export default function LectureList() {
       },
       {
         id: "02",
-        name: "Lê Văn b",
+        name: "Trương Thị Ngọc Ánh",
       },
       {
         id: "3",
-        name: "Lê Văn c",
+        name: "Đoàn Văn Huy",
       },
       {
         id: "4",
-        name: "Lê Văn d",
+        name: "Nguyễn Hữu Thành",
       },
       {
         id: "5",
-        name: "Lê Văn A",
+        name: "Nguyễn Thanh Anh",
       },
       {
         id: "6",
-        name: "Lê Văn A",
+        name: "Trương Thị Ngọc Anh",
       },
       {
         id: "7",
-        name: "Lê Văn A",
+        name: "Lê Văn Anh",
       },
       {
         id: "8",
-        name: "Lê Văn A",
+        name: "Lê Văn Tuấn",
       },
       {
         id: "9",
-        name: "Lê Văn A",
+        name: "Trương Ngọc Anh",
       },
       {
         id: "10",
-        name: "Lê Văn A",
+        name: "Đoàn Văn Anh",
       },
       {
         id: "11",
-        name: "Lê Văn A",
+        name: "Nguyễn Lan Anh",
       },
     ],
     []
