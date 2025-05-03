@@ -1,7 +1,5 @@
 package com.datn.service.impl;
 
-import com.datn.dto.request.ThiSinhDuThiAddDTO;
-import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.ThiSinhDuThi;
 import com.datn.repository.ThiSinhDuThiRepo;
@@ -24,12 +22,12 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
     }
 
     @Override
-    public ThiSinhDuThi add(ThiSinhDuThiAddDTO thiSinhDuThiAddDTO) {
+    public ThiSinhDuThi add(ThiSinhDuThi thiSinhDuThi) {
         return null;
     }
 
     @Override
-    public ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThiUpdateDTO thiSinhDuThiUpdateDTO) {
+    public ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThi thiSinhDuThi) {
         return null;
     }
 

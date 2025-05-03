@@ -1,6 +1,7 @@
 package com.datn.repository.impl;
 
 import com.datn.entity.ThiSinhDuThi;
+import com.datn.exception.thisinh.ThiSinhNotFoundException;
 import com.datn.repository.ThiSinhDuThiRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -29,17 +30,35 @@ public class ThiSinhDuThiRepoImpl implements ThiSinhDuThiRepo {
 
     @Override
     public List<ThiSinhDuThi> pagination(int pageNumber, int pageSize) {
-        return List.of();
+        TypedQuery<ThiSinhDuThi> typedQuery = this.entityManager.createQuery
+                ("FROM ThiSinhDuThi AS TS ORDER BY TS.maThiSinhDuThi", this.getEntityClass());
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
     }
 
     @Override
     public ThiSinhDuThi findById(String maThiSinhDuThi) {
-        return null;
+        TypedQuery<ThiSinhDuThi> typedQuery = this.entityManager.createQuery
+                ("FROM ThiSinhDuThi AS TS WHERE TS.maThiSinhDuThi = :maThiSinhDuThi", this.getEntityClass());
+        typedQuery.setParameter("maThiSinhDuThi", maThiSinhDuThi);
+
+        List<ThiSinhDuThi> thiSinhDuThis = typedQuery.getResultList();
+
+        return thiSinhDuThis.isEmpty() ? null : thiSinhDuThis.get(0);
     }
 
     @Override
     public List<ThiSinhDuThi> findByTenThiSinhDuThi(String tenThiSinhDuThi) {
-        return List.of();
+        TypedQuery<ThiSinhDuThi> typedQuery = this.entityManager
+                .createQuery("FROM ThiSinhDuThi AS TS WHERE TS.tenThiSinhDuThi LIKE :tenThiSinhDuThi", this.getEntityClass());
+        typedQuery.setParameter("tenThiSinhDuThi", "%" + tenThiSinhDuThi + "%");
+
+        List<ThiSinhDuThi> thiSinhDuThis = typedQuery.getResultList();
+
+        return thiSinhDuThis;
     }
 
     @Override
@@ -58,12 +77,18 @@ public class ThiSinhDuThiRepoImpl implements ThiSinhDuThiRepo {
 
     @Override
     public ThiSinhDuThi update(ThiSinhDuThi thiSinhDuThi) {
-        return null;
+        return this.entityManager.merge(thiSinhDuThi);
     }
 
     @Override
     public void delete(String maThiSinhDuThi) {
+        ThiSinhDuThi thiSinhDuThi = this.findById(maThiSinhDuThi);
 
+        if(thiSinhDuThi == null) {
+            throw new ThiSinhNotFoundException("Không tìm thấy thí sinh với mã - " + maThiSinhDuThi);
+        } else {
+            this.entityManager.remove(thiSinhDuThi);
+        }
     }
 
     private Class<ThiSinhDuThi> getEntityClass() {
