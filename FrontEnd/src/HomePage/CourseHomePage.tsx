@@ -434,7 +434,7 @@ export default function CourseHomePage() {
             <div className="flex p-2 gap-2">
               <div className="flex p-2 items-center bg-blue-100 gap-2 rounded border">
                 <div className="flex flex-col items-start">
-                  <p className=" font-semibold">Hello Le Van A</p>
+                  <p className=" font-semibold">Hello Lê Đức Thảo</p>
                   <p className="text-sm text-gray-600">Teacher</p>
                 </div>
               </div>

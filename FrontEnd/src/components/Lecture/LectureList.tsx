@@ -6,9 +6,9 @@ import {
   useRef,
   useState,
 } from "react";
-import LectureDetail from "./LectureDetail";
+import { useNavigate } from "react-router-dom";
 import AddLecture from "./AddLecture";
-type Lecture = {
+type Lecturer = {
   id: string;
   name: string;
   dob: string;
@@ -34,8 +34,8 @@ export default function LectureList() {
   const [activeButton, setActiveButton] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
   const typeRef = useRef<HTMLDivElement | null>(null);
-
-  const [formData, setFormData] = useState<Lecture | null>(null);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<Lecturer | null>(null);
 
   const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
 
@@ -67,12 +67,11 @@ export default function LectureList() {
     }
   };
 
-  const handleViewClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("viewLecture");
-    setIsSidebarOpen(true);
+  const handleView = (lecturer: Lecturer) => {
+    navigate(`/Lecture/get-lecture/${lecturer.id}`, {
+      state: { lecturer },
+    });
   };
-
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
@@ -114,10 +113,80 @@ export default function LectureList() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [handleClickOutside]);
 
-  const classList = useMemo(
+  const lecturelist = useMemo<Lecturer[]>(
     () => [
       {
         id: "GV01",
+        name: "Lê Đức Thảo",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "ducthao2112@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "java",
+        ghiChu: "",
+      },
+      {
+        id: "GV02",
+        name: "Trương Thị Ngọc Ánh",
+        dob: "2003-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "ntanh2003@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "iot",
+        ghiChu: "",
+      },
+      {
+        id: "GV03",
+        name: "Nguyễn Thanh Anh",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "ntanh2002@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "cntt",
+        ghiChu: "",
+      },
+      {
+        id: "GV04",
+        name: "Đoàn Văn Huy",
+        dob: "2003-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "huydv@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "khmt",
+        ghiChu: "",
+      },
+      {
+        id: "GV05",
+        name: "Nguyễn Hữu Thành",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "ntthanh2003@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "java",
+        ghiChu: "",
+      },
+      {
+        id: "GV06",
         name: "Lê Văn A",
         dob: "1997-08-15",
         gioiTinh: "true",
@@ -131,44 +200,74 @@ export default function LectureList() {
         ghiChu: "",
       },
       {
-        id: "02",
-        name: "Lê Văn b",
+        id: "GV07",
+        name: "Lê Văn B",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "iot",
+        ghiChu: "",
       },
       {
-        id: "3",
-        name: "Lê Văn c",
+        id: "GV08",
+        name: "Lê Văn C",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "java",
+        ghiChu: "",
       },
       {
-        id: "4",
-        name: "Lê Văn d",
+        id: "GV09",
+        name: "Lê Văn D",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "java",
+        ghiChu: "",
       },
       {
-        id: "5",
-        name: "Lê Văn A",
-      },
-      {
-        id: "6",
-        name: "Lê Văn A",
-      },
-      {
-        id: "7",
-        name: "Lê Văn A",
-      },
-      {
-        id: "8",
-        name: "Lê Văn A",
-      },
-      {
-        id: "9",
-        name: "Lê Văn A",
-      },
-      {
-        id: "10",
-        name: "Lê Văn A",
+        id: "GV10",
+        name: "Lê Văn E",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "cntt",
+        ghiChu: "",
       },
       {
         id: "11",
         name: "Lê Văn A",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "cntt",
+        ghiChu: "",
       },
     ],
     []
@@ -197,7 +296,7 @@ export default function LectureList() {
   //  10 items per page
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const filteredList = classList.filter((c) => {
+  const filteredList = lecturelist.filter((c) => {
     const matchSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.id.toLowerCase().includes(search.toLowerCase());
@@ -296,18 +395,24 @@ export default function LectureList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((classList, index) => (
-              <tr key={classList.id} className="border-b">
+            {paginatedList.map((lecturer, index) => (
+              <tr key={lecturer.id} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{classList.id}</td>
-                <td className="p-2 text-center">{classList.name}</td>
+                <td className="p-2 text-center">{lecturer.id}</td>
+                <td className="p-2 text-center">{lecturer.name}</td>
 
-                <td className="p-2 text-center">{classList.SDT}</td>
-                <td className="p-2 text-center">{classList.email}</td>
-                <td className="p-2 text-center">{classList.linhVuc}</td>
+                <td className="p-2 text-center">{lecturer.SDT}</td>
+                <td className="p-2 text-center">{lecturer.email}</td>
+                <td className="p-2 text-center">
+                  {linhVucList.find(
+                    (lv) =>
+                      lv.id.toLowerCase() === lecturer.linhVuc?.toLowerCase()
+                  )?.name || lecturer.linhVuc}
+                </td>
+
                 <td className="p-2 text-center">
                   <button
-                    onClick={handleViewClick}
+                    onClick={() => handleView(lecturer)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
@@ -387,7 +492,7 @@ export default function LectureList() {
         onClick={(e) => e.stopPropagation()}
       >
         {activeButton === "addLecture" && <AddLecture />}
-        {activeButton === "viewLecture" && <LectureDetail />}
+        {/* {activeButton === "viewLecture" && <LectureDetail />} */}
       </div>
     </div>
   );

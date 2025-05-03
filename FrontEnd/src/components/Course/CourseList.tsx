@@ -167,7 +167,7 @@ export default function CourseList() {
         <table className="w-full border-collapse border rounded-md ">
           <thead>
             <tr className="bg-gray-200">
-              <th className="p-2 border">#</th>
+              <th className="p-2 border">STT</th>
               <th>IMG</th>
               <th className="p-2 border">TÊN KHOÁ HỌC</th>
               <th className="p-2 border">THUỘC DANH MỤC</th>

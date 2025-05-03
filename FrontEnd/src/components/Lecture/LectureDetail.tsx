@@ -1,28 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
+interface Lecturer {
+  id: string;
+  name: string;
+  dob: string;
+  gioiTinh: string;
+  CCCD: string;
+  SDT: string;
+  email: string;
+  address: string;
+  coQuan: string;
+  tinhTrang: string;
+  linhVuc: string;
+  ghiChu: string;
+}
 export default function LectureDetail() {
-  const [formData, setFormData] = useState({
-    id: "GV01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "DTU",
-    tinhTrang: "dangDay",
-    linhVuc: "java",
-    ghiChu: "",
-  });
+  const location = useLocation();
+  const [formData, setFormData] = useState(location.state?.lecturer || null);
+  useEffect(() => {
+    if (!formData) {
+      console.warn("Không có dữ liệu giảng viên được truyền!");
+    }
+  }, [formData]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: Lecturer) => ({ ...prev, [name]: value }));
   };
+
+  if (!formData) {
+    return <div>Không có dữ liệu giảng viên.</div>;
+  }
 
   const handleSave = () => {
     console.log("Lưu thông tin giảng viên:", formData);
@@ -78,7 +91,7 @@ export default function LectureDetail() {
 
               <input
                 type="text"
-                name="salary"
+                name="CCCD"
                 value={formData.CCCD}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -93,7 +106,7 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="salary"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -108,7 +121,7 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="courseName"
+                name="coQuan"
                 value={formData.coQuan}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -147,7 +160,7 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="classname"
+                name="name"
                 value={formData.name}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -237,7 +250,9 @@ export default function LectureDetail() {
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
+            onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"

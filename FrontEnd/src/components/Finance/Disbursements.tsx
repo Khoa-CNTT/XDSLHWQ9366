@@ -107,6 +107,23 @@ export default function Disbursements() {
     ],
     []
   );
+  //  10 items per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const filteredList = classList.filter((c) => {
+    const matchSearch = c.description
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    return matchSearch;
+  });
+
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedList = filteredList.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   return (
     <div onClick={handleCloseSidebar} className="h-full">
@@ -216,44 +233,69 @@ export default function Disbursements() {
             </tr>
           </thead>
           <tbody>
-            {classList
-              .filter((c) =>
-                c.description.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((classList, index) => (
-                <tr key={classList.id} className="border-b">
-                  <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{classList.id}</td>
-                  <td className="p-2 text-center">{classList.description}</td>
-                  <td className="p-2 text-center">{classList.accounting}</td>
-                  <td className="p-2 text-center">{classList.payee}</td>
-                  <td className="p-2 text-center">{classList.amount}</td>
-                  <td className="p-2 text-center">{classList.date}</td>
-                  <td className="p-2 text-center">
-                    <button
-                      onClick={handleViewClick}
-                      className=" mx-2 border p-2 rounded-md items-center align-middle"
+            {filteredList.map((classList, index) => (
+              <tr key={classList.id} className="border-b">
+                <td className="p-2 text-center">{index + 1}</td>
+                <td className="p-2 text-center">{classList.id}</td>
+                <td className="p-2 text-center">{classList.description}</td>
+                <td className="p-2 text-center">{classList.accounting}</td>
+                <td className="p-2 text-center">{classList.payee}</td>
+                <td className="p-2 text-center">{classList.amount}</td>
+                <td className="p-2 text-center">{classList.date}</td>
+                <td className="p-2 text-center">
+                  <button
+                    onClick={handleViewClick}
+                    className=" mx-2 border p-2 rounded-md items-center align-middle"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      className="size-6"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        className="size-6"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                        />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
+        <div className="flex justify-end p-2">
+          <div className="flex justify-between gap-2 items-center px-4 pb-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-500 disabled:opacity-50"
+            >
+              Trang trước
+            </button>
+            <span className="px-4 py-2 text-md font-medium text-gray-700">
+              Trang {currentPage} / {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="px-4 py-2  bg-gray-300 rounded hover:bg-gray-500 disabled:opacity-50"
+            >
+              Trang sau
+            </button>
+            <button
+              // onClick={handleExportExcel}
+              className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
+            >
+              Export Excel
+            </button>
+          </div>
+        </div>
       </div>
       {/* Sidebar Button*/}
       <div
