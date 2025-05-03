@@ -1,5 +1,7 @@
 package com.datn.service;
 
+import com.datn.dto.request.ThiSinhDuThiAddDTO;
+import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.ThiSinhDuThi;
 
@@ -7,9 +9,9 @@ import java.util.List;
 
 public interface ThiSinhDuThiService {
 
-    ThiSinhDuThi add(ThiSinhDuThi thiSinhDuThi);
+    ThiSinhDuThi add(ThiSinhDuThiAddDTO thiSinhDuThiAddDTO);
 
-    ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThi thiSinhDuThi);
+    ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThiUpdateDTO dto);
 
     void delete(String maThiSinhDuThi);
 
