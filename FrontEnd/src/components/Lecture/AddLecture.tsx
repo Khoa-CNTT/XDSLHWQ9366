@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-
+import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+type LectureForm = {
+  id: string;
+  name: string;
+  dob: string;
+  gioiTinh: string;
+  CCCD: string;
+  SDT: string;
+  email: string;
+  address: string;
+  coQuan: string;
+  tinhTrang: string;
+  linhVuc: string;
+  ghiChu: string;
+};
 function AddLecture() {
-  type LectureForm = {
-    id: string;
-    name: string;
-    dob: string;
-    gioiTinh: string;
-    CCCD: string;
-    SDT: string;
-    email: string;
-    address: string;
-    coQuan: string;
-    tinhTrang: string;
-    linhVuc: string;
-    ghiChu: string;
-  };
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<LectureForm>({
     id: "",
@@ -33,14 +34,14 @@ function AddLecture() {
 
   const saveToBackend = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/giangvien", {
+      const res = await fetch("http://localhost:8080/giangvien/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Lỗi khi gửi dữ liệu");
       else {
-        alert("Gửi thành công đến backend!");
+        alert("Thêm giảng viên thành công!");
         handleClear();
         console.log("Lưu thông tin giảng viên:", formData);
       }
@@ -94,12 +95,43 @@ function AddLecture() {
       ghiChu: "",
     });
   };
-
+  const linhVucList = useMemo(
+    () => [
+      {
+        id: "java",
+        name: "Java",
+      },
+      {
+        id: "iot",
+        name: "IOT",
+      },
+      {
+        id: "cntt",
+        name: "Công nghệ thông tin",
+      },
+      {
+        id: "khmt",
+        name: "Khoa học máy tính",
+      },
+    ],
+    []
+  );
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <div className="flex justify-between items-center  p-4 rounded-md bg-orange-300">
-          <h1 className="text-2xl font-bold text-gray-800">Thêm Giảng viên</h1>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Thêm Giảng viên
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-2 py-2">
@@ -195,9 +227,11 @@ function AddLecture() {
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Lĩnh vực --</option>
-                  <option value="java">Java</option>
-                  <option value="c">C#</option>
-                  <option value="python">Python</option>
+                  {linhVucList.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -315,7 +349,7 @@ function AddLecture() {
           <button
             type="button"
             onClick={handleChangeData}
-            className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
+            className="w-32 p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Lưu
           </button>

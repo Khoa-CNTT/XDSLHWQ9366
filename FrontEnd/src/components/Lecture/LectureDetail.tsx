@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-interface Lecturer {
+type Lecturer = {
   id: string;
   name: string;
   dob: string;
@@ -14,10 +14,47 @@ interface Lecturer {
   tinhTrang: string;
   linhVuc: string;
   ghiChu: string;
-}
+};
 export default function LectureDetail() {
   const location = useLocation();
-  const [formData, setFormData] = useState(location.state?.lecturer || null);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(
+    location.state?.lecturer || {
+      id: "",
+      name: "",
+      dob: "",
+      gioiTinh: "",
+      CCCD: "",
+      SDT: "",
+      email: "",
+      address: "",
+      coQuan: "",
+      tinhTrang: "",
+      linhVuc: "",
+      ghiChu: "",
+    }
+  );
+  const linhVucList = useMemo(
+    () => [
+      {
+        id: "java",
+        name: "Java",
+      },
+      {
+        id: "iot",
+        name: "IOT",
+      },
+      {
+        id: "cntt",
+        name: "Công nghệ thông tin",
+      },
+      {
+        id: "khmt",
+        name: "Khoa học máy tính",
+      },
+    ],
+    []
+  );
   useEffect(() => {
     if (!formData) {
       console.warn("Không có dữ liệu giảng viên được truyền!");
@@ -37,18 +74,49 @@ export default function LectureDetail() {
     return <div>Không có dữ liệu giảng viên.</div>;
   }
 
-  const handleSave = () => {
-    console.log("Lưu thông tin giảng viên:", formData);
-    alert("Lưu thông tin thành công!");
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/giangvien/update/${formData.id}?maGiangVien=${formData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Cập nhật dữ liệu thất bại!");
+      }
+
+      alert("Cập nhật thông tin giảng viên thành công!");
+      console.log("Dữ liệu đã cập nhật:", formData);
+      navigate(-1); // Quay lại trang trước
+    } catch (error) {
+      console.error("Lỗi khi cập nhật dữ liệu:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin giảng viên!");
+    }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Giảng viên
-        </h2>
-
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Quản lý Giảng viên
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
@@ -142,9 +210,11 @@ export default function LectureDetail() {
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Lĩnh vực --</option>
-                  <option value="java">Java</option>
-                  <option value="c">C#</option>
-                  <option value="python">Python</option>
+                  {linhVucList.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

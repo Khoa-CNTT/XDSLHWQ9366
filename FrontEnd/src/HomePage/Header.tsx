@@ -1,6 +1,7 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
 function Header() {
+  const navigate = useNavigate();
   return (
     <div>
       <div className="flex h-16 w-full bg-blue-200 justify-end">
@@ -11,7 +12,15 @@ function Header() {
               <p className="text-sm text-gray-600">Teacher</p>
             </div>
           </div>
-          <button className="p-2 bg-white border rounded-md hover:bg-blue-500 hover:text-white">
+          <button
+            className="p-2 bg-white border rounded-md hover:bg-blue-500 hover:text-white"
+            onClick={() => {
+              navigate("/signin");
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              localStorage.removeItem("userId");
+            }}
+          >
             Đăng xuất
           </button>
         </div>

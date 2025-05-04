@@ -1,13 +1,6 @@
-import {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import axios from "axios";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddLecture from "./AddLecture";
 type Lecturer = {
   id: string;
   name: string;
@@ -28,90 +21,63 @@ interface linhVuc {
 }
 export default function LectureList() {
   const [search, setSearch] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenType, setIsOpenType] = useState(false);
-  const [activeButton, setActiveButton] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const typeRef = useRef<HTMLDivElement | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<Lecturer | null>(null);
 
   const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
 
-  const handleAdd = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("addLecture");
-    setIsSidebarOpen(true);
+  // Fetch data from API
+  useEffect(() => {
+    const fetchLecturers = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/giangvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+        );
+        const { content, totalPages } = response.data;
+        setLecturers(content);
+        setTotalPages(totalPages);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu giảng viên:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLecturers();
+  }, [currentPage]);
+
+  // Handle button
+  const handleAdd = () => {
+    navigate("/giangvien/add-giangvien");
   };
-  const handleDelete = () => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
+      "Bạn có chắc chắn muốn xóa giảng viên này?"
     );
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/giangvien/delete/${id}`);
+      alert("Xóa giảng viên thành công!");
+      // Cập nhật lại danh sách giảng viên sau khi xóa
+      setLecturers((prev) => prev.filter((lecturer) => lecturer.id !== id));
+    } catch (error) {
+      console.error("Lỗi khi xóa giảng viên:", error);
+      alert("Xóa giảng viên thất bại!");
     }
   };
 
   const handleView = (lecturer: Lecturer) => {
-    navigate(`/Lecture/get-lecture/${lecturer.id}`, {
+    navigate(`/giangvien/get-giangvien/${lecturer.id}`, {
       state: { lecturer },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-
-  const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
-    if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
-      setIsSidebarOpen(false);
-      setActiveButton("");
-    }
-  };
-
-  const handleClickOutside = useCallback(
-    (event: Event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        isOpenMenu
-      ) {
-        setIsOpenMenu(false);
-      }
-
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(event.target as Node) &&
-        isOpenType
-      ) {
-        if (
-          event.target instanceof HTMLElement &&
-          typeRef.current.contains(event.target)
-        ) {
-          return;
-        }
-        setIsOpenType(false);
-      }
-    },
-    [isOpenMenu, isOpenType]
-  );
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [handleClickOutside]);
 
   const lecturelist = useMemo<Lecturer[]>(
     () => [
@@ -269,6 +235,20 @@ export default function LectureList() {
         linhVuc: "cntt",
         ghiChu: "",
       },
+      {
+        id: "11",
+        name: "Lê Văn A",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
+        SDT: "0385665243",
+        email: "abc123@gmail.com",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "DTU",
+        tinhTrang: "dangDay",
+        linhVuc: "cntt",
+        ghiChu: "",
+      },
     ],
     []
   );
@@ -294,7 +274,6 @@ export default function LectureList() {
     []
   );
   //  10 items per page
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const filteredList = lecturelist.filter((c) => {
     const matchSearch =
@@ -304,15 +283,13 @@ export default function LectureList() {
     return matchSearch && matchLinhVuc;
   });
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedList = filteredList.slice(
-    startIndex,
-    startIndex + itemsPerPage
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
-    <div onClick={handleCloseSidebar} className="h-full">
+    <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold mx-4">Danh mục Giảng viên</h2>
         <div className=" gap-4 inline-flex">
@@ -325,7 +302,6 @@ export default function LectureList() {
           />
           <div className="relative" ref={menuRef}>
             {/* Button */}
-
             <button
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
@@ -395,9 +371,12 @@ export default function LectureList() {
             </tr>
           </thead>
           <tbody>
+            {/* {lecturers.map((lecturer, index) => ( */}
             {paginatedList.map((lecturer, index) => (
               <tr key={lecturer.id} className="border-b">
-                <td className="p-2 text-center">{index + 1}</td>
+                <td className="p-2 text-center">
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </td>
                 <td className="p-2 text-center">{lecturer.id}</td>
                 <td className="p-2 text-center">{lecturer.name}</td>
 
@@ -432,7 +411,7 @@ export default function LectureList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(lecturer.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -483,16 +462,6 @@ export default function LectureList() {
             </button>
           </div>
         </div>
-      </div>
-      {/* Sidebar Button*/}
-      <div
-        className={`absolute bg-white w-2/3 min-h-screen overflow-y-auto transition-transform transform ease-in-out duration-300 top-0 right-0 ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {activeButton === "addLecture" && <AddLecture />}
-        {/* {activeButton === "viewLecture" && <LectureDetail />} */}
       </div>
     </div>
   );

@@ -45,6 +45,9 @@ import AccountSettings from "./components/Account/AccountSetting";
 import ClassList from "./components/Class/ClassList";
 import AddClass from "./components/Class/AddClass";
 import ClassDetail from "./components/Class/ClassDetail";
+import SignIn from "./components/Account/SignIn";
+import SignUp from "./components/Account/SignUp";
+import ForgotPassword from "./components/Account/ForgotPass";
 
 function App() {
   return (
@@ -143,6 +146,9 @@ function App() {
               path="/taikhoan/get-taikhoan/:id"
               element={<FieldDetail />}
             />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Routes>
         </div>
       </div>
