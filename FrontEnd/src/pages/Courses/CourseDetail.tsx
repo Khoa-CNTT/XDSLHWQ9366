@@ -9,9 +9,34 @@ import {
 import { FaCertificate, FaFlask, FaUserCog } from "react-icons/fa";
 import { RiGlobalLine } from "react-icons/ri";
 
+// Define the Course interface to ensure proper typing
+interface Course {
+  makhoahoc: string;
+  tenkhoahoc: string;
+  malinhvuc: string;
+  sobuoi: number;
+  hocphi: number;
+  noidungtomtatkhoahoc: string;
+  noidungkhoahoc: string;
+  ghichu: string;
+}
+
 const CourseDetail = () => {
   const { id } = useParams();
-  const course = courseItems.find((c) => String(c.makhoahoc) === id);
+  const course = courseItems.find((c: Course) => String(c.makhoahoc) === id);
+
+  const addToCart = () => {
+    // Type the cart as an array of Course objects
+    const cart: Course[] = JSON.parse(localStorage.getItem("cart") || "[]");
+    // Type the item in the find method as Course
+    const existingCourse = cart.find(
+      (item: Course) => item.makhoahoc === course?.makhoahoc
+    );
+    if (!existingCourse && course) {
+      cart.push(course);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+  };
 
   if (!course) {
     return (
@@ -22,7 +47,7 @@ const CourseDetail = () => {
   }
 
   const otherCourses = courseItems.filter(
-    (c) => c.tenkhoahoc !== course.tenkhoahoc
+    (c: Course) => c.tenkhoahoc !== course.tenkhoahoc
   );
 
   return (
@@ -98,7 +123,8 @@ const CourseDetail = () => {
           </p>
 
           <Link
-            to={`/register/${course.makhoahoc}`}
+            to="/cart"
+            onClick={addToCart}
             className="block w-full bg-primary text-white text-center py-3 rounded-lg font-medium text-lg hover:bg-secondary transition"
           >
             Add to cart
@@ -140,7 +166,7 @@ const CourseDetail = () => {
             Other courses
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {otherCourses.slice(0, 6).map((item) => (
+            {otherCourses.slice(0, 6).map((item: Course) => (
               <Link
                 key={item.makhoahoc}
                 to={`/course/${item.makhoahoc}`}
