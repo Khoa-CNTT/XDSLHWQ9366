@@ -18,4 +18,6 @@ public interface TaiKhoanService {
     List<TaiKhoan> findAll();
 
     void deleteById(String maTaiKhoan);
+
+    Optional<TaiKhoan> findById(String id);
 }

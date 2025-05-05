@@ -11,6 +11,7 @@ import com.datn.service.TaiKhoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -52,19 +53,36 @@ public class TaiKhoanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TaiKhoan>> getTaiKhoan(@PathVariable String id) {
-        Optional<TaiKhoan> taiKhoan = taiKhoanService.findByUsername(id);
-        if (taiKhoan.isPresent()) {
-            return ResponseEntity.ok(
-                    new ApiResponse<>(HttpStatus.OK.value(), "Lấy tài khoản thành công", taiKhoan.get())
+        if (id == null || id.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "ID không được để trống", null)
             );
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+
+        Optional<TaiKhoan> taiKhoan = taiKhoanService.findById(id);
+        return taiKhoan.map(tk -> ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK.value(), "Lấy tài khoản thành công", tk)
+        )).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không tìm thấy tài khoản", null)
-        );
+        ));
     }
 
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public ResponseEntity<ApiResponse<Void>> deleteTaiKhoan(@PathVariable String id) {
+        if (id == null || id.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "ID không được để trống", null)
+            );
+        }
+
+        Optional<TaiKhoan> taiKhoan = taiKhoanService.findById(id);
+        if (taiKhoan.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không tìm thấy tài khoản", null)
+            );
+        }
+
         taiKhoanService.deleteById(id);
         return ResponseEntity.ok(
                 new ApiResponse<>(HttpStatus.OK.value(), "Xóa tài khoản thành công", null)

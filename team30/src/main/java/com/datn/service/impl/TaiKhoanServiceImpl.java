@@ -71,4 +71,9 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
     public void deleteById(String maTaiKhoan) {
         taiKhoanRepository.deleteById(maTaiKhoan);
     }
+
+    @Override
+    public Optional<TaiKhoan> findById(String id) {
+        return taiKhoanRepository.findByIdTaiKhoan(id);
+    }
 }

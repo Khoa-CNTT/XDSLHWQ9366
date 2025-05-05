@@ -42,4 +42,10 @@ public class TaiKhoanRepoImpl implements TaiKhoanRepo {
             entityManager.remove(taiKhoan);
         }
     }
+
+    @Override
+    public Optional<TaiKhoan> findByIdTaiKhoan(String id) {
+        TaiKhoan taiKhoan = entityManager.find(TaiKhoan.class, id);
+        return Optional.ofNullable(taiKhoan);
+    }
 }

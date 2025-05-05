@@ -17,4 +17,6 @@ public interface TaiKhoanRepo {
     List<TaiKhoan> findAll();
 
     void deleteById(String id);
+
+    Optional<TaiKhoan> findByIdTaiKhoan(String id);
 }
