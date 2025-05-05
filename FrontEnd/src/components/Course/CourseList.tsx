@@ -1,18 +1,8 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-type Course = {
-  id: string;
-  name: string;
-  noidung: string;
-  fee: string;
-  linhVuc: string;
-  sobuoi: number;
-};
-interface linhVuc {
-  id: string;
-  name: string;
-}
+import { Course, linhVuc } from "../Type/Types";
+
 export default function CourseList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -49,6 +39,7 @@ export default function CourseList() {
   const handleAdd = () => {
     navigate("/khoahoc/add-khoahoc");
   };
+
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa Khoá học này?"
@@ -97,6 +88,70 @@ export default function CourseList() {
         noidung: "Tristique libero...",
         fee: "150000",
         sobuoi: 2,
+        linhVuc: "cntt",
+      },
+      {
+        id: "HANTA4",
+        name: "HỌC CÙNG HANTA 4",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "200000",
+        sobuoi: 3,
+        linhVuc: "java",
+      },
+      {
+        id: "HANTA5",
+        name: "HỌC CÙNG HANTA 5",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "250000",
+        sobuoi: 4,
+        linhVuc: "iot",
+      },
+      {
+        id: "HANTA6",
+        name: "HỌC CÙNG HANTA 6",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "300000",
+        sobuoi: 5,
+        linhVuc: "khmt",
+      },
+      {
+        id: "HANTA7",
+        name: "HỌC CÙNG HANTA 7",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "350000",
+        sobuoi: 6,
+        linhVuc: "cntt",
+      },
+      {
+        id: "HANTA8",
+        name: "HỌC CÙNG HANTA 8",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "400000",
+        sobuoi: 7,
+        linhVuc: "java",
+      },
+      {
+        id: "HANTA9",
+        name: "HỌC CÙNG HANTA 9",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "450000",
+        sobuoi: 8,
+        linhVuc: "iot",
+      },
+      {
+        id: "HANTA10",
+        name: "HỌC CÙNG HANTA 10",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "500000",
+        sobuoi: 9,
+        linhVuc: "khmt",
+      },
+      {
+        id: "HANTA11",
+        name: "HỌC CÙNG HANTA 11",
+        noidung: "Lorem ipsum dolor sit amet...",
+        fee: "550000",
+        sobuoi: 10,
         linhVuc: "cntt",
       },
     ],
@@ -248,13 +303,13 @@ export default function CourseList() {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
                       />
                     </svg>
@@ -267,13 +322,13 @@ export default function CourseList() {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                       />
                     </svg>

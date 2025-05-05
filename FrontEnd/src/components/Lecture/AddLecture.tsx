@@ -1,35 +1,27 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-type LectureForm = {
-  id: string;
-  name: string;
-  dob: string;
-  gioiTinh: string;
-  CCCD: string;
-  SDT: string;
-  email: string;
-  address: string;
-  coQuan: string;
-  tinhTrang: string;
-  linhVuc: string;
-  ghiChu: string;
-};
+import { Lecturer } from "../Type/Types";
+
 function AddLecture() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<LectureForm>({
-    id: "",
-    name: "",
-    dob: "",
+  const [formData, setFormData] = useState<Lecturer>({
+    maGiangVien: "",
+    tenGiangVien: "",
+    ngaySinh: "",
     gioiTinh: "",
-    CCCD: "",
-    SDT: "",
+    soCMND: "",
+    soDienThoai: "",
     email: "",
-    address: "",
-    coQuan: "",
-    tinhTrang: "",
-    linhVuc: "",
+    diaChi: "",
+    coQuanCongTac: "",
+    tinhTrangCongTac: "",
+    linhVuc: {
+      id: "",
+      name: "",
+    },
     ghiChu: "",
+    urlHinhDaiDien: null,
   });
 
   const saveToBackend = async () => {
@@ -81,18 +73,22 @@ function AddLecture() {
 
   const handleClear = () => {
     setFormData({
-      id: "",
-      name: "",
-      dob: "",
+      maGiangVien: "",
+      tenGiangVien: "",
+      ngaySinh: "",
       gioiTinh: "",
-      CCCD: "",
-      SDT: "",
+      soCMND: "",
+      soDienThoai: "",
       email: "",
-      address: "",
-      coQuan: "",
-      tinhTrang: "",
-      linhVuc: "",
+      diaChi: "",
+      coQuanCongTac: "",
+      tinhTrangCongTac: "",
+      linhVuc: {
+        id: "",
+        name: "",
+      },
       ghiChu: "",
+      urlHinhDaiDien: null,
     });
   };
   const linhVucList = useMemo(

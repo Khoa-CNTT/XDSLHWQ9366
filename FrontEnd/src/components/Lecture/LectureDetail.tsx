@@ -1,37 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Lecturer } from "../Type/Types";
 
-type Lecturer = {
-  id: string;
-  name: string;
-  dob: string;
-  gioiTinh: string;
-  CCCD: string;
-  SDT: string;
-  email: string;
-  address: string;
-  coQuan: string;
-  tinhTrang: string;
-  linhVuc: string;
-  ghiChu: string;
-};
 export default function LectureDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(
     location.state?.lecturer || {
-      id: "",
-      name: "",
-      dob: "",
+      maGiangVien: "",
+      tenGiangVien: "",
+      ngaySinh: "",
       gioiTinh: "",
-      CCCD: "",
-      SDT: "",
+      soCMND: "",
+      soDienThoai: "",
       email: "",
-      address: "",
-      coQuan: "",
-      tinhTrang: "",
-      linhVuc: "",
+      diaChi: "",
+      coQuanCongTac: "",
+      tinhTrangCongTac: "",
+      linhVuc: {
+        id: "",
+        name: "",
+      },
       ghiChu: "",
+      urlHinhDaiDien: null,
     }
   );
   const linhVucList = useMemo(
@@ -128,8 +119,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maGiangVien"
+                value={formData.maGiangVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -143,8 +134,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -159,8 +150,8 @@ export default function LectureDetail() {
 
               <input
                 type="text"
-                name="CCCD"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -189,8 +180,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="coQuan"
-                value={formData.coQuan}
+                name="coQuanCongTac"
+                value={formData.coQuanCongTac}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -205,7 +196,7 @@ export default function LectureDetail() {
               <div className="w-full">
                 <select
                   name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
+                  value={formData.linhVuc.id} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -230,8 +221,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenGiangVien"
+                value={formData.tenGiangVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -246,7 +237,7 @@ export default function LectureDetail() {
               <div className="w-full">
                 <select
                   name="gioiTinh"
-                  value={formData.gioiTinh}
+                  value={formData.gioiTinh} // Gán giá trị từ formData
                   onChange={handleChange}
                   className="form-input w-2/3 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -267,7 +258,7 @@ export default function LectureDetail() {
               <input
                 type="text"
                 name="SDT"
-                value={formData.SDT}
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -282,8 +273,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -298,8 +289,8 @@ export default function LectureDetail() {
               </label>
               <div className="w-full">
                 <select
-                  name="tinhTrang"
-                  value={formData.tinhTrang} // Gán giá trị từ formData
+                  name="tinhTrangCongTac"
+                  value={formData.tinhTrangCongTac} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >

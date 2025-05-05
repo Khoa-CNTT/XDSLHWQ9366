@@ -1,119 +1,171 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Employee } from "../Type/Types";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-export default function EmployeeList() {
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+type User = {
+  id: string;
+  user: string;
+  password: string;
+  role: string;
+  name: string;
+  ghiChu: string;
+};
+interface role {
+  id: string;
+  name: string;
+}
+export default function UserList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [employees, setemployees] = useState<Employee[]>([]);
+  const [Users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [role, setrole] = useState<role | null>(null);
+
+  // Fetch data from API
   useEffect(() => {
-    const fetchemployees = async () => {
+    const fetchUsers = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/giangvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+          `http://localhost:8080/taikhoan/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
-        if (response.status === 200) {
-          const { content, totalPages } = response.data;
-          setemployees(content);
-          setTotalPages(totalPages);
-        } else {
-          console.error("API trả về lỗi:", response.status);
-        }
+        const { content, totalPages } = response.data;
+        setUsers(content);
+        setTotalPages(totalPages);
       } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
+        console.error("Lỗi khi lấy dữ liệu Tài khoản:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchemployees();
+    fetchUsers();
   }, [currentPage]);
 
   // Handle button
   const handleAdd = () => {
-    navigate("/nhanvien/add-nhanvien");
+    navigate("/taikhoan/add-taikhoan");
   };
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa giảng viên này?"
+      "Bạn có chắc chắn muốn xóa Tài khoản này?"
     );
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8080/nhanvien/delete/${id}`);
-      alert("Xóa giảng viên thành công!");
-      // Cập nhật lại danh sách giảng viên sau khi xóa
-      setemployees((prev) => prev.filter((employee) => employee.id !== id));
+      await axios.delete(`http://localhost:8080/taikhoan/delete/${id}`);
+      alert("Xóa Tài khoản thành công!");
+      // Cập nhật lại danh sách Tài khoản sau khi xóa
+      setUsers((prev) => prev.filter((User) => User.id !== id));
     } catch (error) {
-      console.error("Lỗi khi xóa giảng viên:", error);
-      alert("Xóa giảng viên thất bại!");
+      console.error("Lỗi khi xóa Tài khoản:", error);
+      alert("Xóa Tài khoản thất bại!");
     }
   };
 
-  const handleView = (employee: Employee) => {
-    navigate(`/nhanvien/get-nhanvien/${employee.id}`, {
-      state: { employee },
+  const handleView = (user: User) => {
+    navigate(`/taikhoan/get-taikhoan/${user.id}`, {
+      state: { user },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const employeelist = useMemo<Employee[]>(
+  const userList = useMemo<User[]>(
     () => [
       {
-        id: "NV01",
-        name: "Lê Văn A",
-        dob: "1997-08-15",
-        gioiTinh: "true",
-        CCCD: "048097000077",
-        SDT: "0385665243",
-        email: "abc123@gmail.com",
-        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuan: "HANTA",
-        tinhTrang: "dangLam",
-        linhVuc: "keToan",
+        id: "GV01",
+        name: "Lê Đức Thảo",
+        user: "ducthao2112",
+        password: "123456",
+        role: "GV",
         ghiChu: "",
       },
       {
-        id: "NV02",
-        name: "Nguyễn Văn B",
-        dob: "1995-05-20",
-        gioiTinh: "true",
-        CCCD: "048097000078",
-        SDT: "0385665243",
-        email: "123123123",
-        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuan: "HANTA",
-        tinhTrang: "dangLam",
-        linhVuc: "keToan",
+        id: "GV02",
+        name: "Trương Thị Ngọc Ánh",
+        user: "ngocanh2112",
+        password: "123456",
+        role: "GV",
         ghiChu: "",
+      },
+      {
+        id: "GV03",
+        name: "Nguyễn Thanh Anh",
+        user: "thanhanh2112",
+        password: "123456",
+        role: "GV",
+        ghiChu: "",
+      },
+      {
+        id: "GV04",
+        name: "Đoàn Văn Huy",
+        user: "doanhuy2112",
+        password: "123456",
+        role: "KT",
+        ghiChu: "",
+      },
+      {
+        id: "GV05",
+        name: "Nguyễn Hữu Thành",
+        user: "huuthanh2112",
+        password: "123456",
+        role: "HV",
+        ghiChu: "",
+      },
+      {
+        id: "GV06",
+        name: "Lê Văn A",
+        user: "levana2112",
+        password: "123456",
+        role: "NV",
+        ghiChu: "",
+      },
+    ],
+    []
+  );
+  const roleList = useMemo(
+    () => [
+      {
+        id: "GV",
+        name: "Giảng viên",
+      },
+      {
+        id: "NV",
+        name: "Nhân viên",
+      },
+      {
+        id: "HV",
+        name: "Học viên",
+      },
+      {
+        id: "KT",
+        name: "Kế toán",
       },
     ],
     []
   );
   //  10 items per page
   const itemsPerPage = 10;
-  const filteredList = employeelist.filter((c) => {
+  const filteredList = userList.filter((c) => {
     const matchSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.id.toLowerCase().includes(search.toLowerCase());
-    // const matchLinhVuc = !c.linhVuc || c.linhVuc === linhVuc.id;
-    return matchSearch;
-    // && matchLinhVuc;
+    const matchrole = !role || c.role === role.id;
+    return matchSearch && matchrole;
   });
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   return (
     <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Danh mục nhân viên</h2>
+        <h2 className="text-xl font-bold mx-4">Danh mục Tài khoản</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -126,39 +178,54 @@ export default function EmployeeList() {
             {/* Button */}
             <button
               onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
+              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              Tất cả danh mục
-              <svg
-                className="w-4 h-4 ml-12 -mr-1 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
+              {role ? role.name : "Tất cả lĩnh vực"}
+              {!role && (
+                <svg
+                  className="w-4 h-4 ml-2 inline"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
+                </svg>
+              )}
             </button>
 
             {/* Dropdown Menu */}
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {employeelist.map((e) => (
+                  {roleList.map((item) => (
                     <button
-                      key={e.id}
+                      key={item.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setrole(item);
+                        setIsOpenMenu(false);
+                      }}
                     >
-                      {e.name}
+                      {item.name}
                     </button>
                   ))}
+                  <button
+                    onClick={() => {
+                      setrole(null);
+                      setIsOpenMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
+                  >
+                    Huỷ
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
           <button
-            onClick={handleAdd}
             className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
+            onClick={handleAdd}
           >
             Thêm
           </button>
@@ -169,26 +236,34 @@ export default function EmployeeList() {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Nhân viên</th>
-              <th className="p-2 border">Tên Nhân viên</th>
-              <th className="p-2 border">Số điện thoại</th>
-              <th className="p-2 border">Email</th>
-              <th className="p-2 border">Lĩnh vực</th>
+              <th>Mã Tài khoản</th>
+              <th className="p-2 border">Tên Tài khoản</th>
+              <th className="p-2 border">Mật khẩu</th>
+              <th className="p-2 border">Nhân viên</th>
+              <th className="p-2 border">Quyền Đăng nhập</th>
+              <th className="p-2 border">Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((employee, index) => (
-              <tr key={employee.id} className="border-b">
-                <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{employee.id}</td>
-                <td className="p-2 text-center">{employee.name}</td>
+            {/* {Users.map((User, index) => ( */}
+            {paginatedList.map((User, index) => (
+              <tr key={User.id} className="border-b">
+                <td className="p-2 text-center">
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </td>
+                <td className="p-2 text-center">{User.id}</td>
+                <td className="p-2 text-center">{User.user}</td>
+                <td className="p-2 text-center">{User.password}</td>
+                <td className="p-2 text-center">{User.name}</td>
+                <td className="p-2 text-center">
+                  {roleList.find(
+                    (lv) => lv.id.toLowerCase() === User.role?.toLowerCase()
+                  )?.name || User.role}
+                </td>
 
-                <td className="p-2 text-center">{employee.SDT}</td>
-                <td className="p-2 text-center">{employee.email}</td>
-                <td className="p-2 text-center">{employee.linhVuc}</td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={() => handleView(employee)}
+                    onClick={() => handleView(User)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
@@ -208,7 +283,7 @@ export default function EmployeeList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(employee.id)}
+                    onClick={() => handleDelete(User.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

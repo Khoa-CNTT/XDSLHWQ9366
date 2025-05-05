@@ -1,36 +1,69 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Course } from "../Type/Types";
+import React from "react";
 
-export default function CourseDetail() {
-  const location = useLocation();
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+type User = {
+  id: string;
+  user: string;
+  password: string;
+  role: string;
+  name: string;
+  ghiChu: string;
+};
+
+export default function AddUser() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
-    location.state?.course || {
-      id: "",
-      name: "",
-      noidung: "",
-      fee: "",
-      linhVuc: "",
-      sobuoi: 0,
-    }
-  );
-  const linhVucList = useMemo(
+  const [formData, setFormData] = useState<User>({
+    id: "",
+    name: "",
+    user: "",
+    password: "",
+    role: "",
+    ghiChu: "",
+  });
+  const roleList = useMemo(
     () => [
-      { id: "java", name: "Java" },
-      { id: "iot", name: "IOT" },
-      { id: "cntt", name: "Công nghệ thông tin" },
-      { id: "khmt", name: "Khoa học máy tính" },
+      {
+        id: "GV",
+        name: "tài khoản",
+      },
+      {
+        id: "NV",
+        name: "Nhân viên",
+      },
+      {
+        id: "HV",
+        name: "Học viên",
+      },
+      {
+        id: "KT",
+        name: "Kế toán",
+      },
     ],
     []
   );
-
-  useEffect(() => {
-    if (!location.state?.course) {
-      console.warn("Không có dữ liệu Khoá học được truyền!");
-      navigate("/khoahoc");
+  const saveToBackend = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/taikhoan/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error("Lỗi khi gửi dữ liệu");
+      else {
+        alert("Thêm tài khoản thành công!");
+        handleClear();
+        console.log("Lưu thông tin tài khoản:", formData);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        alert("Lỗi kết nối backend: " + err.message);
+      } else {
+        alert("Đã có lỗi xảy ra.");
+      }
     }
-  }, [location.state, navigate]);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -38,39 +71,35 @@ export default function CourseDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: Course) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (!formData) {
-    return <div>Không có dữ liệu Khoá học.</div>;
-  }
+  const handleChangeData = async () => {
+    const { id, user, password, name, role } = formData;
 
-  const handleSave = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/khoahoc/update/${formData.id}?makhoahoc=${formData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Cập nhật dữ liệu thất bại!");
-      }
-
-      alert("Cập nhật thông tin khoá học thành công!");
-      console.log("Dữ liệu đã cập nhật:", formData);
-      navigate(-1);
-    } catch (error) {
-      console.error("Lỗi khi cập nhật dữ liệu:", error);
-      alert("Đã xảy ra lỗi khi cập nhật thông tin khoá học!");
+    if (!id || !user || !password || !name || !role) {
+      alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
+      return;
     }
+
+    const userRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!userRegex.test(user)) {
+      alert("User không hợp lệ!");
+      return;
+    }
+    await saveToBackend();
   };
 
+  const handleClear = () => {
+    setFormData({
+      id: "",
+      name: "",
+      user: "",
+      password: "",
+      role: "",
+      ghiChu: "",
+    });
+  };
   const handleBack = () => {
     navigate(-1);
   };
@@ -79,7 +108,7 @@ export default function CourseDetail() {
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-            Quản lý Khoá học
+            Quản lý tài khoản
           </h2>
           <button
             onClick={handleBack}
@@ -93,9 +122,9 @@ export default function CourseDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="courseDetail"
+                htmlFor="userDetail"
               >
-                Mã Khoá học
+                Mã tài khoản
               </label>
               <input
                 type="text"
@@ -105,42 +134,35 @@ export default function CourseDetail() {
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="courseDetail"
-              >
-                Lĩnh vực
-              </label>
-              <div className="w-full">
-                <select
-                  name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Lĩnh vực --</option>
-                  {linhVucList.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
 
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="courseDetail"
+                htmlFor="userDetail"
               >
-                Số buổi
+                Mật khẩu
               </label>
 
               <input
                 type="text"
-                name="sobuoi"
-                value={formData.sobuoi}
+                name="password"
+                autoComplete="off"
+                value={formData.password}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label
+                className="block w-1/2 text-gray-700 text-sm font-bold "
+                htmlFor="userDetail"
+              >
+                Nhân viên sở hữu
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -151,34 +173,40 @@ export default function CourseDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="courseDetail"
+                htmlFor="userDetail"
               >
-                Tên Khoá học
+                Tên tài khoản
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="user"
+                value={formData.user}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="courseDetail"
+                htmlFor="userDetail"
               >
-                Học phí
+                Quyền đăng nhập
               </label>
-
-              <input
-                type="text"
-                name="fee"
-                value={formData.fee}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="w-full">
+                <select
+                  name="role"
+                  value={formData.role} // Gán giá trị từ formData
+                  onChange={handleChange} // Xử lý sự kiện thay đổi
+                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">-- Quyền đăng nhập --</option>
+                  {roleList.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -187,12 +215,12 @@ export default function CourseDetail() {
             className="block w-1/5 text-gray-700 text-sm font-bold "
             htmlFor="courseName"
           >
-            Nội dung
+            Ghi chú
           </label>
 
           <textarea
-            name="noidung"
-            value={formData.noidung}
+            name="ghiChu"
+            value={formData.ghiChu}
             onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."
@@ -202,7 +230,7 @@ export default function CourseDetail() {
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"
-            onClick={handleSave}
+            onClick={handleChangeData}
             className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
           >
             Lưu
