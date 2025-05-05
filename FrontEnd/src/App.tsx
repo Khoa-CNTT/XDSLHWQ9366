@@ -18,10 +18,12 @@ import TestScores from "./pages/TestScores/TestScores";
 import TestScoreDetail from "./pages/TestScores/TestScoreDetail";
 import News from "./pages/News/News";
 import NewsDetail from "./pages/News/NewsDetail";
+import Cart from "./pages/Cart/Cart";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Router>
         <main className="overflow-x-hidden bg-white text-dark">
           <ScrollToTop />
@@ -43,11 +45,12 @@ function App() {
             <Route path="/test-scores/:id" element={<TestScoreDetail />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:mabaiviet" element={<NewsDetail />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
           <Footer />
         </main>
       </Router>
-    </>
+    </AuthProvider>
   );
 }
 
