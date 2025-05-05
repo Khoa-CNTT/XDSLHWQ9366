@@ -30,7 +30,9 @@ public class LinhVucServiceImpl implements LinhVucService {
 
     @Override
     public LinhVuc findById(String maLinhVuc) {
-        return this.linhVucRepo.findById(maLinhVuc);
+        LinhVuc linhVuc = this.findById(maLinhVuc);
+
+        return linhVuc;
     }
 
     @Override

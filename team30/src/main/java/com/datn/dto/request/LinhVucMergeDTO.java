@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 public class LinhVucMergeDTO {
 
     @NotBlank(message = "Tên lĩnh vực không được để trống")
-    @Size(max = 255, message = "Tên thí sinh không được vượt quá 255 ký tự")
+    @Size(min = 5, max = 255, message = "Tên học viên phải có độ dài từ 5 đến 255 ký tự")
     private String tenLinhVuc;
 
     public LinhVucMergeDTO() {
