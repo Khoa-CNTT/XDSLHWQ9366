@@ -12,7 +12,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> request
+        httpSecurity
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable())
+                .authorizeHttpRequests(request -> request
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
         );
