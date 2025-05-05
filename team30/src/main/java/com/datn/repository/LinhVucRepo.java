@@ -18,4 +18,6 @@ public interface LinhVucRepo {
 
     void checkLinhVucExists(String tenLinhVuc);
 
+    List<LinhVuc> pagination(int pageNumber, int pageSize);
+
 }

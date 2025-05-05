@@ -81,6 +81,17 @@ public class LinhVucRepoImpl implements LinhVucRepo {
         }
     }
 
+    @Override
+    public List<LinhVuc> pagination(int pageNumber, int pageSize) {
+        TypedQuery<LinhVuc> typedQuery = this.entityManager.createQuery
+                ("FROM LinhVuc ", this.getEntityClass());
+
+        typedQuery.setFirstResult((pageNumber - 1) * pageSize);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
+    }
+
     private Class<LinhVuc> getEntityClass() {
         return LinhVuc.class;
     }

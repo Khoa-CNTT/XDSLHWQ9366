@@ -1,6 +1,7 @@
 package com.datn.service.impl;
 
 import com.datn.dto.request.LinhVucMergeDTO;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.LinhVuc;
 import com.datn.exception.linhvuc.LinhVucNotFoundException;
 import com.datn.repository.LinhVucRepo;
@@ -58,6 +59,17 @@ public class LinhVucServiceImpl implements LinhVucService {
     @Override
     public void delete(String maLinhVuc) {
         this.linhVucRepo.delete(maLinhVuc);
+    }
+
+    @Override
+    public PaginationResponse<LinhVuc> pagination(int pageNumber, int pageSize) {
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+        long totalElements = this.linhVucRepo.findAll().size();
+        List<LinhVuc> linhVucs = this.linhVucRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, linhVucs);
     }
 
 }
