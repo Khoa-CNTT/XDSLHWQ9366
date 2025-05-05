@@ -44,10 +44,10 @@ public class GlobalExceptionHandler {
     }
 
 //  Làm xong dự án thì mới dùng hàm này --> để check lỗi
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
-//        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), null);
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException ex) {
+        ApiResponse<Void> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
 
 }
