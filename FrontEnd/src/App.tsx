@@ -20,6 +20,7 @@ import News from "./pages/News/News";
 import NewsDetail from "./pages/News/NewsDetail";
 import Cart from "./pages/Cart/Cart";
 import { AuthProvider } from "./context/AuthContext";
+import Checkout from "./pages/Checkout/Checkout";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path="/news" element={<News />} />
             <Route path="/news/:mabaiviet" element={<NewsDetail />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
           </Routes>
           <Footer />
         </main>
