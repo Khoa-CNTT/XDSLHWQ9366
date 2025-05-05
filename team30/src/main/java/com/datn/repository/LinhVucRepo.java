@@ -10,4 +10,12 @@ public interface LinhVucRepo {
 
     LinhVuc findById(String maLinhVuc);
 
+    LinhVuc add(LinhVuc linhVuc);
+
+    LinhVuc update(LinhVuc linhVuc);
+
+    void delete(String maLinhVuc);
+
+    void checkLinhVucExists(String tenLinhVuc);
+
 }

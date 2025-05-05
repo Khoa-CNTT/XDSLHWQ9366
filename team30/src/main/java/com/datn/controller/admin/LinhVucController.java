@@ -1,14 +1,15 @@
 package com.datn.controller.admin;
 
+import com.datn.dto.request.LinhVucMergeDTO;
 import com.datn.dto.response.ApiResponse;
+import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.LinhVuc;
 import com.datn.service.LinhVucService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +31,60 @@ public class LinhVucController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @GetMapping("/getById/{maLinhVuc}")
+    public ResponseEntity<ApiResponse<LinhVuc>> getById
+            (@PathVariable(name = "maLinhVuc") String maLinhVuc) {
+        LinhVuc linhVuc = this.linhVucService.findById(maLinhVuc);
+        ApiResponse<LinhVuc> apiResponse = new ApiResponse<>
+                (HttpStatus.OK.value(), "Lấy chi tiết lĩnh vực thành công", linhVuc);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse<LinhVuc>> add(@Valid @RequestBody LinhVucMergeDTO dto) {
+        LinhVuc linhVuc = this.linhVucService.add(dto);
+
+        ApiResponse<LinhVuc> apiResponse = new ApiResponse<>
+                (HttpStatus.CREATED.value(), "Thêm lĩnh vực thành công", linhVuc);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PutMapping("/update/{maLinhVuc}")
+    public ResponseEntity<ApiResponse<LinhVuc>> update(
+            @PathVariable String maLinhVuc,
+            @Valid @RequestBody LinhVucMergeDTO dto
+    ) {
+        LinhVuc linhVuc = this.linhVucService.update(maLinhVuc, dto);
+
+        ApiResponse<LinhVuc> apiResponse =
+                new ApiResponse<>(HttpStatus.OK.value(), "Cập nhật lĩnh vực thành công", linhVuc);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/delete/{maLinhVuc}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String maLinhVuc) {
+        this.linhVucService.delete(maLinhVuc);
+
+        ApiResponse<Void> apiResponse =
+                new ApiResponse<>(HttpStatus.OK.value(), "Xóa lĩnh vực thành công", null);
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+//    @GetMapping("/pagination")
+//    public ResponseEntity<ApiResponse<PaginationResponse<KhoaHoc>>> pagination
+//            (@RequestParam(defaultValue = "1") int page,
+//             @RequestParam(defaultValue = "2") int size) {
+//        PaginationResponse<KhoaHoc> paginationResponse = this.khoaHocService.pagination(page, size);
+//
+//        ApiResponse<PaginationResponse<KhoaHoc>> apiResponse = new ApiResponse<>
+//                (HttpStatus.OK.value(), "Danh sách các khóa học", paginationResponse);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+//    }
 
 }
