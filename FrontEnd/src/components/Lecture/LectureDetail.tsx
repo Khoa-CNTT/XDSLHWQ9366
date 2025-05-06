@@ -305,7 +305,7 @@ export default function LectureDetail() {
         <div className="flex p-1 w-full justify-center border">
           <label
             className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
+            htmlFor="lectureDetail"
           >
             Ghi chú
           </label>

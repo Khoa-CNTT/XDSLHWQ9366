@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Employee } from "../Type/Types";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 export default function EmployeeList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -16,7 +17,7 @@ export default function EmployeeList() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/giangvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+          `http://localhost:8080/nhanvien/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
         if (response.status === 200) {
           const { content, totalPages } = response.data;

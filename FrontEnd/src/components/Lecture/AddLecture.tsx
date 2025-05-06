@@ -56,9 +56,9 @@ function AddLecture() {
   };
 
   const handleChangeData = async () => {
-    const { id, name, dob, email } = formData;
+    const { tenGiangVien, ngaySinh, email } = formData;
 
-    if (!id || !name || !dob || !email) {
+    if (!tenGiangVien || !ngaySinh || !email) {
       alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
       return;
     }
@@ -141,9 +141,7 @@ function AddLecture() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
+                name="maGiangVien"
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -156,8 +154,8 @@ function AddLecture() {
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -172,8 +170,8 @@ function AddLecture() {
 
               <input
                 type="text"
-                name="CCCD"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -202,8 +200,8 @@ function AddLecture() {
               </label>
               <input
                 type="text"
-                name="coQuan"
-                value={formData.coQuan}
+                name="coQuanCongTac"
+                value={formData.coQuanCongTac}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -218,7 +216,7 @@ function AddLecture() {
               <div className="w-full">
                 <select
                   name="linhVuc"
-                  value={formData.linhVuc}
+                  value={formData.linhVuc.name}
                   onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -243,8 +241,8 @@ function AddLecture() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenGiangVien"
+                value={formData.tenGiangVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -279,8 +277,8 @@ function AddLecture() {
 
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
+                name="soDienThoai"
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -295,8 +293,8 @@ function AddLecture() {
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -311,8 +309,8 @@ function AddLecture() {
               </label>
               <div className="w-full">
                 <select
-                  name="tinhTrang"
-                  value={formData.tinhTrang}
+                  name="tinhTrangCongTac"
+                  value={formData.tinhTrangCongTac}
                   onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >

@@ -11,6 +11,7 @@ export default function LectureList() {
   const [totalPages, setTotalPages] = useState(1);
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
   const [loading, setLoading] = useState(false);
+  const [itemsPerPage] = useState(10);
   const navigate = useNavigate();
 
   const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
@@ -24,9 +25,13 @@ export default function LectureList() {
           `http://localhost:8080/giangvien/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
         if (response.status === 200) {
-          const { content, totalPages } = response.data;
-          setLecturers(content);
-          setTotalPages(totalPages);
+          const { data: paginationData } = response.data;
+          if (paginationData) {
+            // Lấy danh sách giảng viên từ paginationData.data
+            const lecturerList = paginationData.data;
+            setLecturers(lecturerList || []);
+            setTotalPages(paginationData.totalPages || 1);
+          }
         } else {
           console.error("API trả về lỗi:", response.status);
         }
@@ -37,8 +42,7 @@ export default function LectureList() {
       }
     };
     fetchLecturers();
-  }, [currentPage]);
-
+  }, [currentPage, itemsPerPage]);
   // Handle button
   const handleAdd = () => {
     navigate("/giangvien/add-giangvien");
@@ -312,8 +316,7 @@ export default function LectureList() {
     []
   );
   //  10 items per page
-  const itemsPerPage = 10;
-  const filteredList = lecturelist.filter((c) => {
+  const filteredList = (lecturers || []).filter((c) => {
     const matchSearch =
       c.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
       c.maGiangVien.toLowerCase().includes(search.toLowerCase());
@@ -321,11 +324,13 @@ export default function LectureList() {
     return matchSearch && matchLinhVuc;
   });
 
-  const paginatedList = filteredList.slice(
+  const paginatedList = (filteredList || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
+  if (loading) {
+    return <div>Đang tải dữ liệu...</div>;
+  }
   return (
     <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
@@ -417,14 +422,11 @@ export default function LectureList() {
                 </td>
                 <td className="p-2 text-center">{lecturer.maGiangVien}</td>
                 <td className="p-2 text-center">{lecturer.tenGiangVien}</td>
-
                 <td className="p-2 text-center">{lecturer.soDienThoai}</td>
                 <td className="p-2 text-center">{lecturer.email}</td>
                 <td className="p-2 text-center">
-                  {linhVucList.find(
-                    (lv) =>
-                      lv.id.toLowerCase() === lecturer.linhVuc.id.toLowerCase()
-                  )?.name || "Không xác định"}
+                  {linhVucList.find((lv) => lv.id === lecturer.linhVuc.id)
+                    ?.name || "Không xác định"}
                 </td>
 
                 <td className="p-2 text-center">
