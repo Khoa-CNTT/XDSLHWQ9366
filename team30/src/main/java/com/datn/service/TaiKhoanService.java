@@ -13,6 +13,8 @@ public interface TaiKhoanService {
 
     TaiKhoan register(TaiKhoanDTO dto);
 
+    Optional<TaiKhoan> update(String id, TaiKhoanDTO dto);
+
     Optional<TaiKhoan> findByUsername(String username);
 
     List<TaiKhoan> findAll();

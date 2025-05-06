@@ -37,8 +37,12 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
     @Override
     @Transactional
     public TaiKhoan register(TaiKhoanDTO dto) {
+        String generatedId = (String) entityManager.createNativeQuery(
+                "SELECT CONCAT('TK', LPAD(IFNULL(MAX(CAST(SUBSTRING(MATAIKHOAN, 3, 3) AS UNSIGNED)), 0) + 1, 3, '0')) FROM TAIKHOANS"
+        ).getSingleResult();
+
         TaiKhoan taiKhoan = new TaiKhoan();
-        taiKhoan.setMaTaiKhoan(dto.getMaTaiKhoan());
+        taiKhoan.setMaTaiKhoan(generatedId);
         taiKhoan.setTenTaiKhoan(dto.getTenTaiKhoan());
         taiKhoan.setMatKhau(passwordEncoder.encode(dto.getMatKhau()));
 
@@ -54,7 +58,42 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
         }
 
         entityManager.persist(taiKhoan);
+        entityManager.flush();
+
         return taiKhoan;
+    }
+
+    @Override
+    @Transactional
+    public Optional<TaiKhoan> update(String id, TaiKhoanDTO dto) {
+        Optional<TaiKhoan> existingTaiKhoan = taiKhoanRepository.findByIdTaiKhoan(id);
+
+        if (existingTaiKhoan.isEmpty()) {
+            return Optional.empty();
+        }
+
+        TaiKhoan taiKhoan = existingTaiKhoan.get();
+        if (dto.getTenTaiKhoan() != null) {
+            taiKhoan.setTenTaiKhoan(dto.getTenTaiKhoan());
+        }
+        if (dto.getMatKhau() != null) {
+            taiKhoan.setMatKhau(passwordEncoder.encode(dto.getMatKhau()));
+        }
+        if (dto.getMaNhanVien() != null) {
+            NhanVien nhanVien = entityManager.createQuery(
+                            "SELECT nv FROM NhanVien nv WHERE nv.id = :id", NhanVien.class)
+                    .setParameter("id", dto.getMaNhanVien())
+                    .getResultStream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại với ID: " + dto.getMaNhanVien()));
+            taiKhoan.setNhanVien(nhanVien);
+        }
+        if (dto.getQuyenTruyCap() != null) {
+            taiKhoan.setQuyenTruyCap(dto.getQuyenTruyCap());
+        }
+
+        entityManager.merge(taiKhoan);
+        return Optional.of(taiKhoan);
     }
 
     @Override

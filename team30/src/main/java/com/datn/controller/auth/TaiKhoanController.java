@@ -37,6 +37,22 @@ public class TaiKhoanController {
         );
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<TaiKhoan>> updateTaiKhoan(@PathVariable String id, @RequestBody TaiKhoanDTO dto) {
+        if (id == null || id.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "ID không được để trống", null)
+            );
+        }
+
+        Optional<TaiKhoan> updatedTaiKhoan = taiKhoanService.update(id, dto);
+        return updatedTaiKhoan.map(tk -> ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK.value(), "Cập nhật tài khoản thành công", tk)
+        )).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không tìm thấy tài khoản", null)
+        ));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody TaiKhoanDTO dto) {
         Optional<TaiKhoan> taiKhoan = taiKhoanService.findByUsername(dto.getTenTaiKhoan());
