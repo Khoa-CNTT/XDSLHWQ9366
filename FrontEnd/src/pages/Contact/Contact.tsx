@@ -86,7 +86,7 @@ const Contact = () => {
             <textarea
               name="message"
               placeholder="Leave us a message..."
-              rows={4}
+              rows={3}
               value={formData.message}
               onChange={handleChange}
               className="border p-3 rounded-lg w-full"
