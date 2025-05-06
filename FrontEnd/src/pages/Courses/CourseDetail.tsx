@@ -22,6 +22,8 @@ import {
 } from "react-icons/fa";
 import { RiGlobalLine } from "react-icons/ri";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { FadeUp } from "../Home/Hero/Hero";
 
 // Define the Course interface to ensure proper typing
 interface Course {
@@ -105,7 +107,12 @@ const CourseDetail = () => {
       <div className="bg-gradient-to-r bg-primary text-black py-12">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-            <div className="md:w-2/3">
+            <motion.div
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeInOut" }}
+              className="md:w-2/3"
+            >
               <div className="mb-4 flex items-center gap-2 text-black">
                 <Link to="/" className="hover:text-white">
                   Home
@@ -163,10 +170,15 @@ const CourseDetail = () => {
                   {course.sobuoi} sessions
                 </span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Preview video thumbnail */}
-            <div className="md:w-1/3 w-full">
+            <motion.div
+              variants={FadeUp(0.6)}
+              initial="initial"
+              animate="animate"
+              className="md:w-1/3 w-full"
+            >
               <div className="relative rounded-xl overflow-hidden bg-gradient-to-br bg-blue-800 aspect-video flex items-center justify-center group cursor-pointer">
                 <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-20 transition"></div>
                 <MdPlayCircleFilled className="text-6xl text-white opacity-90 group-hover:opacity-100 group-hover:scale-110 transition" />
@@ -174,7 +186,7 @@ const CourseDetail = () => {
                   Watch preview 2:45
                 </span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import coursesItems from "../../constants/courseData";
+import { motion } from "framer-motion";
 
 import {
   MdSearch,
@@ -11,6 +12,7 @@ import {
   MdCheckCircle,
   MdStarRate,
 } from "react-icons/md";
+import { FadeUp } from "../Home/Hero/Hero";
 
 // Define interface for course data
 interface Course {
@@ -172,13 +174,23 @@ const Courses = () => {
       <div className="bg-gradient-to-r bg-primary text-white py-16">
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <motion.h1
+              variants={FadeUp(0.2)}
+              initial="initial"
+              animate="animate"
+              className="text-4xl md:text-5xl font-bold mb-4"
+            >
               Explore Our Courses
-            </h1>
-            <p className="text-lg text-blue-100 mb-8">
+            </motion.h1>
+            <motion.p
+              variants={FadeUp(0.4)}
+              initial="initial"
+              animate="animate"
+              className="text-lg text-blue-100 mb-8"
+            >
               Enhance your skills with high-quality courses from leading
               industry experts
-            </p>
+            </motion.p>
 
             <div className="relative">
               <input
@@ -438,7 +450,11 @@ const Courses = () => {
                 ))}
               </div>
             ) : filtered.length > 0 ? (
-              <div
+              <motion.div
+                variants={FadeUp(0.9)}
+                initial="initial"
+                whileInView={"animate"}
+                viewport={{ once: true }}
                 className={
                   viewMode === "grid"
                     ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
@@ -549,7 +565,7 @@ const Courses = () => {
                     </Link>
                   )
                 )}
-              </div>
+              </motion.div>
             ) : (
               <div className="bg-white rounded-xl p-10 text-center shadow-sm">
                 <div className="w-20 h-20 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
