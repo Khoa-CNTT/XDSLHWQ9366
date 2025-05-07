@@ -2,6 +2,7 @@ import React from "react";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import axios from "axios";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -12,24 +13,28 @@ const SignIn = () => {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
-  // Mock data for email and password
-  const mockData = {
-    email: "user@gmail.com",
-    password: "123456",
-    token: "mockToken12345", // Simulated token
-  };
-
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simulating a mock login check
-    if (email === mockData.email && password === mockData.password) {
-      // Simulate successful login
-      const token = mockData.token;
-      login(token);
-      navigate("/"); // Redirect to homepage on successful login
-    } else {
-      alert("Đăng nhập thất bại!"); // Show error message if credentials don't match
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/taikhoan/login",
+        {
+          tenTaiKhoan: email,
+          matKhau: password,
+        }
+      );
+
+      if (response.data.status === 200) {
+        const token = response.data.data;
+        login(token); // Save token via context or localStorage
+        navigate("/"); // Redirect to homepage
+      } else {
+        alert("Đăng nhập thất bại!");
+      }
+    } catch (error) {
+      console.error("Đăng nhập lỗi:", error);
+      alert("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.");
     }
   };
 
@@ -54,6 +59,7 @@ const SignIn = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
               placeholder="Enter your email"
               className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300 focus:border-sky-500 outline-none ease-in-out duration-300"
             />
@@ -71,6 +77,7 @@ const SignIn = () => {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 placeholder="Enter your password"
                 className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300 focus:border-sky-500 outline-none ease-in-out duration-300"
               />
