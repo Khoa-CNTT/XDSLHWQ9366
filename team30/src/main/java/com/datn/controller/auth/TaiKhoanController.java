@@ -32,6 +32,9 @@ public class TaiKhoanController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<TaiKhoan>> register(@RequestBody TaiKhoanDTO dto) {
         TaiKhoan taiKhoan = taiKhoanService.register(dto);
+        if(taiKhoan.getQuyenTruyCap() == null){
+            taiKhoan.setQuyenTruyCap("HOCVIEN");
+        }
         return ResponseEntity.ok(
                 new ApiResponse<>(HttpStatus.OK.value(), "Đăng ký tài khoản thành công", taiKhoan)
         );
