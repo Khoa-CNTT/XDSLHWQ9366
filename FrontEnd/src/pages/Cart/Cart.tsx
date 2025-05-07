@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { HiCheckCircle } from "react-icons/hi";
+import { MdArrowBack, MdDelete, MdShoppingCart } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { MdDelete } from "react-icons/md";
 
 interface Course {
   makhoahoc: string;
@@ -34,8 +35,9 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-white text-black pt-24">
       <div className="max-w-6xl mx-auto px-6 py-10">
+        {/* Header */}
         <div className="mb-6 text-left">
-          <h1 className="text-4xl font-extrabold">Your Cart</h1>
+          <h1 className="text-4xl font-extrabold">Cart</h1>
           <p className="text-sm text-gray-500 mt-1">
             <Link to="/" className="text-blue-600 hover:underline">
               Home
@@ -49,54 +51,136 @@ const Cart = () => {
         </div>
 
         {cartItems.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">
-            Your cart is empty.{" "}
-            <Link to="/courses" className="text-blue-600 hover:underline">
-              Browse courses
+          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl shadow-sm">
+            <div className="text-gray-400 mb-4">
+              <MdShoppingCart />
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+              Your cart is empty
+            </h2>
+            <p className="text-gray-500 mb-6">
+              You haven't added any courses to your cart yet.
+            </p>
+            <Link
+              to="/courses"
+              className="flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition"
+            >
+              <MdArrowBack /> Continue browsing
             </Link>
-          </p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6">
-            {cartItems.map((item) => (
-              <div
-                key={item.makhoahoc}
-                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border border-gray-200 rounded-xl shadow-sm"
-              >
-                <div className="mb-4 sm:mb-0">
-                  <h3 className="text-xl font-semibold text-secondary">
-                    {item.tenkhoahoc}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Sessions: {item.sobuoi} | Fee:{" "}
-                    {item.hocphi.toLocaleString()} VNĐ
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Field: {item.malinhvuc}
-                  </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Cart items */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="bg-white p-6 rounded-xl shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                  Courses in Cart ({cartItems.length})
+                </h2>
+                <div className="divide-y divide-gray-100">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.makhoahoc}
+                      className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex-1">
+                        <h3 className="text-lg font-medium text-gray-900 mb-1">
+                          {item.tenkhoahoc}
+                        </h3>
+                        <div className="flex flex-wrap gap-3 text-sm">
+                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                            {item.malinhvuc}
+                          </span>
+                          <span className="bg-green-50 text-green-700 px-2 py-1 rounded">
+                            {item.sobuoi} sessions
+                          </span>
+                        </div>
+                        {item.noidungtomtatkhoahoc && (
+                          <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+                            {item.noidungtomtatkhoahoc}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-lg font-bold text-gray-900">
+                          {item.hocphi.toLocaleString()} VND
+                        </span>
+                        <button
+                          onClick={() => removeFromCart(item.makhoahoc)}
+                          className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition"
+                          aria-label="Remove course"
+                        >
+                          <MdDelete />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-lg font-bold">
-                    {item.hocphi.toLocaleString()} VNĐ
-                  </span>
-                  <button
-                    onClick={() => removeFromCart(item.makhoahoc)}
-                    className="text-red-600 hover:text-red-800 transition"
+                <div className="mt-6 pt-4 border-t border-gray-100">
+                  <Link
+                    to="/courses"
+                    className="flex items-center gap-2 text-blue-600 font-medium hover:underline"
                   >
-                    <MdDelete className="text-2xl" />
-                  </button>
+                    <MdArrowBack /> Continue shopping
+                  </Link>
                 </div>
               </div>
-            ))}
-            <div className="mt-6 p-6 border border-gray-200 rounded-xl shadow-sm">
-              <h3 className="text-xl font-semibold">
-                Total: {totalPrice.toLocaleString()} VNĐ
-              </h3>
-              <Link
-                to="/checkout"
-                className="block w-full sm:w-auto mt-4 bg-primary text-white text-center py-3 px-6 rounded-lg font-medium text-lg hover:bg-secondary transition"
-              >
-                Proceed to Checkout
-              </Link>
+            </div>
+
+            {/* Order summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white p-6 rounded-xl shadow-sm sticky top-24">
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                  Order Summary
+                </h2>
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Total Courses</span>
+                    <span>{cartItems.length}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Total Sessions</span>
+                    <span>
+                      {cartItems.reduce(
+                        (total, item) => total + item.sobuoi,
+                        0
+                      )}
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-gray-100 flex justify-between font-semibold text-lg">
+                    <span>Total Payment</span>
+                    <span className="text-blue-600">
+                      {totalPrice.toLocaleString()} VND
+                    </span>
+                  </div>
+                </div>
+                <Link
+                  to="/checkout"
+                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-6 rounded-lg font-medium transition-colors"
+                >
+                  Proceed to Checkout
+                </Link>
+
+                {/* Additional Info */}
+                <div className="mt-6 pt-4 border-t border-gray-100">
+                  <h3 className="font-medium text-gray-700 mb-2">
+                    Additional Information
+                  </h3>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <HiCheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                      <span>Lifetime access support</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <HiCheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                      <span>Certificate of completion</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <HiCheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
+                      <span>7-day money-back guarantee if not satisfied</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         )}
