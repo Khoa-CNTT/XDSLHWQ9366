@@ -3,9 +3,12 @@ package com.datn.entity;/*
  * @author Huy
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity
 @Table(name = "TAIKHOANS")
@@ -34,6 +37,10 @@ public class TaiKhoan {
     @Lob
     @Column(name = "GHICHU")
     private String ghiChu;
+
+    @OneToMany(mappedBy = "maTaiKhoan", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<HocVien> hocViens;
 
     public TaiKhoan() {
     }

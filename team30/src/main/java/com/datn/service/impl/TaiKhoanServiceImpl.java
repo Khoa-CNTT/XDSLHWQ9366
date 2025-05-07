@@ -4,6 +4,7 @@ package com.datn.service.impl;/*
  */
 
 import com.datn.dto.request.TaiKhoanDTO;
+import com.datn.entity.HocVien;
 import com.datn.entity.NhanVien;
 import com.datn.entity.TaiKhoan;
 import com.datn.repository.NhanVienRepo;
@@ -58,6 +59,12 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
         }
 
         entityManager.persist(taiKhoan);
+
+        HocVien hocVien = new HocVien();
+        hocVien.setMaHocVien(generatedId);
+        hocVien.setMaTaiKhoan(taiKhoan.getMaTaiKhoan());
+
+        entityManager.persist(hocVien);
         entityManager.flush();
 
         return taiKhoan;

@@ -5,10 +5,29 @@ package com.datn.repository;/*
 
 import com.datn.entity.NhanVien;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface NhanVienRepo {
 
-    Optional<NhanVien> findById(Long id);
+    boolean add(NhanVien nhanVien);
+
+    List<NhanVien> findAll();
+
+    List<NhanVien> findAll(int pageNumber, int pageSize);
+
+    NhanVien findById(String maNhanVien);
+
+    List<NhanVien> findByTenNhanVien(String tenNhanVien);
+
+    NhanVien update(NhanVien nhanVien);
+
+    void delete(String maNhanVien);
+
+    void checkSoCMNDExists(String soCMND);
+
+    void checkSoDienThoaiExists(String soDienThoai);
+
+    void checkEmailExists(String email);
 
 }
