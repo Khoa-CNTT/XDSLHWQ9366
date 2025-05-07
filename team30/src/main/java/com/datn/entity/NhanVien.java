@@ -11,6 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "NHANVIENS")
@@ -55,6 +56,9 @@ public class NhanVien {
 
     @Column(name = "URIHINHDAIDIEN", length = 255)
     private String uriHinhDaiDien;
+
+    @OneToMany(mappedBy = "nhanVien", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BaiViet> baiViets;
 
     public NhanVien() {
 

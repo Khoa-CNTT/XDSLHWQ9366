@@ -87,6 +87,7 @@ public class BaiVietRepoImpl implements BaiVietRepo {
     public void deleteBaiViet(String id) {
         BaiViet baiViet = entityManager.find(BaiViet.class, id);
         if (baiViet != null) {
+            baiViet.setNhanVien(null); // Disassociate the foreign key
             entityManager.remove(baiViet);
         }
     }

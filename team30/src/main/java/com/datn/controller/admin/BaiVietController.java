@@ -9,6 +9,7 @@ import com.datn.dto.response.ApiResponse;
 import com.datn.entity.BaiViet;
 import com.datn.service.BaiVietService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
