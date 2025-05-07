@@ -173,14 +173,14 @@ export default function RoleList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {/* {dataList.map((dataList) => (
+                  {roleList.map((roleList) => (
                     <button
-                      key={dataList.id}
+                      key={roleList.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {dataList.name}
+                      {roleList.name}
                     </button>
-                  ))} */}
+                  ))}
                 </div>
               </div>
             )}

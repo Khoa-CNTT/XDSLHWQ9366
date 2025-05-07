@@ -2,18 +2,18 @@ export interface Lecturer  {
   maGiangVien: string;
   tenGiangVien: string;
   ngaySinh: string;
-  gioiTinh: string;
+  gioiTinh: boolean;
   soCMND: string;
   soDienThoai: string;
   email: string;
   diaChi: string;
   coQuanCongTac: string;
   tinhTrangCongTac: string;
-  linhVuc: linhVuc;
+  linhVuc?: LinhVuc | null;
   ghiChu: string;
   urlHinhDaiDien: string | null;
   };
-  export interface linhVuc {
+  export interface LinhVuc {
     id: string;
     name: string;
   }
@@ -75,14 +75,14 @@ export interface Student  {
   }
 
 export interface Room  {
-  maPhong: string;
-  tenPhong: string;
+  maPhongHoc: string;
+  tenPhongHoc: string;
   soChoNgoi: number;
   ghiChu: string;
   };
 
   export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
-  export type SimpleRoom = Pick<Room, "maPhong" | "tenPhong">;
+  export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
   export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;
   export type SimpleEmployee = Pick<Employee, "maNhanVien" | "tenNhanVien">;
   

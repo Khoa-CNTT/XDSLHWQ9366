@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/Account/AuthContext";
-
+import logo from "../assets/Logo.png";
 function Header() {
   const { isLoggedIn, user, logout } = useAuth();
   const navigate = useNavigate();
@@ -17,14 +17,14 @@ function Header() {
   return (
     <div>
       <div className="flex h-16 w-full bg-blue-200 px-4 items-center justify-between">
-        <div className="flex p-2 gap-2">
-          <button
-            className="p-2 text-xl font-medium  bg-white border rounded-xl hover:bg-blue-500 hover:text-white"
-            onClick={() => navigate("/")}
-          >
-            Trang chủ
-          </button>
-        </div>
+        <button
+          className="flex items-center gap-2 text-xl font-medium bg-white border rounded-xl hover:bg-blue-500 hover:text-white px-4"
+          onClick={() => navigate("/")}
+        >
+          <img src={logo} className="h-12 w-auto" alt="Logo" />
+          <span className=" text-xl font-bold text-gray-700 ">Trang chủ</span>
+        </button>
+
         {/* Nút Trang chủ */}
 
         <div className="flex items-center gap-2">
