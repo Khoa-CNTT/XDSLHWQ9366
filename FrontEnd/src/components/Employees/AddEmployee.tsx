@@ -1,22 +1,10 @@
 import { useState } from "react";
+import { Employee } from "../Type/Types";
+import { useNavigate } from "react-router-dom";
 
 export default function AddEmployee() {
-  type EmployeeForm = {
-    id: string;
-    name: string;
-    dob: string;
-    gioiTinh: string;
-    CCCD: string;
-    SDT: string;
-    email: string;
-    address: string;
-    coQuan: string;
-    tinhTrang: string;
-    linhVuc: string;
-    ghiChu: string;
-  };
-
-  const [formData, setFormData] = useState<EmployeeForm>({
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<Employee>({
     id: "",
     name: "",
     dob: "",
@@ -94,13 +82,23 @@ export default function AddEmployee() {
       ghiChu: "",
     });
   };
-
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Thêm Nhân viên
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Thêm Nhân viên
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">

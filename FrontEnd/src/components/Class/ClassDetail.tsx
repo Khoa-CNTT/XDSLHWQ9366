@@ -1,28 +1,91 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Class } from "../Type/Types";
 
 export default function ClassDetail() {
-  const [formData, setFormData] = useState({
-    id: "C01",
-    name: "Class C01",
-    schedule: "2-4-6",
-    dateStart: "2025-01-01",
-    dateEnd: "2025-04-01",
-    Status: "Đang học",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(
+    location.state?.lopHoc || {
+      maLopHoc: "",
+      tenLopHoc: "",
+      lichHoc: "",
+      tinhTrang: "",
+      ngayBatDau: "",
+      ngayKetThuc: "",
+      thuLao: "",
+      daThanhToan: "",
+      khoaHoc: [],
+      phongHoc: [],
+      giangVien: [],
+      nhanVien: [],
+      ghiChu: "",
+    }
+  );
+
+  useEffect(() => {
+    if (!formData) {
+      console.warn("Không có dữ liệu lớp học được truyền!");
+    }
+  }, [formData]);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: Class) => ({ ...prev, [name]: value }));
+  };
+
+  if (!formData) {
+    return <div>Không có dữ liệu lớp học.</div>;
+  }
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/lophoc/update/${formData.id}?malophoc=${formData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Cập nhật dữ liệu thất bại!");
+      }
+
+      alert("Cập nhật thông tin lớp học thành công!");
+      console.log("Dữ liệu đã cập nhật:", formData);
+      navigate(-1); // Quay lại trang trước
+    } catch (error) {
+      console.error("Lỗi khi cập nhật dữ liệu:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin lớp học!");
+    }
+  };
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý lớp học
-        </h2>
-
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Quản lý lớp học
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
@@ -34,8 +97,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maLopHoc"
+                value={formData.maLopHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -49,8 +112,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="schedule"
-                value={formData.schedule}
+                name="lichHoc"
+                value={formData.lichHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -65,8 +128,8 @@ export default function ClassDetail() {
 
               <input
                 type="date"
-                name="startDate"
-                value={formData.dateStart}
+                name="ngayBatDau"
+                value={formData.ngayBatDau}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -80,8 +143,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="salary"
-                value={"0"}
+                name="thuLao"
+                value={formData.thuLao}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -95,8 +158,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="courseName"
-                value={"Tên khoá học"}
+                name="tenKhoaHoc"
+                value={formData.khoaHoc[0]?.tenKhoaHoc || ""}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -106,12 +169,12 @@ export default function ClassDetail() {
                 className="block w-1/2 text-gray-700 text-sm font-bold "
                 htmlFor="classDetail"
               >
-                Tên Giảng viên
+                Tên giảng viên
               </label>
               <input
                 type="text"
-                name="lectureName"
-                value={"Tên Giảng viên"}
+                name="tenGiangVien"
+                value={formData.giangVien[0]?.tenGiangVien || ""}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -128,8 +191,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="classname"
-                value={formData.name}
+                name="tenLopHoc"
+                value={formData.tenLopHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -142,14 +205,13 @@ export default function ClassDetail() {
                 Tình trạng
               </label>
               <div className="w-full">
-                <select
-                  name="status"
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Tình trạng --</option>
-                  <option value="dangDay">Đang dạy</option>
-                  <option value="sapBatDau">Sắp bắt đầu</option>
-                </select>
+                <input
+                  type="text"
+                  name="tinhTrang"
+                  value={formData.tinhTrang}
+                  onChange={handleChange}
+                  className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
@@ -162,8 +224,8 @@ export default function ClassDetail() {
 
               <input
                 type="date"
-                name="endDate"
-                value={formData.dateEnd}
+                name="ngayKetThuc"
+                value={formData.ngayKetThuc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -179,18 +241,12 @@ export default function ClassDetail() {
               <div className="flex w-full items-center mx-2 gap-2">
                 <input
                   id="thanhToan"
-                  type="checkbox"
+                  type="text"
                   name="thanhToan"
-                  // value={formData.dateEnd}
+                  value={formData.daThanhToan}
                   onChange={handleChange}
-                  className="size-5  bg-gray-200 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 hover:ring-2 hover:ring-blue-400"
+                  className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <label
-                  htmlFor="thanhToan"
-                  className="text-gray-700 text-sm cursor-pointer"
-                >
-                  Đã thanh toán hay chưa?
-                </label>
               </div>
             </div>
 
@@ -203,8 +259,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="roomName"
-                value={"Tên phòng học"}
+                name="tenPhongHoc"
+                value={formData.phongHoc[0]?.tenPhongHoc || ""}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -218,8 +274,8 @@ export default function ClassDetail() {
               </label>
               <input
                 type="text"
-                name="NVName"
-                value={"Nhân viên quản lý"}
+                name="tenNhanVien"
+                value={formData.nhanVien[0]?.tenNhanVien}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -235,8 +291,10 @@ export default function ClassDetail() {
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
             rows={4}
+            onChange={handleChange}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -244,21 +302,10 @@ export default function ClassDetail() {
         <div className="flex justify-center p-4 gap-4">
           <button
             type="submit"
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm
-          </button>
-          <button
-            type="submit"
+            onChange={handleSave}
             className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
           >
             Lưu
-          </button>
-          <button
-            type="submit"
-            className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Xoá
           </button>
         </div>
       </div>

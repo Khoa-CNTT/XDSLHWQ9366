@@ -1,41 +1,113 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Lecturer } from "../Type/Types";
 
 export default function LectureDetail() {
-  const [formData, setFormData] = useState({
-    id: "GV01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "DTU",
-    tinhTrang: "dangDay",
-    linhVuc: "java",
-    ghiChu: "",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(
+    location.state?.lecturer || {
+      maGiangVien: "",
+      tenGiangVien: "",
+      ngaySinh: "",
+      gioiTinh: "",
+      soCMND: "",
+      soDienThoai: "",
+      email: "",
+      diaChi: "",
+      coQuanCongTac: "",
+      tinhTrangCongTac: "",
+      linhVuc: {
+        id: "",
+        name: "",
+      },
+      ghiChu: "",
+      urlHinhDaiDien: null,
+    }
+  );
+  const linhVucList = useMemo(
+    () => [
+      {
+        id: "java",
+        name: "Java",
+      },
+      {
+        id: "iot",
+        name: "IOT",
+      },
+      {
+        id: "cntt",
+        name: "Công nghệ thông tin",
+      },
+      {
+        id: "khmt",
+        name: "Khoa học máy tính",
+      },
+    ],
+    []
+  );
+  useEffect(() => {
+    if (!formData) {
+      console.warn("Không có dữ liệu giảng viên được truyền!");
+    }
+  }, [formData]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: Lecturer) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    console.log("Lưu thông tin giảng viên:", formData);
-    alert("Lưu thông tin thành công!");
+  if (!formData) {
+    return <div>Không có dữ liệu giảng viên.</div>;
+  }
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/giangvien/update/${formData.id}?maGiangVien=${formData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Cập nhật dữ liệu thất bại!");
+      }
+
+      alert("Cập nhật thông tin giảng viên thành công!");
+      console.log("Dữ liệu đã cập nhật:", formData);
+      navigate(-1); // Quay lại trang trước
+    } catch (error) {
+      console.error("Lỗi khi cập nhật dữ liệu:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin giảng viên!");
+    }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Giảng viên
-        </h2>
-
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Quản lý Giảng viên
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
@@ -47,8 +119,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maGiangVien"
+                value={formData.maGiangVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -62,8 +134,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -78,8 +150,8 @@ export default function LectureDetail() {
 
               <input
                 type="text"
-                name="salary"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -93,7 +165,7 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="salary"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -108,8 +180,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="courseName"
-                value={formData.coQuan}
+                name="coQuanCongTac"
+                value={formData.coQuanCongTac}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -124,14 +196,16 @@ export default function LectureDetail() {
               <div className="w-full">
                 <select
                   name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
+                  value={formData.linhVuc.id} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Lĩnh vực --</option>
-                  <option value="java">Java</option>
-                  <option value="c">C#</option>
-                  <option value="python">Python</option>
+                  {linhVucList.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -147,8 +221,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="classname"
-                value={formData.name}
+                name="tenGiangVien"
+                value={formData.tenGiangVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -163,7 +237,7 @@ export default function LectureDetail() {
               <div className="w-full">
                 <select
                   name="gioiTinh"
-                  value={formData.gioiTinh}
+                  value={formData.gioiTinh} // Gán giá trị từ formData
                   onChange={handleChange}
                   className="form-input w-2/3 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -184,7 +258,7 @@ export default function LectureDetail() {
               <input
                 type="text"
                 name="SDT"
-                value={formData.SDT}
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -199,8 +273,8 @@ export default function LectureDetail() {
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -215,8 +289,8 @@ export default function LectureDetail() {
               </label>
               <div className="w-full">
                 <select
-                  name="tinhTrang"
-                  value={formData.tinhTrang} // Gán giá trị từ formData
+                  name="tinhTrangCongTac"
+                  value={formData.tinhTrangCongTac} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -231,13 +305,15 @@ export default function LectureDetail() {
         <div className="flex p-1 w-full justify-center border">
           <label
             className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
+            htmlFor="lectureDetail"
           >
             Ghi chú
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
+            onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"

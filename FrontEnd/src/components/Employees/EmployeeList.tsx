@@ -1,149 +1,118 @@
-import {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import EmployeeDetail from "./EmployeeDetail";
-import AddEmployee from "./AddEmployee";
-type Employee = {
-  id: string;
-  name: string;
-  dob: string;
-  gioiTinh: string;
-  CCCD: string;
-  SDT: string;
-  email: string;
-  address: string;
-  coQuan: string;
-  tinhTrang: string;
-  linhVuc: string;
-  ghiChu: string;
-};
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Employee } from "../Type/Types";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 export default function EmployeeList() {
   const [search, setSearch] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenType, setIsOpenType] = useState(false);
-  const [activeButton, setActiveButton] = useState("");
-  const [formData, setFormData] = useState<Employee | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const typeRef = useRef<HTMLDivElement | null>(null);
-  const handleAdd = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("addEmployee");
-    setIsSidebarOpen(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [employees, setemployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchemployees = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/nhanvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+        );
+        if (response.status === 200) {
+          const { content, totalPages } = response.data;
+          setemployees(content);
+          setTotalPages(totalPages);
+        } else {
+          console.error("API trả về lỗi:", response.status);
+        }
+      } catch (error) {
+        console.error("Lỗi khi gọi API:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchemployees();
+  }, [currentPage]);
+
+  // Handle button
+  const handleAdd = () => {
+    navigate("/nhanvien/add-nhanvien");
   };
-  const handleViewClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("viewEmployee");
-    setIsSidebarOpen(true);
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa giảng viên này?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/nhanvien/delete/${id}`);
+      alert("Xóa giảng viên thành công!");
+      // Cập nhật lại danh sách giảng viên sau khi xóa
+      setemployees((prev) => prev.filter((employee) => employee.id !== id));
+    } catch (error) {
+      console.error("Lỗi khi xóa giảng viên:", error);
+      alert("Xóa giảng viên thất bại!");
+    }
+  };
+
+  const handleView = (employee: Employee) => {
+    navigate(`/nhanvien/get-nhanvien/${employee.id}`, {
+      state: { employee },
+    });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const handleDelete = () => {
-    const confirmDelete = window.confirm("Bạn có chắc muốn xóa nhân viên này?");
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
-    }
-  };
-  const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
-    if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
-      setIsSidebarOpen(false);
-      setActiveButton("");
-    }
-  };
 
-  const handleClickOutside = useCallback(
-    (event: Event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        isOpenMenu
-      ) {
-        setIsOpenMenu(false);
-      }
-
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(event.target as Node) &&
-        isOpenType
-      ) {
-        if (
-          event.target instanceof HTMLElement &&
-          typeRef.current.contains(event.target)
-        ) {
-          return;
-        }
-        setIsOpenType(false);
-      }
-    },
-    [isOpenMenu, isOpenType]
-  );
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [handleClickOutside]);
-
-  const classList = useMemo(
+  const employeelist = useMemo<Employee[]>(
     () => [
       {
         id: "NV01",
         name: "Lê Văn A",
+        dob: "1997-08-15",
+        gioiTinh: "true",
+        CCCD: "048097000077",
         SDT: "0385665243",
         email: "abc123@gmail.com",
-        linhVuc: "Kế toán",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "HANTA",
+        tinhTrang: "dangLam",
+        linhVuc: "keToan",
+        ghiChu: "",
       },
       {
         id: "NV02",
-        name: "Lê Văn B",
+        name: "Nguyễn Văn B",
+        dob: "1995-05-20",
+        gioiTinh: "true",
+        CCCD: "048097000078",
         SDT: "0385665243",
-        email: "zxc456@gmail.com",
-        linhVuc: "Kỹ thuật",
-      },
-      {
-        id: "NV03",
-        name: "Lê Văn C",
-        SDT: "0385665243",
-        email: "xyz789@gmail.com",
-        linhVuc: "Lao công",
+        email: "123123123",
+        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuan: "HANTA",
+        tinhTrang: "dangLam",
+        linhVuc: "keToan",
+        ghiChu: "",
       },
     ],
     []
   );
   //  10 items per page
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const filteredList = classList.filter(
-    (c) =>
+  const filteredList = employeelist.filter((c) => {
+    const matchSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.id.toLowerCase().includes(search.toLowerCase())
-    // ||      c.linhVuc.toLowerCase().includes(search.toLowerCase())
-  );
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
+      c.id.toLowerCase().includes(search.toLowerCase());
+    // const matchLinhVuc = !c.linhVuc || c.linhVuc === linhVuc.id;
+    return matchSearch;
+    // && matchLinhVuc;
+  });
+
   const paginatedList = filteredList.slice(
-    startIndex,
-    startIndex + itemsPerPage
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
   return (
-    <div onClick={handleCloseSidebar} className="h-full">
+    <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold mx-4">Danh mục nhân viên</h2>
         <div className=" gap-4 inline-flex">
@@ -175,12 +144,12 @@ export default function EmployeeList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {classList.map((classList) => (
+                  {employeelist.map((e) => (
                     <button
-                      key={classList.id}
+                      key={e.id}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {classList.name}
+                      {e.name}
                     </button>
                   ))}
                 </div>
@@ -209,50 +178,50 @@ export default function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((classList, index) => (
-              <tr key={classList.id} className="border-b">
+            {paginatedList.map((employee, index) => (
+              <tr key={employee.id} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{classList.id}</td>
-                <td className="p-2 text-center">{classList.name}</td>
+                <td className="p-2 text-center">{employee.id}</td>
+                <td className="p-2 text-center">{employee.name}</td>
 
-                <td className="p-2 text-center">{classList.SDT}</td>
-                <td className="p-2 text-center">{classList.email}</td>
-                <td className="p-2 text-center">{classList.linhVuc}</td>
+                <td className="p-2 text-center">{employee.SDT}</td>
+                <td className="p-2 text-center">{employee.email}</td>
+                <td className="p-2 text-center">{employee.linhVuc}</td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={handleViewClick}
+                    onClick={() => handleView(employee)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
                       />
                     </svg>
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(employee.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                       />
                     </svg>
@@ -291,16 +260,6 @@ export default function EmployeeList() {
             </button>
           </div>
         </div>
-      </div>
-      {/* Sidebar Button*/}
-      <div
-        className={`absolute bg-white w-2/3 min-h-screen overflow-y-auto transition-transform transform ease-in-out duration-300 top-0 right-0 ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {activeButton === "addEmployee" && <AddEmployee />}
-        {activeButton === "viewEmployee" && <EmployeeDetail />}
       </div>
     </div>
   );

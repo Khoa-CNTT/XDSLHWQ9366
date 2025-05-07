@@ -1,25 +1,82 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Room } from "../Type/Types";
 
 export default function RoomDetail() {
-  const [formData, setFormData] = useState({
-    id: "R01",
-    name: "Phòng học 1",
-    soLuong: 20,
-    ghiChu: "Đang hoạt động",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(
+    location.state?.phongHoc || {
+      maPhongHoc: "",
+      tenPhongHoc: "",
+      soChoNgoi: 20,
+      ghiChu: "",
+    }
+  );
+
+  useEffect(() => {
+    if (!formData) {
+      console.warn("Không có dữ liệu phòng học được truyền!");
+    }
+  }, [formData]);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: Room) => ({ ...prev, [name]: value }));
+  };
+
+  if (!formData) {
+    return <div>Không có dữ liệu phòng học.</div>;
+  }
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/phonghoc/update/${formData.id}?maphonghoc=${formData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Cập nhật dữ liệu thất bại!");
+      }
+
+      alert("Cập nhật thông tin phòng học thành công!");
+      console.log("Dữ liệu đã cập nhật:", formData);
+      navigate(-1); // Quay lại trang trước
+    } catch (error) {
+      console.error("Lỗi khi cập nhật dữ liệu:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin phòng học!");
+    }
+  };
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Phòng học
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Quản lý Phòng học
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
@@ -32,8 +89,8 @@ export default function RoomDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maPhongHoc"
+                value={formData.maPhongHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -51,8 +108,8 @@ export default function RoomDetail() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenPhongHoc"
+                value={formData.tenPhongHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -68,8 +125,8 @@ export default function RoomDetail() {
               </label>
               <input
                 type="text"
-                name="soLuong"
-                value={formData.soLuong}
+                name="soChoNgoi"
+                value={formData.soChoNgoi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -85,30 +142,21 @@ export default function RoomDetail() {
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
             rows={4}
+            onChange={handleChange}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div className="flex justify-between p-4 gap-4">
+        <div className="flex justify-center p-4 gap-4">
           <button
             type="submit"
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm mới
-          </button>
-          <button
-            type="submit"
+            onChange={handleSave}
             className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
           >
             Lưu
-          </button>
-          <button
-            type="submit"
-            className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Xoá
           </button>
         </div>
       </div>

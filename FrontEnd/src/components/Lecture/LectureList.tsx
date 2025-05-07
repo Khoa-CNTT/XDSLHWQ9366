@@ -1,174 +1,295 @@
-import {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import LectureDetail from "./LectureDetail";
-import AddLecture from "./AddLecture";
-type Lecture = {
-  id: string;
-  name: string;
-  dob: string;
-  gioiTinh: string;
-  CCCD: string;
-  SDT: string;
-  email: string;
-  address: string;
-  coQuan: string;
-  tinhTrang: string;
-  linhVuc: string;
-  ghiChu: string;
-};
-interface linhVuc {
-  id: string;
-  name: string;
-}
+import axios from "axios";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lecturer, linhVuc } from "../Type/Types";
+
 export default function LectureList() {
   const [search, setSearch] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenType, setIsOpenType] = useState(false);
-  const [activeButton, setActiveButton] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const typeRef = useRef<HTMLDivElement | null>(null);
-
-  const [formData, setFormData] = useState<Lecture | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [itemsPerPage] = useState(10);
+  const navigate = useNavigate();
 
   const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
 
-  const handleAdd = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("addLecture");
-    setIsSidebarOpen(true);
+  // Fetch data from API
+  useEffect(() => {
+    const fetchLecturers = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/giangvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+        );
+        if (response.status === 200) {
+          const { data: paginationData } = response.data;
+          if (paginationData) {
+            // Lấy danh sách giảng viên từ paginationData.data
+            const lecturerList = paginationData.data;
+            setLecturers(lecturerList || []);
+            setTotalPages(paginationData.totalPages || 1);
+          }
+        } else {
+          console.error("API trả về lỗi:", response.status);
+        }
+      } catch (error) {
+        console.error("Lỗi khi gọi API:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLecturers();
+  }, [currentPage, itemsPerPage]);
+  // Handle button
+  const handleAdd = () => {
+    navigate("/giangvien/add-giangvien");
   };
-  const handleDelete = () => {
+  const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
+      "Bạn có chắc chắn muốn xóa giảng viên này?"
     );
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/giangvien/delete/${id}`);
+      alert("Xóa giảng viên thành công!");
+      // Cập nhật lại danh sách giảng viên sau khi xóa
+      setLecturers((prev) =>
+        prev.filter((lecturer) => lecturer.maGiangVien !== id)
+      );
+    } catch (error) {
+      console.error("Lỗi khi xóa giảng viên:", error);
+      alert("Xóa giảng viên thất bại!");
     }
   };
 
-  const handleViewClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setActiveButton("viewLecture");
-    setIsSidebarOpen(true);
+  const handleView = (lecturer: Lecturer) => {
+    navigate(`/giangvien/get-giangvien/${lecturer.maGiangVien}`, {
+      state: { lecturer },
+    });
   };
-
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
-    if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
-      setIsSidebarOpen(false);
-      setActiveButton("");
-    }
-  };
-
-  const handleClickOutside = useCallback(
-    (event: Event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        isOpenMenu
-      ) {
-        setIsOpenMenu(false);
-      }
-
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(event.target as Node) &&
-        isOpenType
-      ) {
-        if (
-          event.target instanceof HTMLElement &&
-          typeRef.current.contains(event.target)
-        ) {
-          return;
-        }
-        setIsOpenType(false);
-      }
-    },
-    [isOpenMenu, isOpenType]
-  );
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [handleClickOutside]);
-
-  const classList = useMemo(
+  const lecturelist = useMemo<Lecturer[]>(
     () => [
       {
-        id: "GV01",
-        name: "Lê Đức Thảo",
-        dob: "1997-08-15",
+        maGiangVien: "GV01",
+        tenGiangVien: "Lê Đức Thảo",
+        ngaySinh: "1997-08-15",
         gioiTinh: "true",
-        CCCD: "048097000077",
-        SDT: "0385665243",
-        email: "Thao123@gmail.com",
-        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuan: "DTU",
-        tinhTrang: "dangDay",
-        linhVuc: "java",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
         ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "02",
-        name: "Trương Thị Ngọc Ánh",
+        maGiangVien: "GV02",
+        tenGiangVien: "Trương Thị Ngọc Ánh",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "3",
-        name: "Đoàn Văn Huy",
+        maGiangVien: "GV03",
+        tenGiangVien: "Nguyễn Thanh Anh",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "cntt",
+          name: "Công nghệ thông tin",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "4",
-        name: "Nguyễn Hữu Thành",
+        maGiangVien: "GV04",
+        tenGiangVien: "Đoàn Văn Huy",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "5",
-        name: "Nguyễn Thanh Anh",
+        maGiangVien: "GV05",
+        tenGiangVien: "Nguyễn Hữu Thành",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "6",
-        name: "Trương Thị Ngọc Anh",
+        maGiangVien: "GV06",
+        tenGiangVien: "Lê Văn B",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "7",
-        name: "Lê Văn Anh",
+        maGiangVien: "GV07",
+        tenGiangVien: "Lê Văn B",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "java",
+          name: "Java",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "8",
-        name: "Lê Văn Tuấn",
+        maGiangVien: "GV08",
+        tenGiangVien: "Lê Văn C",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "iot",
+          name: "IOT",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "9",
-        name: "Trương Ngọc Anh",
+        maGiangVien: "GV09",
+        tenGiangVien: "Lê Văn D",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "iot",
+          name: "IOT",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "10",
-        name: "Đoàn Văn Anh",
+        maGiangVien: "GV10",
+        tenGiangVien: "Lê Văn E",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "KHMT",
+          name: "Khoa học máy tính",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
       {
-        id: "11",
-        name: "Nguyễn Lan Anh",
+        maGiangVien: "11",
+        tenGiangVien: "Lê Văn A",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "KHMT",
+          name: "Khoa học máy tính",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
+      },
+      {
+        maGiangVien: "11",
+        tenGiangVien: "Lê Văn A",
+        ngaySinh: "1997-08-15",
+        gioiTinh: "true",
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@gmail.com",
+        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
+        coQuanCongTac: "DTU",
+        tinhTrangCongTac: "dangDay",
+        linhVuc: {
+          id: "KHMT",
+          name: "Khoa học máy tính",
+        },
+        ghiChu: "",
+        urlHinhDaiDien: null,
       },
     ],
     []
@@ -195,25 +316,23 @@ export default function LectureList() {
     []
   );
   //  10 items per page
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const filteredList = classList.filter((c) => {
+  const filteredList = (lecturers || []).filter((c) => {
     const matchSearch =
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.id.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.linhVuc === linhVuc.id;
+      c.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
+      c.maGiangVien.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || c.linhVuc.id === linhVuc.id;
     return matchSearch && matchLinhVuc;
   });
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedList = filteredList.slice(
-    startIndex,
-    startIndex + itemsPerPage
+  const paginatedList = (filteredList || []).slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
-
+  if (loading) {
+    return <div>Đang tải dữ liệu...</div>;
+  }
   return (
-    <div onClick={handleCloseSidebar} className="h-full">
+    <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold mx-4">Danh mục Giảng viên</h2>
         <div className=" gap-4 inline-flex">
@@ -226,7 +345,6 @@ export default function LectureList() {
           />
           <div className="relative" ref={menuRef}>
             {/* Button */}
-
             <button
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
@@ -296,50 +414,56 @@ export default function LectureList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((classList, index) => (
-              <tr key={classList.id} className="border-b">
-                <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{classList.id}</td>
-                <td className="p-2 text-center">{classList.name}</td>
+            {/* {lecturers.map((lecturer, index) => ( */}
+            {paginatedList.map((lecturer, index) => (
+              <tr key={lecturer.maGiangVien} className="border-b">
+                <td className="p-2 text-center">
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+                </td>
+                <td className="p-2 text-center">{lecturer.maGiangVien}</td>
+                <td className="p-2 text-center">{lecturer.tenGiangVien}</td>
+                <td className="p-2 text-center">{lecturer.soDienThoai}</td>
+                <td className="p-2 text-center">{lecturer.email}</td>
+                <td className="p-2 text-center">
+                  {linhVucList.find((lv) => lv.id === lecturer.linhVuc.id)
+                    ?.name || "Không xác định"}
+                </td>
 
-                <td className="p-2 text-center">{classList.SDT}</td>
-                <td className="p-2 text-center">{classList.email}</td>
-                <td className="p-2 text-center">{classList.linhVuc}</td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={handleViewClick}
+                    onClick={() => handleView(lecturer)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
                       />
                     </svg>
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(lecturer.maGiangVien)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      stroke-width="1.5"
+                      strokeWidth="1.5"
                       stroke="currentColor"
                       className="size-6"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                       />
                     </svg>
@@ -378,16 +502,6 @@ export default function LectureList() {
             </button>
           </div>
         </div>
-      </div>
-      {/* Sidebar Button*/}
-      <div
-        className={`absolute bg-white w-2/3 min-h-screen overflow-y-auto transition-transform transform ease-in-out duration-300 top-0 right-0 ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {activeButton === "addLecture" && <AddLecture />}
-        {activeButton === "viewLecture" && <LectureDetail />}
       </div>
     </div>
   );
