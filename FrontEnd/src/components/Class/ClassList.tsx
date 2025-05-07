@@ -61,9 +61,9 @@ export default function ClassList() {
     }
   };
 
-  const handleView = (c: Class) => {
-    navigate(`/lophoc/get-lophoc/${c.maLopHoc}`, {
-      state: { c },
+  const handleView = (lopHoc: Class) => {
+    navigate(`/lophoc/get-lophoc/${lopHoc.maLopHoc}`, {
+      state: { lopHoc },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
@@ -86,8 +86,8 @@ export default function ClassList() {
         ],
         phongHoc: [
           {
-            maPhong: "PH001",
-            tenPhong: "lớp học A",
+            maPhongHoc: "PH001",
+            tenPhongHoc: "lớp học A",
           },
         ],
         giangVien: [
@@ -121,8 +121,8 @@ export default function ClassList() {
         ],
         phongHoc: [
           {
-            maPhong: "PH002",
-            tenPhong: "lớp học B",
+            maPhongHoc: "PH002",
+            tenPhongHoc: "lớp học B",
           },
         ],
         giangVien: [
@@ -158,9 +158,9 @@ export default function ClassList() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  if (loading) {
-    return <div>Đang tải dữ liệu...</div>;
-  }
+  // if (loading) {
+  //   return <div>Đang tải dữ liệu...</div>;
+  // }
 
   return (
     <div className="h-full mt-2">
@@ -243,19 +243,19 @@ export default function ClassList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((classList, index) => (
-              <tr key={classList.maLopHoc} className="border-b">
+            {paginatedList.map((lopHoc, index) => (
+              <tr key={lopHoc.maLopHoc} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{classList.maLopHoc}</td>
-                <td className="p-2 text-center">{classList.tenLopHoc}</td>
+                <td className="p-2 text-center">{lopHoc.maLopHoc}</td>
+                <td className="p-2 text-center">{lopHoc.tenLopHoc}</td>
 
-                <td className="p-2">{classList.lichHoc}</td>
-                <td className="p-2 text-center">{classList.ngayBatDau}</td>
-                <td className="p-2 text-center">{classList.ngayKetThuc}</td>
-                <td className="p-2 text-center">{classList.tinhTrang}</td>
+                <td className="p-2">{lopHoc.lichHoc}</td>
+                <td className="p-2 text-center">{lopHoc.ngayBatDau}</td>
+                <td className="p-2 text-center">{lopHoc.ngayKetThuc}</td>
+                <td className="p-2 text-center">{lopHoc.tinhTrang}</td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={() => handleView(classList)}
+                    onClick={() => handleView(lopHoc)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
@@ -275,7 +275,7 @@ export default function ClassList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(classList.maLopHoc)}
+                    onClick={() => handleDelete(lopHoc.maLopHoc)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
