@@ -19,12 +19,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .cors(cors -> {}) // <<=== BẮT BUỘC: bật CORS
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
-        );
-
-        httpSecurity.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+                );
 
         return httpSecurity.build();
     }
