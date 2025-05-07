@@ -47,11 +47,11 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black pt-24">
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Header section like Cart page */}
-        <div className="mb-6 text-left">
-          <h1 className="text-4xl font-extrabold">Checkout</h1>
+    <div className="min-h-screen bg-gray-50 pt-24">
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-extrabold text-gray-900">Checkout</h1>
           <p className="text-sm text-gray-500 mt-1">
             <Link to="/" className="text-blue-600 hover:underline">
               Home
@@ -60,23 +60,23 @@ const Checkout = () => {
             <Link to="/courses" className="text-blue-600 hover:underline">
               Courses
             </Link>{" "}
-            / <span className="text-gray-800">Checkout</span>
+            / <span className="text-gray-800 font-medium">Checkout</span>
           </p>
         </div>
 
-        {/* Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* LEFT SIDE - Summary */}
-          <div>
-            <div className="bg-white shadow-md rounded-2xl p-6 space-y-4">
-              <h2 className="text-xl font-semibold mb-2">Summary</h2>
+          {/* LEFT - Summary */}
+          <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Course Summary
+            </h2>
+            <div className="divide-y">
               {cartItems.map((item) => (
-                <div
-                  key={item.makhoahoc}
-                  className="flex justify-between items-center border-b pb-3"
-                >
+                <div key={item.makhoahoc} className="flex justify-between py-4">
                   <div>
-                    <p className="font-medium">{item.tenkhoahoc}</p>
+                    <p className="font-medium text-gray-900">
+                      {item.tenkhoahoc}
+                    </p>
                     <p className="text-sm text-gray-500">{item.malinhvuc}</p>
                   </div>
                   <span className="text-right font-semibold text-gray-800">
@@ -84,74 +84,94 @@ const Checkout = () => {
                   </span>
                 </div>
               ))}
-              <div className="pt-4 space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Enter promo code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
-                  />
-                  <button
-                    onClick={handleApplyPromo}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition whitespace-nowrap"
-                  >
-                    Apply Code
-                  </button>
-                </div>
-                <div className="flex justify-between text-lg font-semibold border-t pt-4">
-                  <span>Total:</span>
+            </div>
+
+            <div className="pt-4 space-y-4">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter promo code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleApplyPromo}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Apply
+                </button>
+              </div>
+
+              <div className="text-lg space-y-2 pt-4 border-t">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
                   <span>{totalPrice.toLocaleString()} VNĐ</span>
                 </div>
                 {discount > 0 && (
-                  <div className="flex justify-between text-lg font-semibold text-green-600">
-                    <span>Discount:</span>
+                  <div className="flex justify-between text-green-600 font-medium">
+                    <span>Discount</span>
                     <span>-{discount.toLocaleString()} VNĐ</span>
                   </div>
                 )}
-                <div className="flex justify-between text-xl font-bold border-t pt-4">
-                  <span>Final Total:</span>
+                <div className="flex justify-between text-xl font-bold border-t pt-4 text-blue-700">
+                  <span>Total</span>
                   <span>{discountedPrice.toLocaleString()} VNĐ</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE - Payment */}
-          <div>
-            <div className="bg-white shadow-md rounded-2xl p-6 space-y-6">
-              <h2 className="text-xl font-semibold">Payment Method</h2>
-              {/* QR CODE MOCK */}
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-2">Scan QR to pay</p>
-                <div className="bg-gray-200 w-40 h-40 mx-auto rounded-lg flex items-center justify-center">
-                  <img src={QR} />
-                </div>
+          {/* RIGHT - Payment */}
+          <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Payment Method
+            </h2>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-3">
+                Scan the QR Code to make payment
+              </p>
+              <div className="bg-gray-100 w-48 h-48 mx-auto rounded-lg shadow-inner flex items-center justify-center border border-gray-300">
+                <img
+                  src={QR}
+                  alt="QR Code"
+                  className="w-full h-full object-contain p-2"
+                />
               </div>
-              {/* BANK ACCOUNT INFO */}
-              <div className="space-y-2 text-center">
-                <p className="font-semibold text-gray-700">
-                  Account Name:{" "}
-                  <span className="text-black">NGUYEN HUU THANH</span>
+
+              {/* Bank transfer instruction */}
+              <div className="mt-4 bg-gray-50 border rounded-xl p-4 text-sm text-gray-700 text-left">
+                <p>
+                  <strong>Transfer Content:</strong> Your Name + Course Name
                 </p>
-                <p className="font-semibold text-gray-700">
-                  Bank: <span className="text-black">ACB</span>
-                </p>
-                <p className="font-semibold text-gray-700">
-                  Account Number: <span className="text-black">24048627</span>
+                <p>
+                  <strong>Example:</strong> Nguyen Van A - Web Design
                 </p>
               </div>
-              <button
-                onClick={handleConfirmCheckout}
-                disabled={isSubmitting}
-                className={`w-full bg-primary text-white text-lg py-3 rounded-xl font-semibold hover:bg-secondary transition ${
-                  isSubmitting ? "opacity-60 cursor-not-allowed" : ""
-                }`}
-              >
-                {isSubmitting ? "Processing..." : "Checkout Now"}
-              </button>
             </div>
+
+            <div className="space-y-2 text-center text-gray-700">
+              <p>
+                <span className="font-semibold">Account Name:</span> NGUYEN HUU
+                THANH
+              </p>
+              <p>
+                <span className="font-semibold">Bank:</span> ACB
+              </p>
+              <p>
+                <span className="font-semibold">Account Number:</span> 24048627
+              </p>
+            </div>
+
+            <button
+              onClick={handleConfirmCheckout}
+              disabled={isSubmitting}
+              className={`w-full bg-blue-600 text-white text-lg py-3 rounded-xl font-semibold hover:bg-blue-700 transition ${
+                isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+              }`}
+            >
+              {isSubmitting ? "Processing..." : "Confirm Payment"}
+            </button>
           </div>
         </div>
       </div>
