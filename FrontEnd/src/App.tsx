@@ -21,38 +21,41 @@ import NewsDetail from "./pages/News/NewsDetail";
 import Cart from "./pages/Cart/Cart";
 import { AuthProvider } from "./context/AuthContext";
 import Checkout from "./pages/Checkout/Checkout";
+import { NotificationProvider } from "./context/NotificationContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <main className="overflow-x-hidden bg-white text-dark">
-          <ScrollToTop />
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/exam-schedule" element={<ExamSchedule />} />
-            <Route path="/exam/:id" element={<ExamDetail />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/course/:id" element={<CourseDetail />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/result" element={<Results />} />
-            <Route path="/result/:id" element={<ResultDetail />} />
-            <Route path="/test-scores" element={<TestScores />} />
-            <Route path="/test-scores/:id" element={<TestScoreDetail />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:mabaiviet" element={<NewsDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-          </Routes>
-          <Footer />
-        </main>
-      </Router>
-    </AuthProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <Router>
+          <main className="overflow-x-hidden bg-white text-dark">
+            <ScrollToTop />
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/exam-schedule" element={<ExamSchedule />} />
+              <Route path="/exam/:id" element={<ExamDetail />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/result" element={<Results />} />
+              <Route path="/result/:id" element={<ResultDetail />} />
+              <Route path="/test-scores" element={<TestScores />} />
+              <Route path="/test-scores/:id" element={<TestScoreDetail />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:mabaiviet" element={<NewsDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Routes>
+            <Footer />
+          </main>
+        </Router>
+      </AuthProvider>
+    </NotificationProvider>
   );
 }
 
