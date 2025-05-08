@@ -18,11 +18,11 @@ function Header() {
     <div>
       <div className="flex h-16 w-full bg-blue-200 px-4 items-center justify-between">
         <button
-          className="flex items-center gap-2 text-xl font-medium bg-white border rounded-xl hover:bg-blue-500 hover:text-white px-4"
+          className="h-12 flex items-center gap-2 text-xl font-medium bg-white border border-black hover:bg-blue-500 hover:text-white "
           onClick={() => navigate("/")}
         >
-          <img src={logo} className="h-12 w-auto" alt="Logo" />
-          <span className=" text-xl font-bold text-gray-700 ">Trang chủ</span>
+          <img src={logo} className="h-14 w-auto" alt="Logo" />
+          {/* <span className=" text-xl font-bold text-gray-700 ">Trang chủ</span> */}
         </button>
 
         {/* Nút Trang chủ */}

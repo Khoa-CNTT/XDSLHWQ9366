@@ -81,6 +81,34 @@ export interface Room  {
   ghiChu: string;
   };
 
+  export interface LichThi{
+    maLichThi: string;
+    maLinhVuc: string;
+    tenChungChi: string;
+    ngayThi: string;
+    thongTinChiTiet: string;
+    lePhiThi: number;
+  }
+
+  export interface ThiSinh{
+    maThiSinhDuThi: string;
+    tenThiSinhDuThi: string;
+    ngaySinh: string;
+    gioiTinh: string;
+    soCMND: string;
+    soDienThoai: string;
+    email: string;
+    diaChi: string;
+    dienDangKy: string; //Diện đăng ký chỉ được là ONLINE hoặc TRUCTIEP"
+    maLichThi: string; //  Đang học, Nghỉ học, Đã tốt nghiệp
+    maPhongThi: string;
+    diem: string;
+    xepLoai: string;
+    ngayCapChungChi: string;
+    ghiChu: string;
+    urlHinhDaiDien: string | null;
+  }
+
   export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
   export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
   export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;

@@ -1,22 +1,43 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ThiSinh } from "../Type/Types";
 
 export default function ContestantDetail() {
-  const [formData, setFormData] = useState({
-    id: "TS01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    dienDangKy: "",
-    phongThi: "",
-    xepLoai: "gioi",
-    tenChungChi: "phanMem",
-    ngayCap: "2025-01-01",
-    ghiChu: "",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(
+    location.state?.thisinh || {
+      maThiSinhDuThi: "",
+      tenThiSinhDuThi: "",
+      ngaySinh: "",
+      gioiTinh: "",
+      soCMND: "",
+      soDienThoai: "",
+      email: "",
+      diaChi: "",
+      dienDangKy: "",
+      maLichThi: "",
+      maPhongThi: "",
+      diem: "",
+      xepLoai: "",
+      ngayCapChungChi: "",
+      ghiChu: "",
+      urlHinhDaiDien: null,
+    }
+  );
+  const dienDangKy = useMemo(
+    () => [
+      { id: "online", name: "Online" },
+      { id: "offline", name: "Offline" },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    if (!formData) {
+      console.warn("Không có dữ liệu học viên được truyền!");
+    }
+  }, [formData]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -24,64 +45,69 @@ export default function ContestantDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: ThiSinh) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
-    console.log("Thêm giảng viên:", formData);
-    alert("Thêm giảng viên thành công!");
-  };
+  if (!formData) {
+    return <div>Không có dữ liệu học viên.</div>;
+  }
 
-  const handleSave = () => {
-    console.log("Lưu thông tin giảng viên:", formData);
-    alert("Lưu thông tin thành công!");
-  };
+  const handleSave = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/hocvien/update/${formData.id}?mahocvien=${formData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
-    );
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        dienDangKy: "",
-        phongThi: "",
-        xepLoai: "",
-        tenChungChi: "",
-        ngayCap: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
+      if (!response.ok) {
+        throw new Error("Cập nhật dữ liệu thất bại!");
+      }
+
+      alert("Cập nhật thông tin học viên thành công!");
+      console.log("Dữ liệu đã cập nhật:", formData);
+      navigate(-1); // Quay lại trang trước
+    } catch (error) {
+      console.error("Lỗi khi cập nhật dữ liệu:", error);
+      alert("Đã xảy ra lỗi khi cập nhật thông tin học viên!");
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Thí sinh
-        </h2>
-
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
+            Quản lý Thí sinh
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Mã Thí sinh
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maThiSinhDuThi"
+                value={formData.maThiSinhDuThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -89,14 +115,14 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Ngày sinh
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -104,15 +130,15 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Số CMND
               </label>
 
               <input
                 type="text"
-                name="salary"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -120,13 +146,13 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Email
               </label>
               <input
                 type="text"
-                name="salary"
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -135,34 +161,37 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Diện đăng ký
               </label>
               <div className="w-full">
                 <select
-                  name="dienDK"
-                  value={formData.dienDangKy} // Gán giá trị từ formData
+                  name="dienDangKy"
+                  value={formData.dienDangKy.toLowerCase()} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Diện Đăng ký --</option>
-                  <option value="dangHoc">Đang học</option>
-                  <option value="daHoanThanh">Đã hoàn thành</option>
+                  {dienDangKy.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Phòng thi
               </label>
               <input
                 type="text"
-                name="phongThi"
-                value={formData.phongThi}
+                name="maPhongThi"
+                value={formData.maPhongThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -171,7 +200,7 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Xếp loại
               </label>
@@ -196,14 +225,14 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Tên Thí sinh
               </label>
               <input
                 type="text"
-                name="classname"
-                value={formData.name}
+                name="tenThiSinhDuThi"
+                value={formData.tenThiSinhDuThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -211,7 +240,7 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Giới tính
               </label>
@@ -231,15 +260,15 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Số điện thoại
               </label>
 
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
+                name="soDienThoai"
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -248,50 +277,30 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-between border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
                 Địa chỉ
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
-              >
-                Diện đăng ký
-              </label>
-              <div className="w-full">
-                <select
-                  name="tenChungChi"
-                  value={formData.tenChungChi} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Chứng chỉ --</option>
-                  <option value="phanMem">Phần mềm</option>
-                  <option value="iot">IOT</option>
-                </select>
-              </div>
-            </div>
             <div className="flex p-1 w-full justify-between border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
               >
-                Điểm
+                Lịch thi
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="maLichThi"
+                value={formData.maLichThi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -299,14 +308,29 @@ export default function ContestantDetail() {
             <div className="flex p-1 w-full justify-between border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="contenstantDetail"
+              >
+                Điểm
+              </label>
+              <input
+                type="text"
+                name="diem"
+                value={formData.diem}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-between border items-center">
+              <label
+                className="w-1/2 text-gray-700 text-sm font-bold"
+                htmlFor="contenstantDetail"
               >
                 Ngày cấp chứng chỉ
               </label>
               <input
                 type="date"
-                name="ngayCap"
-                value={formData.ngayCap}
+                name="ngayCapChungChi"
+                value={formData.ngayCapChungChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -322,7 +346,9 @@ export default function ContestantDetail() {
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
+            onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -331,24 +357,10 @@ export default function ContestantDetail() {
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"
-            onClick={handleAdd}
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm
-          </button>
-          <button
-            type="button"
             onClick={handleSave}
             className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
           >
             Lưu
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Xoá
           </button>
         </div>
       </div>
