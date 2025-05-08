@@ -3,6 +3,7 @@ import Hero from "./Hero/Hero";
 import Services from "./Services/Services";
 import Banner from "./Banner/Banner";
 import Subscribe from "./Subscribe/Subscribe";
+import Chatbot from "../Chatbot/Chatbot";
 
 const Home = () => {
   useEffect(() => {
@@ -19,6 +20,7 @@ const Home = () => {
       </div>
       <Banner />
       <Subscribe />
+      <Chatbot />
     </div>
   );
 };

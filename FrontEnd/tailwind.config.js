@@ -12,6 +12,11 @@ export default {
         light: "#f7f7f7",
         dark: "#333333",
         dark2: "#999999",
+        purple: {
+          50: "#f6f2ff",
+          600: "#6d4fc2",
+          700: "#593bab",
+        },
       },
       container: {
         center: true,
