@@ -1,10 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiClock, FiEye } from "react-icons/fi";
-import newItems from "../../constants/newData";
+import { getAllBaiViet } from "../../api/newApi";
+
+interface ChucVu {
+  maChucVu: string;
+  tenChucVu: string;
+  trangThai: boolean;
+}
+
+interface NhanVien {
+  tenNhanVien: string;
+  ngaySinh: string;
+  gioiTinh: boolean;
+  soCMND: string;
+  soDienThoai: string;
+  email: string;
+  diaChi: string;
+  chucVu: ChucVu;
+  nguoiNhapThongTin: string;
+  ghiChu: string;
+  uriHinhDaiDien: string;
+}
+
+interface BaiViet {
+  maBaiViet: string;
+  tieuDe: string;
+  uriHinhAnhMinhHoa: string;
+  noiDungTomTat: string;
+  noiDung: string;
+  ngayDang: string;
+  nhanVien: NhanVien;
+  lanCapNhatCuoiCung: string | null;
+  soLuongTruyCap: number;
+  menu: string;
+  trangThai: boolean;
+}
 
 const News = () => {
-  const [filtered] = useState(newItems);
+  const [filtered, setFiltered] = useState<BaiViet[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getAllBaiViet();
+        setFiltered(data);
+      } catch (error) {
+        console.error("Lỗi khi tải bài viết:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-black pt-24">
@@ -20,32 +66,32 @@ const News = () => {
           {filtered.length > 0 ? (
             filtered.map((article) => (
               <div
-                key={article.mabaiviet}
+                key={article.maBaiViet}
                 className="border rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col"
               >
                 <img
-                  src={article.urhinhminhhoa}
-                  alt={article.tieude}
+                  src={article.uriHinhAnhMinhHoa}
+                  alt={article.tieuDe}
                   className="rounded-lg w-full h-48 object-cover mb-4"
                 />
                 <h2 className="text-lg font-semibold text-gray-800">
-                  {article.tieude}
+                  {article.tieuDe}
                 </h2>
                 <p className="text-sm text-gray-600 mt-2 line-clamp-3">
-                  {article.noidungtomtat}
+                  {article.noiDungTomTat}
                 </p>
                 <div className="flex-grow" />
                 <div className="text-xs text-gray-500 mt-3 flex justify-between items-center">
                   <span className="flex items-center gap-1">
                     <FiClock />
-                    {new Date(article.ngaydang).toLocaleDateString()}
+                    {new Date(article.ngayDang).toLocaleDateString()}
                   </span>
                   <span className="flex items-center gap-1">
                     <FiEye />
-                    {article.soluongtruycap}
+                    {article.soLuongTruyCap}
                   </span>
                 </div>
-                <Link to={`/news/${article.mabaiviet}`}>
+                <Link to={`/news/${article.maBaiViet}`}>
                   <h2 className="text-sm font-semibold text-blue-600 hover:underline mt-2">
                     View Details
                   </h2>
