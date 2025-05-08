@@ -128,7 +128,7 @@ export default function LectureList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              {linhVuc ? linhVuc.name : "Tất cả lĩnh vực"}
+              {linhVuc ? linhVuc.tenLinhVuc : "Tất cả lĩnh vực"}
               {!linhVuc && (
                 <svg
                   className="w-4 h-4 ml-2 inline"
@@ -205,8 +205,9 @@ export default function LectureList() {
                 <td className="p-2 text-center">{lecturer.email}</td>
                 <td className="p-2 text-center">
                   {lecturer.linhVuc
-                    ? linhVucList.find((lv) => lv.id === lecturer.linhVuc?.id)
-                        ?.name || "Không xác định"
+                    ? linhVucList.find(
+                        (lv) => lv.id === lecturer.linhVuc?.maLinhVuc
+                      )?.name || "Không xác định"
                     : "Không xác định"}
                 </td>
 

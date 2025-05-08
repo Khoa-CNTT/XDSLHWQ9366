@@ -14,8 +14,8 @@ export interface Lecturer  {
   urlHinhDaiDien: string | null;
   };
   export interface LinhVuc {
-    id: string;
-    name: string;
+    maLinhVuc: string;
+    tenLinhVuc: string;
   }
 export interface Course  {
   maKhoaHoc: string;
@@ -109,6 +109,12 @@ export interface Room  {
     urlHinhDaiDien: string | null;
   }
 
+  export interface ChucVu  {
+    maChucVu: string;
+    tenChucVu: string;
+    trangThai: string;
+    };
+    
   export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
   export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
   export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;

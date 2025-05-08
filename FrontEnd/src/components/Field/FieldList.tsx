@@ -1,126 +1,93 @@
-import {
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import FieldDetail from "./FieldDetail";
-// interface Fileds {
-//   id: string;
-//   name: string;
-// }
+import axios from "axios";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LinhVuc } from "../Type/Types";
+
 export default function FieldList() {
   const [search, setSearch] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const [isOpenShare, setIsOpenShare] = useState(false);
-  const [isOpenType, setIsOpenType] = useState(false);
-  //   const [dataList, setDataList] = useState<Roles[]>([]);
-  //   const [loading, setLoading] = useState(true);
-  //   const [error, setError] = useState<string | null>(null);
-
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const shareRef = useRef<HTMLDivElement | null>(null);
-  const typeRef = useRef<HTMLDivElement | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [linhvucs, setlinhvuc] = useState<LinhVuc[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  // Fetch data from API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/linhvuc/linhvucs"
+        );
+        console.log("API Response:", response.data);
 
-  const fieldList = useMemo(
-    () => [
-      {
-        id: "LV01",
-        name: "Lập trình",
-      },
-      {
-        id: "LV02",
-        name: "Thiết kế đồ họa",
-      },
-      {
-        id: "LV03",
-        name: "Quản trị mạng",
-      },
-      {
-        id: "LV04",
-        name: "Quản trị hệ thống",
-      },
-    ],
-    []
-  );
+        const linhvucList = response.data.data;
+        // Kiểm tra dữ liệu trả về từ API
+        setlinhvuc(linhvucList);
+        setTotalPages(totalPages);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch("http://localhost:8080/linhvuc/linhvucs");
-  //       const data = await response.json();
-  //       setDataList(data);
-  //     } catch (err) {
-  //       console.error(err);
-  //       setError("Không thể tải dữ liệu.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+    fetchCourses();
+  }, [currentPage]);
 
-  //   useEffect(() => {
-  //     fetchData();
-  //   }, []);
-  //   useEffect(() => {
-  //     if (loading) {
-  //       setError(null);
-  //     }
-  //   }, [loading]);
-
-  const handleViewClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setIsSidebarOpen((prev) => !prev);
+  useEffect(() => {
+    console.log("Danh sách lĩnh vực:", linhvucs); // Kiểm tra dữ liệu trong state
+  }, [linhvucs]);
+  // Handle button
+  const handleAdd = () => {
+    navigate("/linhvuc/add-linhvuc");
   };
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const handleCloseSidebar = (e: MouseEvent<HTMLDivElement>) => {
-    if (!menuRef.current?.contains(e.target as Node) && isSidebarOpen) {
-      setIsSidebarOpen(false);
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa lĩnh vực này?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/linhvuc/delete/${id}`);
+      alert("Xóa lĩnh vực thành công!");
+      // Cập nhật lại danh sách lĩnh vực sau khi xóa
+      setlinhvuc((prev) => prev.filter((linhvuc) => linhvuc.maLinhVuc !== id));
+    } catch (error) {
+      console.error("Lỗi khi xóa lĩnh vực:", error);
+      alert("Xóa lĩnh vực thất bại!");
     }
   };
 
-  const handleClickOutside = useCallback(
-    (event: Event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        isOpenMenu
-      ) {
-        setIsOpenMenu(false);
-      }
-      if (
-        shareRef.current &&
-        !shareRef.current.contains(event.target as Node) &&
-        isOpenShare
-      ) {
-        setIsOpenShare(false);
-      }
-      if (
-        typeRef.current &&
-        !typeRef.current.contains(event.target as Node) &&
-        isOpenType
-      ) {
-        if (
-          event.target instanceof HTMLElement &&
-          typeRef.current.contains(event.target)
-        ) {
-          return;
-        }
-        setIsOpenType(false);
-      }
-    },
-    [isOpenMenu, isOpenShare, isOpenType]
+  const handleView = (linhvuc: LinhVuc) => {
+    navigate(`/linhvuc/get-linhvuc/${linhvuc.maLinhVuc}`, {
+      state: { linhvuc },
+    });
+  };
+  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
+
+  //  10 items per page
+  const [linhVuc, setLinhVuc] = useState<string | null>(null);
+  const itemsPerPage = 10;
+  const filteredList = (linhvucs || []).filter((c) => {
+    const matchSearch =
+      c.maLinhVuc.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenLinhVuc.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || c.maLinhVuc === linhVuc;
+    return matchSearch && matchLinhVuc;
+  });
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [handleClickOutside]);
-
+  // if (loading) {
+  //   return <div>Đang tải dữ liệu...</div>;
+  // }
   return (
-    <div onClick={handleCloseSidebar} className="h-full">
+    <div className="h-full mt-2">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold mx-4">Danh mục Lĩnh vực</h2>
         <div className=" gap-4 inline-flex">
@@ -152,20 +119,36 @@ export default function FieldList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {fieldList.map((fieldList) => (
+                  {linhvucs.map((item) => (
                     <button
-                      key={fieldList.id}
+                      key={item.maLinhVuc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setLinhVuc(item.maLinhVuc);
+                        setIsOpenMenu(false);
+                      }}
                     >
-                      {fieldList.name}
+                      {item.tenLinhVuc}
                     </button>
                   ))}
+                  <button
+                    onClick={() => {
+                      setLinhVuc(null);
+                      setIsOpenMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
+                  >
+                    Huỷ
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
-          <button className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600">
+          <button
+            className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
+            onClick={handleAdd}
+          >
             Thêm
           </button>
         </div>
@@ -178,24 +161,26 @@ export default function FieldList() {
               <th className="p-2 border">STT</th>
               <th>Mã Lĩnh vực</th>
               <th className="p-2 border">Tên Lĩnh vực</th>
+              <th className="p-2 border">Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {fieldList
-              .filter(
-                (c) =>
-                  c.name.toLowerCase().includes(search.toLowerCase()) ||
-                  c.id.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((c, index) => (
-                <tr key={c.id} className="border-b">
+            {paginatedList.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="text-center py-4 text-gray-500">
+                  Không có dữ liệu
+                </td>
+              </tr>
+            ) : (
+              paginatedList.map((linhvuc, index) => (
+                <tr key={linhvuc.maLinhVuc} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{c.id}</td>
-                  <td className="p-2 text-center">{c.name}</td>
+                  <td className="p-2 text-center">{linhvuc.maLinhVuc}</td>
+                  <td className="p-2 text-center">{linhvuc.tenLinhVuc}</td>
 
                   <td className="p-2 text-center">
                     <button
-                      onClick={handleViewClick}
+                      onClick={() => handleView(linhvuc)}
                       className=" mx-2 border p-2 rounded-md items-center align-middle"
                     >
                       <svg
@@ -213,20 +198,60 @@ export default function FieldList() {
                         />
                       </svg>
                     </button>
+                    <button
+                      className="border p-2 rounded-md items-center align-middle"
+                      onClick={() => handleDelete(linhvuc.maLinhVuc)}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
+                      </svg>
+                    </button>
                   </td>
                 </tr>
-              ))}
+              ))
+            )}
           </tbody>
         </table>
-      </div>
-      {/* Sidebar Button*/}
-      <div
-        className={`absolute bg-white w-2/3 min-h-screen overflow-y-auto transition-transform transform ease-in-out duration-300 top-0 right-0 ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <FieldDetail />
+        <div className="flex justify-end p-2">
+          <div className="flex justify-between gap-2 items-center px-4 pb-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-500 disabled:opacity-50"
+            >
+              Trang trước
+            </button>
+            <span className="px-4 py-2 text-md font-medium text-gray-700">
+              Trang {currentPage} / {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="px-4 py-2  bg-gray-300 rounded hover:bg-gray-500 disabled:opacity-50"
+            >
+              Trang sau
+            </button>
+            <button
+              // onClick={handleExportExcel}
+              className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
+            >
+              Export Excel
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
