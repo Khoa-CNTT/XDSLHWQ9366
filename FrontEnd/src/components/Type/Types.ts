@@ -13,10 +13,12 @@ export interface Lecturer  {
   ghiChu: string;
   urlHinhDaiDien: string | null;
   };
+
   export interface LinhVuc {
     maLinhVuc: string;
     tenLinhVuc: string;
-  }
+  };
+
 export interface Course  {
   maKhoaHoc: string;
   tenKhoaHoc: string;
@@ -115,6 +117,33 @@ export interface Room  {
     trangThai: string;
     };
     
+  export interface PhieuThu  {
+      maPhieuThu: string;
+      tenPhieuThu: string;
+      maNhanVien: string;
+      nguoiNop: string;
+      soTien: string;
+      ngayThu: string;
+      };
+
+  export interface PhieuChi  {
+        maPhieuChi: string;
+        tenPhieuChi: string;
+        maNhanVien: string;
+        nguoiNhan: string;
+        soTien: string;
+        ngayChi: string;
+        };
+
+        export interface LienHe  {
+          maLienHe: string;
+          tenLienHe: string;
+          soDienThoai: string;
+          email: string;
+          ngayLienHe: string;
+          };
+
+
   export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
   export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
   export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;
