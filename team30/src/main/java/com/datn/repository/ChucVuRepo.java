@@ -10,4 +10,14 @@ public interface ChucVuRepo {
 
     ChucVu findById(String maChucVu);
 
+    ChucVu add(ChucVu chucVu);
+
+    ChucVu update(ChucVu chucVu);
+
+    void delete(String maChucVu);
+
+    void checkChucVuExists(String tenChucVu);
+
+    List<ChucVu> pagination(int pageNumber, int pageSize);
+
 }
