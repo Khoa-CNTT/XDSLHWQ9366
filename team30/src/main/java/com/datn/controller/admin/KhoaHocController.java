@@ -88,4 +88,21 @@ public class KhoaHocController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/getByMaLinhVuc")
+    public ResponseEntity<ApiResponse<PaginationResponse<KhoaHoc>>> getByMaLinhVuc
+            (@RequestParam String maLinhVuc,
+             @RequestParam(defaultValue = "1") int page,
+             @RequestParam(defaultValue = "2") int size) {
+        PaginationResponse<KhoaHoc> khoaHocs = this.khoaHocService.findByMaLinhVuc
+                (maLinhVuc, page, size);
+
+        ApiResponse<PaginationResponse<KhoaHoc>> apiResponse = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Danh sách các khóa học lấy theo mã lĩnh vực",
+                khoaHocs
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
 }

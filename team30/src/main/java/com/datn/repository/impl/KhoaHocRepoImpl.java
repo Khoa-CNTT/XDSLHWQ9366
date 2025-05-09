@@ -5,6 +5,7 @@ import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.phonghoc.DuplicatePhongHocException;
 import com.datn.repository.KhoaHocRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -57,6 +58,18 @@ public class KhoaHocRepoImpl implements KhoaHocRepo {
         List<KhoaHoc> khoaHocs = typedQuery.getResultList();
 
         return khoaHocs;
+    }
+
+    @Override
+    public List<KhoaHoc> findByMaLinhVuc(String maLinhVuc, int pageNumber, int pageSize) {
+        Query query = this.entityManager.createNativeQuery(
+                "SELECT * FROM KHOAHOCS WHERE MALINHVUC LIKE ?", KhoaHoc.class);
+        query.setParameter(1, "%" + maLinhVuc + "%");
+
+        query.setFirstResult((pageNumber - 1) * pageSize);
+        query.setMaxResults(pageSize);
+
+        return query.getResultList();
     }
 
     @Override

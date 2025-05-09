@@ -14,6 +14,8 @@ public interface KhoaHocRepo {
 
     List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc);
 
+    List<KhoaHoc> findByMaLinhVuc(String maLinhVuc, int pageNumber, int pageSize);
+
     void checkKhoaHocExists(String tenKhoaHoc);
 
     KhoaHoc add(KhoaHoc khoaHoc);
