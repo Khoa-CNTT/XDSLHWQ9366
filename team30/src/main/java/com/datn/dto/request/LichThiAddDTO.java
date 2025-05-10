@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class LichThiAddDTO {
 
-    @NotBlank(message = "Mã lịch thi không được để trống")
     private String maLichThi;
 
     @NotBlank(message = "Tên chứng chỉ không được để trống")
@@ -39,14 +38,6 @@ public class LichThiAddDTO {
     }
 
     // Getters & Setters
-    public String getMaLichThi() {
-        return maLichThi;
-    }
-
-    public void setMaLichThi(String maLichThi) {
-        this.maLichThi = maLichThi;
-    }
-
     public String getTenChungChi() {
         return tenChungChi;
     }

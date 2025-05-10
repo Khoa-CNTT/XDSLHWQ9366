@@ -77,5 +77,25 @@ public class LichThiController {
         }
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<LichThi>>> getAll() {
+        try {
+            List<LichThi> lichThiList = lichThiService.getAllLichThi();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách lịch thi thành công", lichThiList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<ApiResponse<LichThi>> getById(@PathVariable String id) {
+        try {
+            LichThi lichThi = lichThiService.getLichThiById(id);
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy lịch thi thành công", lichThi));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
+    }
+
 }
 

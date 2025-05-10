@@ -19,4 +19,8 @@ public interface LichThiRepo {
     void delete(String id);
 
     List<LichThi> search(String maLichThi, String tenChungChi);
+
+    List<LichThi> getAllLichThi();
+
+    LichThi getLichThiById(String id);
 }

@@ -44,4 +44,17 @@ public class LichThiServiceImpl implements LichThiService {
     public List<LichThi> search(String maLichThi, String tenChungChi) {
         return lichThiRepo.search(maLichThi, tenChungChi);
     }
+
+    @Override
+    public List<LichThi> getAllLichThi() {
+        return lichThiRepo.getAllLichThi();
+    }
+
+    @Override
+    public LichThi getLichThiById(String id) {
+        return lichThiRepo.getLichThiById(id);
+    }
+
 }
+
+
