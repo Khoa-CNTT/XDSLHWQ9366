@@ -1,79 +1,66 @@
-package com.datn.entity;
+package com.datn.dto.request;/*
+ * @project team30
+ * @author Huy
+ */
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "BAIVIETS")
-public class BaiViet {
+public class BaiVietUpdateDTO {
 
-    @Id
-    @Column(name = "MABAIVIET", length = 255, nullable = false)
     @NotBlank(message = "Mã bài viết không được để trống")
     private String maBaiViet;
 
-    @Column(name = "TIEUDE", length = 255, nullable = false)
     @NotBlank(message = "Tiêu đề không được để trống")
     @Size(max = 255, message = "Tiêu đề không được vượt quá 255 ký tự")
     private String tieuDe;
 
-    @Column(name = "URIHINHANHMINHHOA", length = 255, nullable = false)
     @NotBlank(message = "URI hình ảnh minh họa không được để trống")
     @Size(max = 255, message = "URI hình ảnh minh họa không được vượt quá 255 ký tự")
     private String uriHinhAnhMinhHoa;
 
-    @Lob
-    @Column(name = "NOIDUNGTOMTAT", nullable = false)
     @NotBlank(message = "Nội dung tóm tắt không được để trống")
     private String noiDungTomTat;
 
-    @Lob
-    @Column(name = "NOIDUNG", nullable = false)
     @NotBlank(message = "Nội dung không được để trống")
     private String noiDung;
 
-    @Column(name = "NGAYDANG", nullable = false)
     @NotNull(message = "Ngày đăng không được để trống")
     @FutureOrPresent(message = "Ngày đăng phải là ngày hiện tại hoặc trong tương lai")
     private LocalDate ngayDang;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "NGUOIVIETBAI", nullable = false)
-    @NotNull(message = "Nhân viên viết bài không được để trống")
-    private NhanVien nhanVien;
+    @NotNull(message = "Mã nhân viên viết bài không được để trống")
+    private String nhanVienId; // ID của nhân viên viết bài
 
-    @Column(name = "LANCAPNHATCUOICUNG")
+    @NotNull(message = "Lần cập nhật cuối cùng không được để trống")
+    @FutureOrPresent(message = "Lần cập nhật cuối cùng phải là ngày hiện tại hoặc trong tương lai")
     private LocalDate lanCapNhatCuoiCung;
 
-    @Column(name = "SOLUONGTRUYCAP", nullable = false)
     @Min(value = 0, message = "Số lượng truy cập phải lớn hơn hoặc bằng 0")
     private int soLuongTruyCap;
 
-    @Column(name = "MENU", length = 255, nullable = false)
     @NotBlank(message = "Menu không được để trống")
     @Size(max = 255, message = "Menu không được vượt quá 255 ký tự")
     private String menu;
 
-    @Column(name = "TRANGTHAI", nullable = false)
     @NotNull(message = "Trạng thái không được để trống")
-    private boolean trangThai;
+    private Boolean trangThai;
 
     // Default constructor
-    public BaiViet() {}
+    public BaiVietUpdateDTO() {}
 
     // Full constructor
-    public BaiViet(String maBaiViet, String tieuDe, String uriHinhAnhMinhHoa, String noiDungTomTat, String noiDung,
-                   LocalDate ngayDang, NhanVien nhanVien, LocalDate lanCapNhatCuoiCung, int soLuongTruyCap, String menu,
-                   boolean trangThai) {
+    public BaiVietUpdateDTO(String maBaiViet, String tieuDe, String uriHinhAnhMinhHoa, String noiDungTomTat, String noiDung,
+                            LocalDate ngayDang, String nhanVienId, LocalDate lanCapNhatCuoiCung, int soLuongTruyCap, String menu,
+                            Boolean trangThai) {
         this.maBaiViet = maBaiViet;
         this.tieuDe = tieuDe;
         this.uriHinhAnhMinhHoa = uriHinhAnhMinhHoa;
         this.noiDungTomTat = noiDungTomTat;
         this.noiDung = noiDung;
         this.ngayDang = ngayDang;
-        this.nhanVien = nhanVien;
+        this.nhanVienId = nhanVienId;
         this.lanCapNhatCuoiCung = lanCapNhatCuoiCung;
         this.soLuongTruyCap = soLuongTruyCap;
         this.menu = menu;
@@ -128,12 +115,12 @@ public class BaiViet {
         this.ngayDang = ngayDang;
     }
 
-    public NhanVien getNhanVien() {
-        return nhanVien;
+    public String getNhanVienId() {
+        return nhanVienId;
     }
 
-    public void setNhanVien(NhanVien nhanVien) {
-        this.nhanVien = nhanVien;
+    public void setNhanVienId(String nhanVienId) {
+        this.nhanVienId = nhanVienId;
     }
 
     public LocalDate getLanCapNhatCuoiCung() {
@@ -160,11 +147,11 @@ public class BaiViet {
         this.menu = menu;
     }
 
-    public boolean isTrangThai() {
+    public Boolean getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(boolean trangThai) {
+    public void setTrangThai(Boolean trangThai) {
         this.trangThai = trangThai;
     }
 }
