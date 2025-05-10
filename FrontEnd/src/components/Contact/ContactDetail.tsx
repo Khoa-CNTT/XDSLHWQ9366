@@ -1,23 +1,22 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { LienHe } from "../Type/Types";
+import { toast } from "react-toastify"; // 👈 Thêm dòng này
 
 export default function ContactDetail() {
-  const [formData, setFormData] = useState({
-    id: "NV01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "HANTA",
-    tinhTrang: "dangLam",
-    linhVuc: "keToan",
-    datestart: "2025-01-01",
-    dateend: "2025-01-10",
-    dateLH: "2025-01-01",
-    ghiChu: "",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<LienHe>(
+    location.state?.lienhe || {
+      maKhach: "",
+      hoTen: "",
+      soDienThoai: "",
+      email: "",
+      ngayLienHe: "",
+      yKien: "",
+    }
+  );
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -28,200 +27,183 @@ export default function ContactDetail() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
-    console.log("Thêm giảng viên:", formData);
-    alert("Thêm giảng viên thành công!");
-  };
+  const handleSave = async () => {
+    if (!formData.hoTen || !formData.soDienThoai || !formData.email) {
+      toast.warning("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email.");
+      return;
+    }
 
-  const handleSave = () => {
-    console.log("Lưu thông tin giảng viên:", formData);
-    alert("Lưu thông tin thành công!");
-  };
+    try {
+      const res = await fetch(
+        `http://localhost:8080/lienhe/update/${formData.maKhach}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
-    );
-    if (confirmDelete) {
-      setFormData({
-        id: "",
-        name: "",
-        dob: "",
-        gioiTinh: "",
-        CCCD: "",
-        SDT: "",
-        email: "",
-        address: "",
-        coQuan: "",
-        tinhTrang: "",
-        linhVuc: "",
-        datestart: "",
-        dateend: "",
-        dateLH: "",
-        ghiChu: "",
-      });
-      alert("Đã xóa thông tin giảng viên.");
+      if (!res.ok) {
+        throw new Error("Cập nhật thất bại");
+      }
+
+      toast.success("✅ Cập nhật thành công!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      toast.error("❌ Cập nhật thất bại!");
     }
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa liên hệ này?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(`http://localhost:8080/lienhe/delete/${formData.maKhach}`, {
+        method: "DELETE",
+      });
+      toast.success("🗑️ Xóa liên hệ thành công!");
+      navigate(-1);
+    } catch (err) {
+      console.error("Lỗi khi xóa liên hệ:", err);
+      toast.error("❌ Xóa liên hệ thất bại!");
+    }
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div>
-      <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Liên hệ
+    <div className="w-full mx-auto p-8 bg-white rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl p-2 text-white font-extrabold bg-orange-400 rounded-md">
+          Chi Tiết Liên Hệ
         </h2>
+        <button
+          onClick={handleBack}
+          className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
+          Quay lại
+        </button>
+      </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <div className="col-start">
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Mã Khách
-              </label>
-              <input
-                type="text"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
-              >
-                SĐT
-              </label>
-
-              <input
-                type="text"
-                name="SDT"
-                value={formData.SDT}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày bắt đầu
-              </label>
-              <input
-                type="date"
-                name="datestart"
-                value={formData.datestart}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày kết thúc
-              </label>
-              <input
-                type="date"
-                name="dateend"
-                value={formData.dateend}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <div className="flex p-1 w-full justify-center border items-center">
+            <label
+              htmlFor="maKhach"
+              className="w-1/2 text-gray-700 text-sm font-bold"
+            >
+              Mã Khách
+            </label>
+            <input
+              type="text"
+              id="maKhach"
+              name="maKhach"
+              value={formData.maKhach}
+              readOnly
+              className="form-input w-full pl-1 bg-gray-100 rounded-md border border-gray-300"
+            />
           </div>
-          {/* Cột 2 */}
-          <div className="col-end">
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Họ tên
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
-              >
-                Email
-              </label>
-              <input
-                type="text"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Ngày liên hệ
-              </label>
-              <input
-                type="date"
-                name="dateLH"
-                value={formData.dateLH}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+
+          <div className="flex p-1 w-full justify-center border items-center">
+            <label
+              htmlFor="soDienThoai"
+              className="w-1/2 text-gray-700 text-sm font-bold"
+            >
+              Số Điện Thoại
+            </label>
+            <input
+              type="text"
+              id="soDienThoai"
+              name="soDienThoai"
+              value={formData.soDienThoai}
+              onChange={handleChange}
+              className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+            />
           </div>
         </div>
-        <div className="flex p-1 w-full justify-center border">
-          <label
-            className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
-          >
-            Ghi chú
-          </label>
 
-          <textarea
-            name="description"
-            rows={4}
-            placeholder="Nhập nội dung..."
-            className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <div>
+          <div className="flex p-1 w-full justify-center border items-center">
+            <label
+              htmlFor="hoTen"
+              className="w-1/2 text-gray-700 text-sm font-bold"
+            >
+              Họ Tên
+            </label>
+            <input
+              type="text"
+              id="hoTen"
+              name="hoTen"
+              value={formData.hoTen}
+              onChange={handleChange}
+              className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+            />
+          </div>
+
+          <div className="flex p-1 w-full justify-center border items-center">
+            <label
+              htmlFor="email"
+              className="w-1/2 text-gray-700 text-sm font-bold"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+            />
+          </div>
         </div>
-        <div className="flex justify-center p-4 gap-4">
-          <button
-            type="button"
-            onClick={handleAdd}
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
-          >
-            Lưu
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            Xoá
-          </button>
-        </div>
+      </div>
+
+      <div className="flex p-1 w-full justify-center border items-center mt-2">
+        <label
+          htmlFor="yKien"
+          className="w-1/5 text-gray-700 text-sm font-bold"
+        >
+          Ý Kiến
+        </label>
+        <textarea
+          id="yKien"
+          name="yKien"
+          rows={4}
+          value={formData.yKien}
+          onChange={handleChange}
+          placeholder="Nhập ý kiến..."
+          className="form-textarea w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+        />
+      </div>
+
+      {formData.ngayLienHe && (
+        <p className="text-right text-sm text-gray-500 mt-2">
+          Ngày liên hệ: {formData.ngayLienHe}
+        </p>
+      )}
+
+      <div className="flex justify-center p-4 gap-4">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="w-32 p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
+          Lưu
+        </button>
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="w-32 py-2 px-4 bg-red-500 text-white font-bold rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+        >
+          Xoá
+        </button>
       </div>
     </div>
   );

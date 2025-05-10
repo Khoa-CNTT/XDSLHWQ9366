@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LienHe } from "../Type/Types";
+import { toast } from "react-toastify"; // 👈 Thêm dòng này
 
 export default function Contacts() {
   const [search, setSearch] = useState("");
@@ -10,7 +11,9 @@ export default function Contacts() {
   const [lienhes, setlienhe] = useState<LienHe[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // Fetch data from API
+
+  const itemsPerPage = 10;
+
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
@@ -18,14 +21,12 @@ export default function Contacts() {
         const response = await axios.get(
           "http://localhost:8080/lienhe/lienhes"
         );
-        console.log("API Response:", response.data);
-
-        const lienheList = response.data.data;
-        // Kiểm tra dữ liệu trả về từ API
+        const lienheList = response.data.data || [];
         setlienhe(lienheList);
         setTotalPages(Math.ceil(lienheList.length / itemsPerPage));
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
+        toast.error("❌ Không thể tải danh sách liên hệ!");
       } finally {
         setLoading(false);
       }
@@ -34,58 +35,54 @@ export default function Contacts() {
     fetchCourses();
   }, [currentPage]);
 
-  useEffect(() => {
-    console.log("Danh sách lĩnh vực:", lienhes); // Kiểm tra dữ liệu trong state
-  }, [lienhes]);
-  // Handle button
   const handleAdd = () => {
     navigate("/lienhe/add-lienhe");
   };
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa lĩnh vực này?"
+      "Bạn có chắc chắn muốn xóa liên hệ này?"
     );
     if (!confirmDelete) return;
 
     try {
       await axios.delete(`http://localhost:8080/lienhe/delete/${id}`);
-      alert("Xóa lĩnh vực thành công!");
-      // Cập nhật lại danh sách lĩnh vực sau khi xóa
-      setlienhe((prev) => prev.filter((lienhe) => lienhe.maLienHe !== id));
+      toast.success("🗑️ Xóa liên hệ thành công!");
+      setlienhe((prev) => prev.filter((lienhe) => lienhe.maKhach !== id));
     } catch (error) {
-      console.error("Lỗi khi xóa lĩnh vực:", error);
-      alert("Xóa lĩnh vực thất bại!");
+      console.error("Lỗi khi xóa liên hệ:", error);
+      toast.error("❌ Xóa liên hệ thất bại!");
     }
   };
 
   const handleView = (lienhe: LienHe) => {
-    navigate(`/lienhe/get-lienhe/${lienhe.maLienHe}`, {
-      state: { lienhe },
-    });
+    navigate(`/lienhe/get-lienhe/${lienhe.maKhach}`, { state: { lienhe } });
   };
 
   const demoList = useMemo<LienHe[]>(
     () => [
       {
-        maLienHe: "NV01",
-        tenLienHe: "Lê Văn A",
+        maKhach: "NV01",
+        hoTen: "Lê Văn A",
         soDienThoai: "0385665243",
         email: "abc123@gmail.com",
+        yKien: "1",
         ngayLienHe: "2025-01-01",
       },
       {
-        maLienHe: "NV02",
-        tenLienHe: "Lê Văn B",
+        maKhach: "NV02",
+        hoTen: "Lê Văn B",
         soDienThoai: "0385665243",
         email: "zxc456@gmail.com",
+        yKien: "2",
         ngayLienHe: "2025-01-02",
       },
       {
-        maLienHe: "NV03",
-        tenLienHe: "Lê Văn C",
+        maKhach: "NV03",
+        hoTen: "Lê Văn C",
         soDienThoai: "0385665243",
         email: "xyz789@gmail.com",
+        yKien: "1",
         ngayLienHe: "2025-01-03",
       },
     ],
@@ -95,11 +92,10 @@ export default function Contacts() {
   // Loại bỏ các giá trị trùng lặp
 
   //  10 items per page
-  const itemsPerPage = 10;
   const filteredList = (demoList || []).filter((c: LienHe) => {
     const matchSearch =
-      c.maLienHe.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenLienHe.toLowerCase().includes(search.toLowerCase());
+      c.maKhach.toLowerCase().includes(search.toLowerCase()) ||
+      c.hoTen.toLowerCase().includes(search.toLowerCase());
 
     return matchSearch;
   });
@@ -161,10 +157,10 @@ export default function Contacts() {
           </thead>
           <tbody>
             {paginatedList.map((lienhe, index) => (
-              <tr key={lienhe.maLienHe} className="border-b">
+              <tr key={lienhe.maKhach} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{lienhe.maLienHe}</td>
-                <td className="p-2 text-center">{lienhe.tenLienHe}</td>
+                <td className="p-2 text-center">{lienhe.maKhach}</td>
+                <td className="p-2 text-center">{lienhe.hoTen}</td>
                 <td className="p-2 text-center">{lienhe.soDienThoai}</td>
                 <td className="p-2 text-center">{lienhe.email}</td>
                 <td className="p-2 text-center">{lienhe.ngayLienHe}</td>
@@ -190,7 +186,7 @@ export default function Contacts() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(lienhe.maLienHe)}
+                    onClick={() => handleDelete(lienhe.maKhach)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

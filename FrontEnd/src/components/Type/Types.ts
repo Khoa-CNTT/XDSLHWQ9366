@@ -119,28 +119,39 @@ export interface Room  {
     
   export interface PhieuThu  {
       maPhieuThu: string;
-      tenPhieuThu: string;
+      noiDung: string;
       maNhanVien: string;
       nguoiNop: string;
       soTien: string;
       ngayThu: string;
+      diaChi: string;
       };
 
   export interface PhieuChi  {
         maPhieuChi: string;
-        tenPhieuChi: string;
+        noiDung: string;
         maNhanVien: string;
         nguoiNhan: string;
         soTien: string;
         ngayChi: string;
+        diaChi: string;
         };
 
         export interface LienHe  {
-          maLienHe: string;
-          tenLienHe: string;
+          maKhach: string;
+          hoTen: string;
           soDienThoai: string;
           email: string;
+          yKien: string;
           ngayLienHe: string;
+          };
+  
+  export interface BaiViet  {
+          maBaiViet: string;
+          tieuDe: string;
+          luongTruyCap: string;
+          trangThai: string;
+          ngayDang: string;
           };
 
 
