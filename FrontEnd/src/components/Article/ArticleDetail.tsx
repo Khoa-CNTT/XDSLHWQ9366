@@ -1,18 +1,20 @@
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { BaiViet } from "../Type/Types";
+import { toast } from "react-toastify"; // 👈 Thêm dòng này
 
 export default function ArticleDetail() {
-  const [formData, setFormData] = useState({
-    id: "NV01",
-    title: "google",
-    tomTat: "",
-    ngayDang: "2025-01-01",
-    lanTruyCapCuoi: "2025-01-01",
-    nguoiViet: "Lê Văn A",
-    soLuong: 0,
-    nemu: "tinTuc",
-    trangThai: "true",
-    hinhAnh: "https://example.com/image.jpg",
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<BaiViet>(
+    location.state?.baiviet || {
+      maBaiViet: "",
+      tieuDe: "",
+      luongTruyCap: "",
+      trangThai: "",
+      ngayDang: "",
+    }
+  );
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -23,82 +25,128 @@ export default function ArticleDetail() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = () => {
-    console.log("Thêm giảng viên:", formData);
-    alert("Thêm giảng viên thành công!");
-  };
-
-  const handleSave = () => {
-    console.log("Lưu thông tin giảng viên:", formData);
-    alert("Lưu thông tin thành công!");
-  };
-
-  const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc muốn xóa giảng viên này?"
-    );
-    if (confirmDelete) {
-      setFormData({
-        id: " ",
-        title: " ",
-        tomTat: "",
-        ngayDang: " ",
-        lanTruyCapCuoi: " ",
-        nguoiViet: " ",
-        soLuong: 0,
-        nemu: " ",
-        trangThai: " ",
-        hinhAnh: " ",
-      });
-      alert("Đã xóa bài đăng.");
+  const handleSave = async () => {
+    if (!formData.hoTen || !formData.soDienThoai || !formData.email) {
+      toast.warning("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email.");
+      return;
     }
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/baiviet/update/${formData.maKhach}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Cập nhật thất bại");
+      }
+
+      toast.success("✅ Cập nhật thành công!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      toast.error("❌ Cập nhật thất bại!");
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa liên hệ này?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(
+        `http://localhost:8080/baiviet/delete/${formData.maBaiViet}`,
+        {
+          method: "DELETE",
+        }
+      );
+      toast.success("🗑️ Xóa liên hệ thành công!");
+      navigate(-1);
+    } catch (err) {
+      console.error("Lỗi khi xóa liên hệ:", err);
+      toast.error("❌ Xóa liên hệ thất bại!");
+    }
+  };
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-          Quản lý Bài đăng
-        </h2>
-
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl p-2 text-white font-extrabold bg-orange-400 rounded-md">
+            Quản lý Bài đăng
+          </h2>
+          <button
+            onClick={handleBack}
+            className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Quay lại
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
             <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="articleDetail"
-              >
-                Mã
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Mã Bài Viết
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maBaiViet"
+                value={formData.maBaiViet}
                 onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="articleDetail"
-              >
-                Người viết bài
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Tiêu đề
               </label>
+              <input
+                type="text"
+                name="tieuDe"
+                value={formData.tieuDe}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+          </div>
 
+          <div className="col-end">
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Lượng truy cập
+              </label>
               <input
                 type="text"
-                name="nguoiViet"
-                value={formData.nguoiViet}
+                name="luongTruyCap"
+                value={formData.luongTruyCap}
                 onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="articleDetail"
-              >
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Trạng thái
+              </label>
+              <input
+                type="text"
+                name="trangThai"
+                value={formData.trangThai}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
                 Ngày đăng
               </label>
               <input
@@ -106,86 +154,17 @@ export default function ArticleDetail() {
                 name="ngayDang"
                 value={formData.ngayDang}
                 onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          {/* Cột 2 */}
-          <div className="col-end">
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="articleDetail"
-              >
-                Tiêu đề
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="articleDetail"
-              >
-                Số lượng truy cập
-              </label>
-              <input
-                type="text"
-                name="soLuong"
-                value={formData.soLuong}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
-              >
-                Lần truy cập cuối
-              </label>
-              <input
-                type="date"
-                name="lanTruyCapCuoi"
-                value={formData.lanTruyCapCuoi}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
             </div>
           </div>
         </div>
-        <div className="flex p-1 w-full justify-center border">
-          <label
-            className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
-          >
-            Ghi chú
-          </label>
 
-          <textarea
-            name="description"
-            rows={4}
-            placeholder="Nhập nội dung..."
-            className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"
-            onClick={handleAdd}
-            className="w-32 py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Thêm
-          </button>
-          <button
-            type="button"
             onClick={handleSave}
-            className="w-32 p-2 border-white bg-orange-500 text-white font-bold rounded-md hover:bg-orange-600 focus:outline-none  focus:ring-2 focus:ring-orange-500"
+            className="w-32 p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Lưu
           </button>

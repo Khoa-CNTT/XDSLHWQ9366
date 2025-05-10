@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lecturer, linhVuc } from "../Type/Types";
+import { Lecturer, LinhVuc } from "../Type/Types";
 
 export default function LectureList() {
   const [search, setSearch] = useState("");
@@ -14,7 +14,7 @@ export default function LectureList() {
   const [itemsPerPage] = useState(10);
   const navigate = useNavigate();
 
-  const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
+  const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
 
   // Fetch data from API
   useEffect(() => {
@@ -73,243 +73,22 @@ export default function LectureList() {
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const lecturelist = useMemo<Lecturer[]>(
-    () => [
-      {
-        maGiangVien: "GV01",
-        tenGiangVien: "Lê Đức Thảo",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV02",
-        tenGiangVien: "Trương Thị Ngọc Ánh",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV03",
-        tenGiangVien: "Nguyễn Thanh Anh",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "cntt",
-          name: "Công nghệ thông tin",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV04",
-        tenGiangVien: "Đoàn Văn Huy",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV05",
-        tenGiangVien: "Nguyễn Hữu Thành",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV06",
-        tenGiangVien: "Lê Văn B",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV07",
-        tenGiangVien: "Lê Văn B",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "java",
-          name: "Java",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV08",
-        tenGiangVien: "Lê Văn C",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "iot",
-          name: "IOT",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV09",
-        tenGiangVien: "Lê Văn D",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "iot",
-          name: "IOT",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "GV10",
-        tenGiangVien: "Lê Văn E",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "KHMT",
-          name: "Khoa học máy tính",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "11",
-        tenGiangVien: "Lê Văn A",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "KHMT",
-          name: "Khoa học máy tính",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-      {
-        maGiangVien: "11",
-        tenGiangVien: "Lê Văn A",
-        ngaySinh: "1997-08-15",
-        gioiTinh: "true",
-        soCMND: "048097000077",
-        soDienThoai: "0385665243",
-        email: "ducthao2112@gmail.com",
-        diaChi: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuanCongTac: "DTU",
-        tinhTrangCongTac: "dangDay",
-        linhVuc: {
-          id: "KHMT",
-          name: "Khoa học máy tính",
-        },
-        ghiChu: "",
-        urlHinhDaiDien: null,
-      },
-    ],
-    []
-  );
   const linhVucList = useMemo(
     () => [
       {
-        id: "java",
+        id: "LV01",
         name: "Java",
       },
       {
-        id: "iot",
+        id: "LV02",
         name: "IOT",
       },
       {
-        id: "cntt",
+        id: "LV03",
         name: "Công nghệ thông tin",
       },
       {
-        id: "KHMT",
+        id: "LV04",
         name: "Khoa học máy tính",
       },
     ],
@@ -320,7 +99,7 @@ export default function LectureList() {
     const matchSearch =
       c.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
       c.maGiangVien.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.linhVuc.id === linhVuc.id;
+    const matchLinhVuc = !linhVuc || c.linhVuc?.name === linhVuc.name;
     return matchSearch && matchLinhVuc;
   });
 
@@ -349,7 +128,7 @@ export default function LectureList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              {linhVuc ? linhVuc.name : "Tất cả lĩnh vực"}
+              {linhVuc ? linhVuc.tenLinhVuc : "Tất cả lĩnh vực"}
               {!linhVuc && (
                 <svg
                   className="w-4 h-4 ml-2 inline"
@@ -425,8 +204,11 @@ export default function LectureList() {
                 <td className="p-2 text-center">{lecturer.soDienThoai}</td>
                 <td className="p-2 text-center">{lecturer.email}</td>
                 <td className="p-2 text-center">
-                  {linhVucList.find((lv) => lv.id === lecturer.linhVuc.id)
-                    ?.name || "Không xác định"}
+                  {lecturer.linhVuc
+                    ? linhVucList.find(
+                        (lv) => lv.id === lecturer.linhVuc?.maLinhVuc
+                      )?.name || "Không xác định"
+                    : "Không xác định"}
                 </td>
 
                 <td className="p-2 text-center">

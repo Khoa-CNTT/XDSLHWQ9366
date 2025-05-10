@@ -91,7 +91,7 @@ export default function AddClass() {
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl p-2 text-white font-extrabold mb-4 text-center bg-orange-400 rounded-md">
-            Quản lý lớp học
+            Thêm lớp học
           </h2>
           <button
             onClick={handleBack}

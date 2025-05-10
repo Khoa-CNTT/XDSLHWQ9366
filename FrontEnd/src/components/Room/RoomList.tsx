@@ -133,7 +133,7 @@ export default function RoomList() {
             {/* Button */}
             <button
               onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
+              className="inline min-w-[200px] border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
               {ghiChu || "Tất cả ghi chú"}
               <svg

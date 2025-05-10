@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lecturer } from "../Type/Types";
 
 function AddLecture() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<Lecturer>({
-    maGiangVien: "",
+  const [formData, setFormData] = useState({
     tenGiangVien: "",
     ngaySinh: "",
     gioiTinh: "",
@@ -16,27 +14,28 @@ function AddLecture() {
     diaChi: "",
     coQuanCongTac: "",
     tinhTrangCongTac: "",
-    linhVuc: {
-      id: "",
-      name: "",
-    },
+    linhVuc: "",
     ghiChu: "",
     urlHinhDaiDien: null,
   });
 
   const saveToBackend = async () => {
     try {
+      const payload = {
+        ...formData,
+        tinhTrangCongTac: formData.tinhTrangCongTac === "true", // Chuyển đổi chuỗi thành boolean
+      };
+
       const res = await fetch("http://localhost:8080/giangvien/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error("Lỗi khi gửi dữ liệu");
-      else {
-        alert("Thêm giảng viên thành công!");
-        handleClear();
-        console.log("Lưu thông tin giảng viên:", formData);
-      }
+      alert("Thêm giảng viên thành công!");
+      handleClear();
+      console.log("Lưu thông tin giảng viên:", payload);
     } catch (err) {
       if (err instanceof Error) {
         alert("Lỗi kết nối backend: " + err.message);
@@ -52,14 +51,23 @@ function AddLecture() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleChangeData = async () => {
-    const { tenGiangVien, ngaySinh, email } = formData;
+    const { tenGiangVien, ngaySinh, email, soCMND, soDienThoai, diaChi } =
+      formData;
 
     if (!tenGiangVien || !ngaySinh || !email) {
       alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
+      return;
+    }
+
+    if (tenGiangVien.length < 5 || tenGiangVien.length > 50) {
+      alert("Tên giảng viên phải từ 5 đến 50 ký tự!");
       return;
     }
 
@@ -68,12 +76,27 @@ function AddLecture() {
       alert("Email không hợp lệ!");
       return;
     }
+
+    // if (!/^\d{12}$/.test(soCMND)) {
+    //   alert("Số CMND phải gồm 12 chữ số!");
+    //   return;
+    // }
+
+    if (!/^0\d{9}$/.test(soDienThoai)) {
+      alert("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0!");
+      return;
+    }
+
+    if (diaChi.length > 255) {
+      alert("Địa chỉ không được vượt quá 255 ký tự!");
+      return;
+    }
+
     await saveToBackend();
   };
 
   const handleClear = () => {
     setFormData({
-      maGiangVien: "",
       tenGiangVien: "",
       ngaySinh: "",
       gioiTinh: "",
@@ -83,10 +106,7 @@ function AddLecture() {
       diaChi: "",
       coQuanCongTac: "",
       tinhTrangCongTac: "",
-      linhVuc: {
-        id: "",
-        name: "",
-      },
+      linhVuc: "",
       ghiChu: "",
       urlHinhDaiDien: null,
     });
@@ -94,19 +114,19 @@ function AddLecture() {
   const linhVucList = useMemo(
     () => [
       {
-        id: "java",
+        id: "LV01",
         name: "Java",
       },
       {
-        id: "iot",
+        id: "LV02",
         name: "IOT",
       },
       {
-        id: "cntt",
+        id: "LV03",
         name: "Công nghệ thông tin",
       },
       {
-        id: "khmt",
+        id: "LV04",
         name: "Khoa học máy tính",
       },
     ],
@@ -132,7 +152,7 @@ function AddLecture() {
 
         <div className="grid grid-cols-2 gap-2 py-2">
           <div className="col-start">
-            <div className="flex p-1 w-full justify-center border items-center">
+            {/* <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
                 htmlFor="addLecture"
@@ -142,9 +162,10 @@ function AddLecture() {
               <input
                 type="text"
                 name="maGiangVien"
+
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
+            </div> */}
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
@@ -216,7 +237,7 @@ function AddLecture() {
               <div className="w-full">
                 <select
                   name="linhVuc"
-                  value={formData.linhVuc.name}
+                  value={formData.linhVuc}
                   onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -315,8 +336,8 @@ function AddLecture() {
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Tình trạng --</option>
-                  <option value="dangDay">Đang dạy</option>
-                  <option value="sapBatDau">Sắp bắt đầu</option>
+                  <option value="Đang giảng dạy">Đang công tác</option>
+                  <option value="Đã nghỉ">Đã nghỉ</option>
                 </select>
               </div>
             </div>

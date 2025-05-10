@@ -28,19 +28,19 @@ export default function LectureDetail() {
   const linhVucList = useMemo(
     () => [
       {
-        id: "java",
+        id: "LV01",
         name: "Java",
       },
       {
-        id: "iot",
+        id: "LV02",
         name: "IOT",
       },
       {
-        id: "cntt",
+        id: "LV03",
         name: "Công nghệ thông tin",
       },
       {
-        id: "khmt",
+        id: "LV04",
         name: "Khoa học máy tính",
       },
     ],
@@ -202,7 +202,7 @@ export default function LectureDetail() {
                 >
                   <option value="">-- Lĩnh vực --</option>
                   {linhVucList.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.name} value={item.name}>
                       {item.name}
                     </option>
                   ))}
@@ -290,13 +290,13 @@ export default function LectureDetail() {
               <div className="w-full">
                 <select
                   name="tinhTrangCongTac"
-                  value={formData.tinhTrangCongTac} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
+                  value={formData.tinhTrangCongTac}
+                  onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Tình trạng --</option>
-                  <option value="dangDay">Đang dạy</option>
-                  <option value="sapBatDau">Sắp bắt đầu</option>
+                  <option value="true">Đang công tác</option>
+                  <option value="false">Đã nghỉ</option>
                 </select>
               </div>
             </div>

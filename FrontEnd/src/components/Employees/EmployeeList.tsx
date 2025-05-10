@@ -7,6 +7,7 @@ export default function EmployeeList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [selectedLinhVuc, setSelectedLinhVuc] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [employees, setemployees] = useState<Employee[]>([]);
@@ -76,7 +77,7 @@ export default function EmployeeList() {
         address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
         coQuan: "HANTA",
         tinhTrang: "dangLam",
-        linhVuc: "keToan",
+        linhVuc: "Kế toán",
         ghiChu: "",
       },
       {
@@ -90,21 +91,30 @@ export default function EmployeeList() {
         address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
         coQuan: "HANTA",
         tinhTrang: "dangLam",
-        linhVuc: "keToan",
+        linhVuc: "Thư ký",
         ghiChu: "",
       },
     ],
     []
   );
+
+  const uniqueLinhVuc = useMemo(() => {
+    const linhVucList = employeelist.map((e) => e.linhVuc);
+    return Array.from(new Set(linhVucList));
+  }, [employeelist]);
+
+  const handleSelectLinhVuc = (linhVuc: string | null) => {
+    setSelectedLinhVuc(linhVuc);
+    setIsOpenMenu(false);
+  };
   //  10 items per page
   const itemsPerPage = 10;
   const filteredList = employeelist.filter((c) => {
     const matchSearch =
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.id.toLowerCase().includes(search.toLowerCase());
-    // const matchLinhVuc = !c.linhVuc || c.linhVuc === linhVuc.id;
-    return matchSearch;
-    // && matchLinhVuc;
+    const matchLinhVuc = !selectedLinhVuc || c.linhVuc === selectedLinhVuc;
+    return matchSearch && matchLinhVuc;
   });
 
   const paginatedList = filteredList.slice(
@@ -144,14 +154,21 @@ export default function EmployeeList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {employeelist.map((e) => (
+                  {uniqueLinhVuc.map((linhVuc, index) => (
                     <button
-                      key={e.id}
+                      key={index}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => handleSelectLinhVuc(linhVuc)}
                     >
-                      {e.name}
+                      {linhVuc}
                     </button>
                   ))}
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
+                    onClick={() => handleSelectLinhVuc(null)}
+                  >
+                    Tất cả lĩnh vực
+                  </button>
                 </div>
               </div>
             )}
