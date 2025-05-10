@@ -1,5 +1,4 @@
 import { useParams, Link } from "react-router-dom";
-import courseItems from "../../constants/courseData";
 import {
   MdOndemandVideo,
   MdOutlineDevices,
@@ -21,38 +20,148 @@ import {
   FaShare,
 } from "react-icons/fa";
 import { RiGlobalLine } from "react-icons/ri";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
 import { FadeUp } from "../Home/Hero/Hero";
+import { HiArrowNarrowRight } from "react-icons/hi";
+import { useNotification } from "../../context/NotificationContext";
+// Định nghĩa interface cho dữ liệu khóa học
+interface LinhVuc {
+  maLinhVuc: string;
+  tenLinhVuc: string;
+}
 
-// Define the Course interface to ensure proper typing
 interface Course {
-  makhoahoc: string;
-  tenkhoahoc: string;
-  malinhvuc: string;
-  sobuoi: number;
-  hocphi: number;
-  noidungtomtatkhoahoc: string;
-  noidungkhoahoc: string;
-  ghichu: string;
+  maKhoaHoc: string;
+  tenKhoaHoc: string;
+  linhVuc: LinhVuc;
+  soBuoi: number;
+  hocPhi: number;
+  noiDungTomTatKhoaHoc: string;
+  noiDungKhoaHoc: string;
+  ghiChu: string;
+}
+
+interface ApiResponse {
+  status: number;
+  message: string;
+  data: Course;
 }
 
 const CourseDetail = () => {
-  const { id } = useParams();
-  const course = courseItems.find((c: Course) => String(c.makhoahoc) === id);
+  const { id } = useParams<{ id: string }>();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
+  const { notify } = useNotification();
+  // Hàm lấy thông tin chi tiết khóa học
+  const fetchCourse = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get<ApiResponse>(
+        `http://localhost:8080/khoahoc/getById/${id}`
+      );
+      setCourse(response.data.data);
+      fetchRelatedCourses(response.data.data.linhVuc.maLinhVuc);
+    } catch (err) {
+      console.error("Lỗi khi lấy thông tin khóa học:", err);
+      setError("Không thể lấy thông tin khóa học. Vui lòng thử lại.");
+      setCourse(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Hàm lấy các khóa học liên quan
+  const fetchRelatedCourses = async (maLinhVuc: string) => {
+    try {
+      const response = await axios.get<{
+        status: number;
+        message: string;
+        data: Course[];
+      }>(`http://localhost:8080/khoahoc/linhvuc/${maLinhVuc}`);
+      const filteredCourses = response.data.data.filter(
+        (c) => c.maKhoaHoc !== id
+      );
+      setRelatedCourses(filteredCourses.slice(0, 3));
+    } catch (err) {
+      console.error("Lỗi khi lấy khóa học liên quan:", err);
+      setRelatedCourses([]);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchCourse();
+    }
+  }, [id]);
 
   const addToCart = () => {
-    const cart: Course[] = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingCourse = cart.find(
-      (item: Course) => item.makhoahoc === course?.makhoahoc
-    );
-    if (!existingCourse && course) {
-      cart.push(course);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      // Show toast notification
-      alert("Course added to cart!");
+    if (!course || !course.maKhoaHoc || !course.tenKhoaHoc || !course.hocPhi) {
+      console.error("Dữ liệu khóa học không hợp lệ:", course);
+      notify(
+        "error",
+        "Không thể thêm khóa học vào giỏ hàng. Dữ liệu khóa học không hợp lệ."
+      );
+      return;
+    }
+
+    try {
+      // Lấy giỏ hàng từ localStorage
+      let cart: Course[] = [];
+      const cartData = localStorage.getItem("cart");
+      if (cartData) {
+        try {
+          cart = JSON.parse(cartData);
+          if (!Array.isArray(cart)) {
+            console.warn(
+              "Dữ liệu giỏ hàng không phải mảng, khởi tạo lại:",
+              cart
+            );
+            cart = [];
+          }
+        } catch (e) {
+          console.error("Lỗi khi parse dữ liệu giỏ hàng:", e);
+          cart = [];
+        }
+      }
+
+      // Kiểm tra khóa học đã tồn tại
+      const existingCourse = cart.find(
+        (item) => item.maKhoaHoc === course.maKhoaHoc
+      );
+
+      if (!existingCourse) {
+        // Tạo đối tượng khóa học với các trường cần thiết
+        const courseToAdd: Course = {
+          maKhoaHoc: course.maKhoaHoc,
+          tenKhoaHoc: course.tenKhoaHoc,
+          hocPhi: course.hocPhi,
+          linhVuc: course.linhVuc || { maLinhVuc: "", tenLinhVuc: "" },
+          soBuoi: course.soBuoi || 0,
+          noiDungTomTatKhoaHoc: course.noiDungTomTatKhoaHoc || "",
+          noiDungKhoaHoc: course.noiDungKhoaHoc || "",
+          ghiChu: course.ghiChu || "",
+        };
+        cart.push(courseToAdd);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        console.log("Đã thêm khóa học vào giỏ hàng:", courseToAdd);
+        notify("success", "Khóa học đã được thêm vào giỏ hàng!");
+      } else {
+        console.log("Khóa học đã tồn tại trong giỏ hàng:", course.maKhoaHoc);
+        notify("info", "Khóa học đã có trong giỏ hàng!");
+      }
+    } catch (err) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", err);
+      notify(
+        "error",
+        "Đã xảy ra lỗi khi thêm khóa học vào giỏ hàng. Vui lòng thử lại."
+      );
     }
   };
 
@@ -60,12 +169,24 @@ const CourseDetail = () => {
     setIsBookmarked(!isBookmarked);
   };
 
-  if (!course) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">
+        <div className="text-center p-8 bg-white rounded-xl shadow-md">
+          <p className="text-gray-700 text-xl font-medium">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!course || error) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">
         <div className="text-center p-8 bg-white rounded-xl shadow-md">
           <MdWarning className="text-5xl text-yellow-500 mx-auto mb-4" />
-          <p className="text-gray-700 text-xl font-medium">Course not found</p>
+          <p className="text-gray-700 text-xl font-medium">
+            {error || "Course not found"}
+          </p>
           <Link
             to="/courses"
             className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -77,28 +198,24 @@ const CourseDetail = () => {
     );
   }
 
-  const otherCourses = courseItems.filter(
-    (c: Course) => c.tenkhoahoc !== course.tenkhoahoc
-  );
-
   // Format content for better display
   const learningObjectives = [
-    course.noidungtomtatkhoahoc,
-    `Understand and apply the fundamental concepts of ${course.malinhvuc}`,
-    `Complete ${course.sobuoi} sessions with practical exercises`,
-    `Master ${course.noidungkhoahoc.split(".")[0]}`,
-    course.ghichu
-      ? course.ghichu
+    course.noiDungTomTatKhoaHoc,
+    `Understand and apply the fundamental concepts of ${course.linhVuc.tenLinhVuc}`,
+    `Complete ${course.soBuoi} sessions with practical exercises`,
+    `Master ${course.noiDungKhoaHoc.split(".")[0]}`,
+    course.ghiChu
+      ? course.ghiChu
       : "Receive a certificate upon course completion",
   ];
 
-  const contentSections = course.noidungkhoahoc
+  const contentSections = course.noiDungKhoaHoc
     .split(/\.\s+/)
     .filter(Boolean)
     .map((section, index) => ({
       id: index + 1,
       title: section.trim(),
-      duration: Math.floor(Math.random() * 40) + 20, // Random minutes between 20-60 for demo
+      duration: Math.floor(Math.random() * 40) + 20, // Random minutes for demo
     }));
 
   return (
@@ -121,15 +238,15 @@ const CourseDetail = () => {
                 <Link to="/courses" className="hover:text-white">
                   Courses
                 </Link>{" "}
-                /<span className="font-medium">{course.tenkhoahoc}</span>
+                /<span className="font-medium">{course.tenKhoaHoc}</span>
               </div>
 
               <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                {course.tenkhoahoc}
+                {course.tenKhoaHoc}
               </h1>
 
               <p className="text-lg text-black mb-4">
-                {course.noidungtomtatkhoahoc}
+                {course.noiDungTomTatKhoaHoc}
               </p>
 
               <div className="flex items-center gap-5 mb-6">
@@ -167,7 +284,7 @@ const CourseDetail = () => {
 
                 <span className="flex items-center gap-1">
                   <MdAccessTime />
-                  {course.sobuoi} sessions
+                  {course.soBuoi} sessions
                 </span>
               </div>
             </motion.div>
@@ -247,10 +364,10 @@ const CourseDetail = () => {
                   </h2>
                   <div className="prose text-gray-700">
                     <p className="mb-4">
-                      {course.noidungkhoahoc.split(".").slice(0, 3).join(". ")}
+                      {course.noiDungKhoaHoc.split(".").slice(0, 3).join(". ")}
                     </p>
                     <p>
-                      {course.noidungkhoahoc.split(".").slice(3).join(". ")}
+                      {course.noiDungKhoaHoc.split(".").slice(3).join(". ")}
                     </p>
                   </div>
                 </div>
@@ -353,7 +470,7 @@ const CourseDetail = () => {
                             <p className="text-gray-600">
                               {
                                 [
-                                  "The course is very engaging and detailed. The instructor explains clearly and understandably. I learned a lot of new things.",
+                                  "The course is very Engaging and detailed. The instructor explains clearly and understandably. I learned a lot of new things.",
                                   "The course content is rich, and the practical exercises helped me gain a deeper understanding of the topic. Well worth it!",
                                   "Amazing! I've been looking for a course like this for a long time. Now I feel much more confident in my skills.",
                                 ][review - 1]
@@ -379,13 +496,14 @@ const CourseDetail = () => {
               <div>
                 <h3 className="text-lg font-semibold">Admin</h3>
                 <p className="text-gray-500 text-sm mb-2">
-                  {course.malinhvuc} expert with over 10 years of experience
+                  {course.linhVuc.tenLinhVuc} expert with over 10 years of
+                  experience
                 </p>
                 <p className="text-gray-700">
                   The instructor has many years of experience in the field of{" "}
-                  {course.malinhvuc}. They have trained over 10,000 students and
-                  are highly regarded for their clear, concise, and effective
-                  teaching methods.
+                  {course.linhVuc.tenLinhVuc}. They have trained over 10,000
+                  students and are highly regarded for their clear, concise, and
+                  effective teaching methods.
                 </p>
               </div>
             </div>
@@ -415,7 +533,7 @@ const CourseDetail = () => {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="text-3xl font-bold text-gray-900">
-                  {course.hocphi.toLocaleString()} VND
+                  {course.hocPhi.toLocaleString()} VND
                 </div>
                 <div className="text-sm text-red-600 flex items-center gap-1">
                   <MdWarning />
@@ -453,11 +571,11 @@ const CourseDetail = () => {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <MdOndemandVideo className="text-xl text-secondary" />
-                    <span>{course.sobuoi} sessions</span>
+                    <span>{course.soBuoi} sessions</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <MdAccessTime className="text-xl text-secondary" />
-                    <span>Duration: {course.sobuoi * 2} hours</span>
+                    <span>Duration: {course.soBuoi * 2} hours</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <FaFlask className="text-xl text-secondary" />
@@ -486,30 +604,30 @@ const CourseDetail = () => {
       </div>
 
       {/* Other Courses */}
-      {otherCourses.length > 0 && (
+      {relatedCourses.length > 0 && (
         <div className="bg-white py-12">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Similar Courses
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {otherCourses.slice(0, 3).map((item: Course) => (
+              {relatedCourses.map((item) => (
                 <Link
-                  key={item.makhoahoc}
-                  to={`/course/${item.makhoahoc}`}
+                  key={item.maKhoaHoc}
+                  to={`/course/${item.maKhoaHoc}`}
                   className="block bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition group"
                 >
                   <div className="aspect-video bg-gradient-to-r bg-primary relative">
                     <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 text-white text-xs rounded px-2 py-1">
-                      {item.sobuoi} sessions
+                      {item.soBuoi} sessions
                     </div>
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-800 group-hover:text-secondary transition">
-                      {item.tenkhoahoc}
+                      {item.tenKhoaHoc}
                     </h3>
                     <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                      {item.noidungtomtatkhoahoc.substring(0, 80)}...
+                      {item.noiDungTomTatKhoaHoc.substring(0, 80)}...
                     </p>
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center">
@@ -523,7 +641,7 @@ const CourseDetail = () => {
                         <span className="text-xs text-gray-500 ml-1">(98)</span>
                       </div>
                       <div className="font-bold text-blue-800">
-                        {item.hocphi.toLocaleString()} VND
+                        {item.hocPhi.toLocaleString()} VND
                       </div>
                     </div>
                   </div>
@@ -536,18 +654,7 @@ const CourseDetail = () => {
                 className="inline-flex items-center px-6 py-3 border border-primary text-primary rounded-lg font-medium hover:bg-gray-50 transition"
               >
                 View All Courses
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-2"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11udanH3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <HiArrowNarrowRight className="h-5 w-5 ml-2" />
               </Link>
             </div>
           </div>
