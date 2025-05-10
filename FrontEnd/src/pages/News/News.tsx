@@ -65,38 +65,33 @@ const News = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filtered.length > 0 ? (
             filtered.map((article) => (
-              <div
-                key={article.maBaiViet}
-                className="border rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col"
-              >
-                <img
-                  src={article.uriHinhAnhMinhHoa}
-                  alt={article.tieuDe}
-                  className="rounded-lg w-full h-48 object-cover mb-4"
-                />
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {article.tieuDe}
-                </h2>
-                <p className="text-sm text-gray-600 mt-2 line-clamp-3">
-                  {article.noiDungTomTat}
-                </p>
-                <div className="flex-grow" />
-                <div className="text-xs text-gray-500 mt-3 flex justify-between items-center">
-                  <span className="flex items-center gap-1">
-                    <FiClock />
-                    {new Date(article.ngayDang).toLocaleDateString()}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiEye />
-                    {article.soLuongTruyCap}
-                  </span>
+              <Link to={`/news/${article.maBaiViet}`} key={article.maBaiViet}>
+                <div className="border rounded-2xl shadow-sm hover:shadow-md transition h-[450px] flex flex-col overflow-hidden">
+                  <img
+                    src={article.uriHinhAnhMinhHoa}
+                    alt={article.tieuDe}
+                    className="rounded-t-lg w-full h-48 object-cover"
+                  />
+                  <div className="p-4 flex flex-col flex-1">
+                    <h2 className="text-lg font-semibold text-gray-800 line-clamp-2 h-14">
+                      {article.tieuDe}
+                    </h2>
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-4 flex-1">
+                      {article.noiDungTomTat}
+                    </p>
+                    <div className="text-xs text-gray-500 mt-3 flex justify-between items-center">
+                      <span className="flex items-center gap-1">
+                        <FiClock />
+                        {new Date(article.ngayDang).toLocaleDateString()}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FiEye />
+                        {article.soLuongTruyCap}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <Link to={`/news/${article.maBaiViet}`}>
-                  <h2 className="text-sm font-semibold text-blue-600 hover:underline mt-2">
-                    View Details
-                  </h2>
-                </Link>
-              </div>
+              </Link>
             ))
           ) : (
             <p className="col-span-full text-center text-gray-500">
