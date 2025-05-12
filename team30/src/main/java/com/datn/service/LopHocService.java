@@ -11,6 +11,8 @@ public interface LopHocService {
 
     LopHoc add(LopHocAddDTO lopHocAddDTO);
 
+    LopHoc findById(String maLopHoc);
+
     LopHoc update(String maLopHoc, LopHocUpdateDTO lopHocUpdateDTO);
 
     void delete(String maLopHoc);

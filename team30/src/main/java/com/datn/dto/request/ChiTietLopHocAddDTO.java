@@ -1,81 +1,66 @@
-package com.datn.entity;/*
- * @project team30
- * @author Huy
- */
+package com.datn.dto.request;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "CHITIETLOPHOCS")
-public class ChiTietLopHoc {
+public class ChiTietLopHocAddDTO {
 
-    @Id
-    @Column(name = "MACTLH", columnDefinition = "VARCHAR(255)")
-    private String maCtlh;
+    @NotNull(message = "Học viên không được để trống")
+    private String maHocVien;
 
-    @ManyToOne
-    @JoinColumn(name = "MAHOCVIEN")
-    private HocVien hocVien;
+    @NotNull(message = "Lớp học không được để trống")
+    private String maLopHoc;
 
-    @ManyToOne
-    @JoinColumn(name = "MALOPHOC")
-    private LopHoc lopHoc;
-
-    @Column(name = "HOCPHI")
+    @DecimalMin(value = "0.0", message = "Học phí phải lớn hơn hoặc bằng 0")
     private double hocPhi;
 
-    @Column(name = "MIENGIAMHOCPHI")
+    @DecimalMin(value = "0.0", message = "Miễn giảm học phí phải lớn hơn hoặc bằng 0")
     private double mienGiamHocPhi;
 
-    @Column(name = "DATHUHOCPHI")
+    @NotNull(message = "Trạng thái đã thu học phí không được để trống")
     private boolean daThuHocPhi;
 
-    @Column(name = "SOTIENTHU")
+    @DecimalMin(value = "0.0", message = "Số tiền thu phải lớn hơn hoặc bằng 0")
     private double soTienThu;
 
-    @Column(name = "DIEM")
+    @DecimalMin(value = "0.0", message = "Điểm phải lớn hơn hoặc bằng 0")
+    @DecimalMax(value = "10.0", message = "Điểm phải nhỏ hơn hoặc bằng 10")
     private double diem;
 
-    @Column(name = "NGAYCAPCHUNGCHI")
+    @NotNull(message = "Ngày cấp chứng chỉ không được để trống")
     private LocalDate ngayCapChungChi;
 
-    @Column(name = "XEPLOAI", columnDefinition = "VARCHAR(255)")
+    @Size(max = 255, message = "Xếp loại không được vượt quá 255 ký tự")
     private String xepLoai;
 
-    @Column(name = "DIEMDANH", columnDefinition = "VARCHAR(255)")
+    @Size(max = 255, message = "Điểm danh không được vượt quá 255 ký tự")
     private String diemDanh;
 
-    @Column(name = "GHICHU", columnDefinition = "TEXT")
+    @Size(max = 255, message = "Ghi chú không được vượt quá 255 ký tự")
     private String ghiChu;
 
-    public  ChiTietLopHoc() {
+    public ChiTietLopHocAddDTO() {
 
     }
 
-    public String getMaCtlh() {
-        return maCtlh;
+    public String getMaHocVien() {
+        return maHocVien;
     }
 
-    public void setMaCtlh(String maCtlh) {
-        this.maCtlh = maCtlh;
+    public void setMaHocVien(String maHocVien) {
+        this.maHocVien = maHocVien;
     }
 
-    public HocVien getHocVien() {
-        return hocVien;
+    public String getMaLopHoc() {
+        return maLopHoc;
     }
 
-    public void setHocVien(HocVien hocVien) {
-        this.hocVien = hocVien;
-    }
-
-    public LopHoc getLopHoc() {
-        return lopHoc;
-    }
-
-    public void setLopHoc(LopHoc lopHoc) {
-        this.lopHoc = lopHoc;
+    public void setMaLopHoc(String maLopHoc) {
+        this.maLopHoc = maLopHoc;
     }
 
     public double getHocPhi() {
@@ -149,4 +134,5 @@ public class ChiTietLopHoc {
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
+
 }

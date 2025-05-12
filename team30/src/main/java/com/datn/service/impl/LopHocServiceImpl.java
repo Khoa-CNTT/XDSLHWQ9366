@@ -40,6 +40,11 @@ public class LopHocServiceImpl implements LopHocService {
     }
 
     @Override
+    public LopHoc findById(String maLopHoc) {
+        return this.lopHocRepo.findById(maLopHoc);
+    }
+
+    @Override
     @Transactional
     public LopHoc add(LopHocAddDTO lopHocAddDTO) {
         this.lopHocRepo.checkLopHocExists(lopHocAddDTO.getTenLopHoc());
