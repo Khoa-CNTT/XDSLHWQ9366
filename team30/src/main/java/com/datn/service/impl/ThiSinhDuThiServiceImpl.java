@@ -4,23 +4,25 @@ import com.datn.dto.request.ThiSinhDuThiAddDTO;
 import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.ThiSinhDuThi;
+import com.datn.exception.base.NotFoundException;
+import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.repository.LichThiRepo;
 import com.datn.repository.PhongHocRepo;
 import com.datn.repository.ThiSinhDuThiRepo;
 import com.datn.service.ThiSinhDuThiService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
 
     private final ThiSinhDuThiRepo thiSinhDuThiRepo;
     private final LichThiRepo lichThiRepo;
     private final PhongHocRepo phongHocRepo;
-
-    // ĐỂ LÀM TIẾP CẦN LichThiRepo và PhongThiRepo
 
     @Autowired
     public ThiSinhDuThiServiceImpl(ThiSinhDuThiRepo thiSinhDuThiRepo,
@@ -42,13 +44,13 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
         entity.setEmail(dto.getEmail());
         entity.setDiaChi(dto.getDiaChi());
         entity.setDienDangKy(dto.getDienDangKy());
-        entity.setLichThi(null); // chưa xử lý lich thi findById
+        entity.setLichThi(this.lichThiRepo.getLichThiById(dto.getMaLichThi()));
         entity.setPhongThi(this.phongHocRepo.findById(dto.getMaPhongThi()));
         entity.setDiem(dto.getDiem());
         entity.setXepLoai(dto.getXepLoai());
         entity.setNgayCapChungChi(dto.getNgayCapChungChi());
         entity.setGhiChu(dto.getGhiChu());
-        entity.setUrlHinhDaiDien(dto.getUrlHinhDaiDien());
+        entity.setUrlHinhDaiDien(null);
 
         return this.thiSinhDuThiRepo.add(entity);
     }
@@ -56,6 +58,11 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
     @Override
     public ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThiUpdateDTO dto) {
         ThiSinhDuThi entity = this.thiSinhDuThiRepo.findById(maThiSinhDuThi);
+
+        if(entity == null) {
+            throw new NotFoundException("Không tìm thấy thí sinh với mã - " + entity.getMaThiSinhDuThi());
+        }
+
         entity.setTenThiSinhDuThi(dto.getTenThiSinhDuThi());
         entity.setNgaySinh(dto.getNgaySinh());
         entity.setGioiTinh(dto.getGioiTinh());
@@ -64,7 +71,7 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
         entity.setEmail(dto.getEmail());
         entity.setDiaChi(dto.getDiaChi());
         entity.setDienDangKy(dto.getDienDangKy());
-//        entity.setLichThi(null);
+        entity.setLichThi(this.lichThiRepo.getLichThiById(dto.getMaLichThi()));
         entity.setPhongThi(this.phongHocRepo.findById(dto.getMaPhongThi()));
         entity.setDiem(dto.getDiem());
         entity.setXepLoai(dto.getXepLoai());
@@ -75,23 +82,40 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
     }
 
     @Override
-    public void delete(String maThiSinhDuThi) {
+    public ThiSinhDuThi update(ThiSinhDuThi thiSinhDuThi) {
+        return this.thiSinhDuThiRepo.update(thiSinhDuThi);
+    }
 
+    @Override
+    public void delete(String maThiSinhDuThi) {
+        this.thiSinhDuThiRepo.delete(maThiSinhDuThi);
     }
 
     @Override
     public PaginationResponse<ThiSinhDuThi> pagination(int pageNumber, int pageSize) {
-        return null;
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.thiSinhDuThiRepo.findAll().size();
+        List<ThiSinhDuThi> thiSinhDuThis = this.thiSinhDuThiRepo.pagination(pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, thiSinhDuThis);
     }
 
     @Override
     public List<ThiSinhDuThi> findByTenThiSinhDuThi(String tenThiSinhDuThi) {
-        return List.of();
+        return this.thiSinhDuThiRepo.findByTenThiSinhDuThi(tenThiSinhDuThi);
     }
 
     @Override
     public ThiSinhDuThi findById(String maThiSinhDuThi) {
-        return null;
+        ThiSinhDuThi thiSinhDuThi = this.thiSinhDuThiRepo.findById(maThiSinhDuThi);
+        if(thiSinhDuThi == null) {
+            throw new GiangVienNotFoundException("Không tìm thấy thí sinh dự thi với mã - " + maThiSinhDuThi);
+        }
+
+        return thiSinhDuThi;
     }
 
 }

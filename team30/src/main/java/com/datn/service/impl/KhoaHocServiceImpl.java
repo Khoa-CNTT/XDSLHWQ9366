@@ -95,6 +95,18 @@ public class KhoaHocServiceImpl implements KhoaHocService {
     }
 
     @Override
+    public PaginationResponse<KhoaHoc> findByMaLinhVuc(String maLinhVuc, int pageNumber, int pageSize) {
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new IllegalArgumentException("Số trang và kích thước trang phải lớn hơn 0");
+        }
+
+        long totalElements = this.khoaHocRepo.countTotalKhoaHocs();
+        List<KhoaHoc> khoaHocs = this.khoaHocRepo.findByMaLinhVuc(maLinhVuc, pageNumber, pageSize);
+
+        return new PaginationResponse<>(pageNumber, pageSize, totalElements, khoaHocs);
+    }
+
+    @Override
     public List<KhoaHoc> findByTenKhoaHoc(String tenKhoaHoc) {
         return this.khoaHocRepo.findByTenKhoaHoc(tenKhoaHoc);
     }

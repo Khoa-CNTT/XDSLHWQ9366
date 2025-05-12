@@ -5,10 +5,7 @@ import java.time.LocalDate;
 
 public class ThiSinhDuThiUpdateDTO {
 
-    @NotBlank(message = "Mã thí sinh dự thi là bắt buộc")
-    private String maThiSinhDuThi; // Khóa chính, bắt buộc có để xác định bản ghi cần cập nhật
-
-    @Size(max = 255, message = "Tên thí sinh không được vượt quá 255 ký tự")
+    @Size(max = 255, min = 5, message = "Tên thí sinh phải có độ dài từ 5 đến 255 ký tự")
     private String tenThiSinhDuThi;
 
     @Past(message = "Ngày sinh phải là ngày trong quá khứ")
@@ -16,23 +13,27 @@ public class ThiSinhDuThiUpdateDTO {
 
     private Boolean gioiTinh;
 
-    @Size(max = 255, message = "Số CMND không được vượt quá 255 ký tự")
+    @NotBlank(message = "Số CMND không được để trống")
+    @Size(min = 9, max = 9, message = "Số CMND phải có đúng 9 ký tự")
     private String soCMND;
 
-    @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có đúng 10 chữ số")
     private String soDienThoai;
 
     @Email(message = "Email không hợp lệ")
     private String email;
 
-    @Size(max = 255, message = "Địa chỉ không được vượt quá 255 ký tự")
+    @Size(min = 5, max = 255, message = "Địa chỉ phải có độ dài từ 5 đến 255 ký tự")
     private String diaChi;
 
     @Pattern(regexp = "ONLINE|TRUCTIEP", message = "Diện đăng ký chỉ được là ONLINE hoặc TRUCTIEP")
     private String dienDangKy;
 
+    @NotBlank(message = "Mã lịch thi không được để trống")
     private String maLichThi;
 
+    @NotBlank(message = "Mã phòng thi không được để trống")
     private String maPhongThi;
 
     @DecimalMin(value = "0.0", message = "Điểm phải lớn hơn hoặc bằng 0")
@@ -46,17 +47,11 @@ public class ThiSinhDuThiUpdateDTO {
 
     private String ghiChu;
 
-    @Size(max = 255, message = "URL hình đại diện không được vượt quá 255 ký tự")
-    private String urlHinhDaiDien;
+//    @Size(max = 255, message = "URL hình đại diện không được vượt quá 255 ký tự")
+//    private String urlHinhDaiDien;
 
-    // Getters và Setters
+    public ThiSinhDuThiUpdateDTO() {
 
-    public String getMaThiSinhDuThi() {
-        return maThiSinhDuThi;
-    }
-
-    public void setMaThiSinhDuThi(String maThiSinhDuThi) {
-        this.maThiSinhDuThi = maThiSinhDuThi;
     }
 
     public String getTenThiSinhDuThi() {
@@ -171,12 +166,12 @@ public class ThiSinhDuThiUpdateDTO {
         this.ghiChu = ghiChu;
     }
 
-    public String getUrlHinhDaiDien() {
-        return urlHinhDaiDien;
-    }
-
-    public void setUrlHinhDaiDien(String urlHinhDaiDien) {
-        this.urlHinhDaiDien = urlHinhDaiDien;
-    }
+//    public String getUrlHinhDaiDien() {
+//        return urlHinhDaiDien;
+//    }
+//
+//    public void setUrlHinhDaiDien(String urlHinhDaiDien) {
+//        this.urlHinhDaiDien = urlHinhDaiDien;
+//    }
 
 }

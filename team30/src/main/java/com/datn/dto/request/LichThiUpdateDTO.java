@@ -1,9 +1,11 @@
-package com.datn.dto.request;
+package com.datn.dto.request;/*
+ * @project team30
+ * @author Huy
+ */
 
 import java.time.LocalDate;
 
 public class LichThiUpdateDTO {
-
     private String tenChungChi;
     private LocalDate ngayThi;
     private double lePhiThi;
@@ -49,5 +51,4 @@ public class LichThiUpdateDTO {
     public void setMaLinhVuc(String maLinhVuc) {
         this.maLinhVuc = maLinhVuc;
     }
-
 }

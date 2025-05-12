@@ -1,4 +1,7 @@
-package com.datn.repository.impl;
+package com.datn.repository.impl;/*
+ * @project team30
+ * @author Huy
+ */
 
 import com.datn.dto.request.LichThiAddDTO;
 import com.datn.dto.request.LichThiUpdateDTO;
@@ -19,15 +22,25 @@ public class LichThiRepoImpl implements LichThiRepo {
 
     @Override
     public LichThi add(LichThiAddDTO lichThiDTO) {
+        String generatedId = (String) entityManager.createNativeQuery(
+                "SELECT CONCAT('LT', LPAD(IFNULL(MAX(CAST(SUBSTRING(MALICHTHI, 3, 3) AS UNSIGNED)), 0) + 1, 3, '0')) FROM LICHTHIS;"
+        ).getSingleResult();
+
+        if (generatedId == null || generatedId.isEmpty()) {
+            throw new IllegalStateException("Không thể tạo mã Lịch Thi mới.");
+        }
+
         LichThi lichThi = new LichThi();
-        lichThi.setMaLichThi(lichThiDTO.getMaLichThi());
+        lichThi.setMaLichThi(generatedId);
         lichThi.setLinhVuc(getLinhVucById(lichThiDTO.getMaLinhVuc()));
         lichThi.setTenChungChi(lichThiDTO.getTenChungChi());
         lichThi.setNgayThi(lichThiDTO.getNgayThi());
         lichThi.setLePhiThi(lichThiDTO.getLePhiThi());
         lichThi.setThongTinChiTiet(lichThiDTO.getThongTinChiTiet());
 
+        // Persist the entity
         entityManager.persist(lichThi);
+        entityManager.flush();
         return lichThi;
     }
 
@@ -70,6 +83,16 @@ public class LichThiRepoImpl implements LichThiRepo {
                 .setParameter("maLichThi", maLichThi)
                 .setParameter("tenChungChi", tenChungChi != null ? "%" + tenChungChi + "%" : null)
                 .getResultList();
+    }
+
+    @Override
+    public List<LichThi> getAllLichThi() {
+        return entityManager.createQuery("SELECT l FROM LichThi l", getEntityClass()).getResultList();
+    }
+
+    @Override
+    public LichThi getLichThiById(String id) {
+        return entityManager.find(LichThi.class, id);
     }
 
     private LinhVuc getLinhVucById(String maLinhVuc) {

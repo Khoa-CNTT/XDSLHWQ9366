@@ -22,4 +22,6 @@ public interface KhoaHocService {
 
     KhoaHoc findById(String maKhoaHoc);
 
+    PaginationResponse<KhoaHoc> findByMaLinhVuc(String maLinhVuc, int pageNumber, int pageSize);
+
 }

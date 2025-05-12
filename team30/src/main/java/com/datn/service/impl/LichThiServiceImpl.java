@@ -8,6 +8,8 @@ import com.datn.dto.request.LichThiUpdateDTO;
 import com.datn.entity.LichThi;
 import com.datn.repository.LichThiRepo;
 import com.datn.service.LichThiService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,4 +44,15 @@ public class LichThiServiceImpl implements LichThiService {
     public List<LichThi> search(String maLichThi, String tenChungChi) {
         return lichThiRepo.search(maLichThi, tenChungChi);
     }
+
+    @Override
+    public List<LichThi> getAllLichThi() {
+        return lichThiRepo.getAllLichThi();
+    }
+
+    @Override
+    public LichThi getLichThiById(String id) {
+        return lichThiRepo.getLichThiById(id);
+    }
+
 }

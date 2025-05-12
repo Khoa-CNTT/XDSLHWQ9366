@@ -13,6 +13,8 @@ public interface ThiSinhDuThiService {
 
     ThiSinhDuThi update(String maThiSinhDuThi, ThiSinhDuThiUpdateDTO dto);
 
+    ThiSinhDuThi update(ThiSinhDuThi thiSinhDuThi);
+
     void delete(String maThiSinhDuThi);
 
     PaginationResponse<ThiSinhDuThi> pagination(int pageNumber, int pageSize);

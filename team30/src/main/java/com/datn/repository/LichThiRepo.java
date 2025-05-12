@@ -1,4 +1,8 @@
-package com.datn.repository;
+package com.datn.repository;/*
+ * @project team30
+ * @author Huy
+ */
+
 
 import com.datn.dto.request.LichThiAddDTO;
 import com.datn.dto.request.LichThiUpdateDTO;
@@ -16,4 +20,7 @@ public interface LichThiRepo {
 
     List<LichThi> search(String maLichThi, String tenChungChi);
 
+    List<LichThi> getAllLichThi();
+
+    LichThi getLichThiById(String id);
 }
