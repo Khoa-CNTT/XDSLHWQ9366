@@ -1,4 +1,7 @@
-package com.datn.dto.request;
+package com.datn.dto.request;/*
+ * @project team30
+ * @author Huy
+ */
 
 import jakarta.validation.constraints.*;
 
@@ -6,7 +9,6 @@ import java.time.LocalDate;
 
 public class LichThiAddDTO {
 
-    @NotBlank(message = "Mã lịch thi không được để trống")
     private String maLichThi;
 
     @NotBlank(message = "Tên chứng chỉ không được để trống")
@@ -36,14 +38,6 @@ public class LichThiAddDTO {
     }
 
     // Getters & Setters
-    public String getMaLichThi() {
-        return maLichThi;
-    }
-
-    public void setMaLichThi(String maLichThi) {
-        this.maLichThi = maLichThi;
-    }
-
     public String getTenChungChi() {
         return tenChungChi;
     }
@@ -83,5 +77,4 @@ public class LichThiAddDTO {
     public void setMaLinhVuc(String maLinhVuc) {
         this.maLinhVuc = maLinhVuc;
     }
-
 }

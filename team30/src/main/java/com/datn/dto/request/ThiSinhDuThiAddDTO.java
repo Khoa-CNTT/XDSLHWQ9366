@@ -17,11 +17,11 @@ public class ThiSinhDuThiAddDTO {
     private Boolean gioiTinh;
 
     @NotBlank(message = "Số CMND không được để trống")
-    @Size(max = 255, message = "Số CMND không được vượt quá 255 ký tự")
+    @Size(min = 9, max = 9, message = "Số CMND phải có đúng 9 ký tự")
     private String soCMND;
 
     @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại không hợp lệ")
+    @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có đúng 10 chữ số")
     private String soDienThoai;
 
     @NotBlank(message = "Email không được để trống")
@@ -56,7 +56,9 @@ public class ThiSinhDuThiAddDTO {
     @Size(max = 255, message = "URL hình đại diện không được vượt quá 255 ký tự")
     private String urlHinhDaiDien;
 
-    // Getters and Setters
+    public ThiSinhDuThiAddDTO() {
+
+    }
 
     public String getTenThiSinhDuThi() {
         return tenThiSinhDuThi;
