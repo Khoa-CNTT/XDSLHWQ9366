@@ -115,7 +115,7 @@ public class ThiSinhDuThiController {
 
     @GetMapping("/search/{tenThiSinh}")
     public ResponseEntity<ApiResponse<List<ThiSinhDuThi>>> search
-            (@PathVariable(name = "tenHocVien")String tenThiSinh) {
+            (@PathVariable(name = "tenThiSinh")String tenThiSinh) {
         List<ThiSinhDuThi> thiSinhDuThis =
                 this.thiSinhDuThiService.findByTenThiSinhDuThi(tenThiSinh);
 

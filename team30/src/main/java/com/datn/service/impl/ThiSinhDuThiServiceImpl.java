@@ -10,12 +10,13 @@ import com.datn.repository.LichThiRepo;
 import com.datn.repository.PhongHocRepo;
 import com.datn.repository.ThiSinhDuThiRepo;
 import com.datn.service.ThiSinhDuThiService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.rmi.NotBoundException;
 import java.util.List;
 
+@Transactional
 @Service
 public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
 
@@ -49,7 +50,7 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
         entity.setXepLoai(dto.getXepLoai());
         entity.setNgayCapChungChi(dto.getNgayCapChungChi());
         entity.setGhiChu(dto.getGhiChu());
-        entity.setUrlHinhDaiDien(dto.getUrlHinhDaiDien());
+        entity.setUrlHinhDaiDien(null);
 
         return this.thiSinhDuThiRepo.add(entity);
     }

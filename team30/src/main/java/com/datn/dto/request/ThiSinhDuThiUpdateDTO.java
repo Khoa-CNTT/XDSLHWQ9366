@@ -5,9 +5,6 @@ import java.time.LocalDate;
 
 public class ThiSinhDuThiUpdateDTO {
 
-    @NotBlank(message = "Mã thí sinh dự thi là bắt buộc")
-    private String maThiSinhDuThi;
-
     @Size(max = 255, min = 5, message = "Tên thí sinh phải có độ dài từ 5 đến 255 ký tự")
     private String tenThiSinhDuThi;
 
@@ -50,19 +47,11 @@ public class ThiSinhDuThiUpdateDTO {
 
     private String ghiChu;
 
-    @Size(max = 255, message = "URL hình đại diện không được vượt quá 255 ký tự")
-    private String urlHinhDaiDien;
+//    @Size(max = 255, message = "URL hình đại diện không được vượt quá 255 ký tự")
+//    private String urlHinhDaiDien;
 
     public ThiSinhDuThiUpdateDTO() {
 
-    }
-
-    public String getMaThiSinhDuThi() {
-        return maThiSinhDuThi;
-    }
-
-    public void setMaThiSinhDuThi(String maThiSinhDuThi) {
-        this.maThiSinhDuThi = maThiSinhDuThi;
     }
 
     public String getTenThiSinhDuThi() {
@@ -177,12 +166,12 @@ public class ThiSinhDuThiUpdateDTO {
         this.ghiChu = ghiChu;
     }
 
-    public String getUrlHinhDaiDien() {
-        return urlHinhDaiDien;
-    }
-
-    public void setUrlHinhDaiDien(String urlHinhDaiDien) {
-        this.urlHinhDaiDien = urlHinhDaiDien;
-    }
+//    public String getUrlHinhDaiDien() {
+//        return urlHinhDaiDien;
+//    }
+//
+//    public void setUrlHinhDaiDien(String urlHinhDaiDien) {
+//        this.urlHinhDaiDien = urlHinhDaiDien;
+//    }
 
 }
