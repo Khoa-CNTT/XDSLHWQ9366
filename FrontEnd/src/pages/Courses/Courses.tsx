@@ -11,7 +11,6 @@ import {
 } from "react-icons/md";
 import CourseApi from "../../api/courseApi";
 
-// Animation variant for fade up effect
 const FadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay } },

@@ -104,9 +104,9 @@ const Cart = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-4">
-              <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">
                   Courses in Cart ({cartItems.length})
                 </h2>
@@ -162,7 +162,7 @@ const Cart = () => {
 
             {/* Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white p-6 rounded-xl shadow-sm sticky top-24">
+              <div className="bg-white shadow-lg rounded-2xl p-6 space-y-6">
                 <h2 className="text-xl font-semibold mb-4 text-gray-800">
                   Order Summary
                 </h2>

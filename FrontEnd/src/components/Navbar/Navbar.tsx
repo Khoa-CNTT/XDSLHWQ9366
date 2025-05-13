@@ -7,6 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FaUser } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
+import TrueFocus from "../Animation/TrueFocus";
 
 const Navbar = () => {
   const [showCart, setShowCart] = useState(false);
@@ -29,7 +30,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all font-semibold duration-300 ease-in-out ${
         isScrolled ? "bg-white shadow-md" : "bg-transparent"
       }`}
     >
@@ -38,32 +39,51 @@ const Navbar = () => {
         animate={{ opacity: 1, y: 0 }}
         className="container py-4 px-4 flex justify-between items-center"
       >
-        <div>
-          <h1 className="font-bold text-2xl">HANTA Elearning</h1>
-        </div>
+        <TrueFocus
+          sentence="HANTA Elearning"
+          manualMode={false}
+          blurAmount={5}
+          borderColor="rgba(247, 186, 52, 0.6)"
+          animationDuration={2}
+          pauseBetweenAnimations={1}
+        />
 
         <div className="hidden md:flex items-center gap-6">
           <ul className="flex items-center gap-6">
             {navItems.map((menu) => (
               <li key={menu.id}>
-                <Link
-                  to={menu.path}
-                  onClick={closeNavbar}
-                  className={`inline-block px-3 py-2 hover:text-secondary transition duration-200 ${
-                    location.pathname === menu.path
-                      ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
-                      : "text-gray-700"
-                  }`}
-                >
-                  {menu.title}
-                </Link>
+                {["/test-scores", "/result"].includes(menu.path) ? (
+                  <Link
+                    to={isAuthenticated ? menu.path : "/signin"}
+                    onClick={closeNavbar}
+                    className={`inline-block px-3 py-2 hover:text-secondary transition duration-200 ${
+                      location.pathname === menu.path
+                        ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {menu.title}
+                  </Link>
+                ) : (
+                  <Link
+                    to={menu.path}
+                    onClick={closeNavbar}
+                    className={`inline-block px-3 py-2 hover:text-secondary transition duration-200 ${
+                      location.pathname === menu.path
+                        ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {menu.title}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
 
           <div className="flex items-center gap-4">
             <Link
-              to="/cart"
+              to={isAuthenticated ? "/cart" : "/signin"}
               className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
             >
               <FiShoppingCart className="text-xl" />
@@ -74,7 +94,7 @@ const Navbar = () => {
                   <FaUser className="text-xl" />
                 </button>
                 {showCart && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md text-gray-700 z-50">
+                  <div className="absolute right-0 mt-2 w-60 bg-white shadow-lg rounded-md text-gray-700 z-50">
                     <ul>
                       <li>
                         <Link
@@ -142,19 +162,34 @@ const Navbar = () => {
         <ul className="flex flex-col gap-6 p-6 text-lg text-gray-700">
           {navItems.map((menu) => (
             <li key={menu.id}>
-              <Link
-                to={menu.path}
-                onClick={closeNavbar}
-                className={`block hover:text-secondary ${
-                  location.pathname === menu.path
-                    ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
-                    : ""
-                }`}
-              >
-                {menu.title}
-              </Link>
+              {["/test-scores", "/result"].includes(menu.path) ? (
+                <Link
+                  to={isAuthenticated ? menu.path : "/signin"}
+                  onClick={closeNavbar}
+                  className={`block hover:text-secondary ${
+                    location.pathname === menu.path
+                      ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
+                      : ""
+                  }`}
+                >
+                  {menu.title}
+                </Link>
+              ) : (
+                <Link
+                  to={menu.path}
+                  onClick={closeNavbar}
+                  className={`block hover:text-secondary ${
+                    location.pathname === menu.path
+                      ? "text-transparent bg-clip-text bg-gradient-to-r bg-primary font-semibold"
+                      : ""
+                  }`}
+                >
+                  {menu.title}
+                </Link>
+              )}
             </li>
           ))}
+
           {isAuthenticated ? (
             <button
               onClick={() => {
