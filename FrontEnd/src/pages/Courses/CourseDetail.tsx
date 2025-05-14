@@ -26,6 +26,7 @@ import axios from "axios";
 import { FadeUp } from "../Home/Hero/Hero";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import { useNotification } from "../../context/NotificationContext";
+import CountUp from "../../components/Animation/CountUp";
 // Định nghĩa interface cho dữ liệu khóa học
 interface LinhVuc {
   maLinhVuc: string;
@@ -256,12 +257,33 @@ const CourseDetail = () => {
                   <MdStar className="text-yellow-400 text-xl" />
                   <MdStar className="text-yellow-400 text-xl" />
                   <MdStarHalf className="text-yellow-400 text-xl" />
-                  <span className="ml-2 text-black">4.8 (126 reviews)</span>
+                  <span className="ml-2 text-black">
+                    4.8 (
+                    <CountUp
+                      from={0}
+                      to={126}
+                      separator=","
+                      direction="up"
+                      duration={1}
+                      className="count-up-text"
+                    />{" "}
+                    reviews)
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   <MdPeople className="text-xl" />
-                  <span>1,245 students</span>
+                  <span>
+                    <CountUp
+                      from={0}
+                      to={1245}
+                      separator=","
+                      direction="up"
+                      duration={1}
+                      className="count-up-text"
+                    />{" "}
+                    students
+                  </span>
                 </div>
               </div>
 

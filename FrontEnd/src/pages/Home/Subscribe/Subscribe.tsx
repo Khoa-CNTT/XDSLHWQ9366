@@ -1,6 +1,7 @@
 import { FaBell } from "react-icons/fa";
 import BgImage from "../../../assets/bg.png";
 import { motion } from "framer-motion";
+import CountUp from "../../../components/Animation/CountUp";
 
 const bgStyle = {
   backgroundImage: `url(${BgImage})`,
@@ -26,7 +27,15 @@ const Subscribe = () => {
         >
           <div className="text-center space-y-4 lg:max-w-[430px] mx-auto">
             <h1 className="text-4xl font-bold !leading-snug">
-              450K+ Students are learning from us
+              <CountUp
+                from={0}
+                to={450}
+                separator=","
+                direction="up"
+                duration={2}
+                className="count-up-text"
+              />
+              K+ Students are learning from us
             </h1>
             <p>Enhance your skills, conquer the future!</p>
             <a

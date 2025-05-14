@@ -1,5 +1,6 @@
 import { FaInstagram, FaFacebook, FaYoutube, FaTiktok } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -28,16 +29,19 @@ const Footer = () => {
               <div className="text-dark2">
                 <ul className="space-y-2 text-lg">
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Web Development
+                    Web programming
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Software Development
+                    Mobile programming
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Apps Development
+                    SQL
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    E-learning
+                    DevOps
+                  </li>
+                  <li className="cursor-pointer hover:text-secondary duration-200">
+                    Computer Networking
                   </li>
                 </ul>
               </div>
@@ -47,16 +51,19 @@ const Footer = () => {
               <div className="text-dark2">
                 <ul className="space-y-2 text-lg">
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Home
+                    <Link to="/">Home</Link>
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Services
+                    <Link to="/courses">Courses</Link>
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    About
+                    <Link to="/exam-schedule">Exam Schedule</Link>
                   </li>
                   <li className="cursor-pointer hover:text-secondary duration-200">
-                    Contact
+                    <Link to="/contact">Contact</Link>
+                  </li>
+                  <li className="cursor-pointer hover:text-secondary duration-200">
+                    <Link to="/news">New</Link>
                   </li>
                 </ul>
               </div>

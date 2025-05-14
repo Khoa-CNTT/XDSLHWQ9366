@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { motion } from "framer-motion";
 import {
   FaFacebook,
   FaInstagram,
@@ -16,6 +17,7 @@ const Contact = () => {
     phone: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,153 +26,293 @@ const Contact = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Sending", formData);
-    alert("Message sent!");
+    setIsSubmitting(true);
+    setTimeout(() => {
+      console.log("Sending", formData);
+      alert("Message sent successfully!");
+      setIsSubmitting(false);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    }, 1500);
+  };
+
+  const sectionVariants = {
+    initial: { opacity: 0, y: 50 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const inputVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: (i: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] },
+    }),
   };
 
   return (
-    <div className="min-h-screen bg-white pt-24 px-4 md:px-10 font-sans">
-      <div className="max-w-6xl mx-auto space-y-10 py-10">
+    <div className="min-h-screen  bg-white  text-gray-100 pt-24">
+      <div className="max-w-6xl mx-auto px-6 py-10">
         {/* Heading */}
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold">Contact our team</h1>
-          <p className="text-sm text-gray-600 mt-2 max-w-2xl mx-auto">
-            Got any questions about the product or scaling on our platform?
-            We're here to help. Chat to our friendly team 24/7 and get onboard
-            in less than 5 minutes.
+        <motion.div
+          variants={sectionVariants}
+          initial="initial"
+          animate="animate"
+          className="text-center mb-16"
+        >
+          <h1 className=" text-4xl font-extrabold bg-clip-text text-transparent bg-primary hover:text-secondary">
+            Contact our team
+          </h1>
+          <p className=" text-black mt-4 max-w-2xl mx-auto leading-relaxed">
+            Questions about our platform? We're here 24/7 to help you scale and
+            succeed. Reach out in less than 5 minutes!
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Form Section */}
-          <form onSubmit={handleSubmit} className="md:col-span-2 space-y-6">
+          <motion.form
+            onSubmit={handleSubmit}
+            className="lg:col-span-3 bg-gray-50 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-black/50"
+            variants={sectionVariants}
+            initial="initial"
+            animate="animate"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                name="firstName"
-                type="text"
-                placeholder="First name"
-                value={formData.firstName}
-                onChange={handleChange}
-                className="border p-3 rounded-lg w-full"
-                required
-              />
-              <input
-                name="lastName"
-                type="text"
-                placeholder="Last name"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="border p-3 rounded-lg w-full"
-              />
+              <motion.div
+                variants={inputVariants}
+                custom={0}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
+                    placeholder="First Name"
+                    required
+                  />
+                </div>
+              </motion.div>
+              <motion.div
+                variants={inputVariants}
+                custom={1}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
+                    placeholder="Last Name"
+                  />
+                </div>
+              </motion.div>
             </div>
-            <input
-              name="email"
-              type="email"
-              placeholder="you@gmail.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full"
-              required
-            />
-            <input
-              name="phone"
-              type="tel"
-              placeholder="Your phone number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full"
-            />
-            <textarea
-              name="message"
-              placeholder="Leave us a message..."
-              rows={3}
-              value={formData.message}
-              onChange={handleChange}
-              className="border p-3 rounded-lg w-full"
-            />
-
-            <button
-              type="submit"
-              className="bg-primary text-white py-3 rounded-lg w-full font-semibold hover:bg-secondary"
+            <motion.div
+              variants={inputVariants}
+              custom={2}
+              initial="initial"
+              animate="animate"
+              className="mt-6"
             >
-              Send message
-            </button>
-          </form>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
+                  placeholder="Your Email"
+                  required
+                />
+              </div>
+            </motion.div>
+            <motion.div
+              variants={inputVariants}
+              custom={3}
+              initial="initial"
+              animate="animate"
+              className="mt-6"
+            >
+              <div className="relative">
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
+                  placeholder="Phone Number"
+                />
+              </div>
+            </motion.div>
+            <motion.div
+              variants={inputVariants}
+              custom={4}
+              initial="initial"
+              animate="animate"
+              className="mt-6"
+            >
+              <div className="relative">
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
+                  placeholder="Your Message"
+                  rows={5}
+                />
+              </div>
+            </motion.div>
+            <motion.button
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 15px rgba(99, 102, 241, 0.5)",
+                transition: { duration: 0.3 },
+              }}
+              whileTap={{ scale: 0.95 }}
+              disabled={isSubmitting}
+              type="submit"
+              className="w-full mt-6 bg-gradient-to-r bg-primary text-white py-4 rounded-lg font-semibold text-lg shadow-lg relative overflow-hidden"
+            >
+              <span className="relative z-10">
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </span>
+              {isSubmitting && (
+                <motion.div
+                  className="absolute inset-0 bg-secondary"
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                />
+              )}
+            </motion.button>
+          </motion.form>
 
           {/* Info Section */}
-          <div className="space-y-8 text-sm">
-            <div>
-              <h3 className="text-base font-semibold">Chat with us</h3>
-              <div className="mt-2 space-y-2 text-blue-600">
-                <div className="flex items-center gap-2">
-                  <FaFacebook />
+          <motion.div
+            variants={sectionVariants}
+            initial="initial"
+            animate="animate"
+            className="lg:col-span-2 space-y-4 mt-2 lg:mt-0"
+          >
+            {/* Chat with Us */}
+            <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
+              <h3 className="text-xl font-bold text-primary hover:text-secondary">
+                Chat with Us
+              </h3>
+              <div className="mt-4 space-y-4 text-black">
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  className="flex items-center gap-3"
+                >
+                  <FaFacebook className="text-xl text-black" />
                   <a
                     href="https://www.facebook.com/idioms632"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors duration-200"
                   >
                     Message us on Facebook
                   </a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FaEnvelope />
+                </motion.div>
+                <motion.div
+                  whileHover={{ x: 5 }}
+                  className="flex items-center gap-3"
+                >
+                  <FaEnvelope className="text-xl text-black" />
                   <a
                     href="mailto:support@example.com"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors duration-200"
                   >
                     Shoot us an email
                   </a>
-                </div>
+                </motion.div>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-base font-semibold">Call us</h3>
-              <p className="mt-2">Call our team Mon-Fri from 8am to 5pm.</p>
-              <p className="text-blue-600 flex items-center gap-2 mt-1">
-                <FaPhoneAlt /> +84 0327 908 007
-              </p>
+            {/* Call Us */}
+            <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
+              <h3 className="text-xl font-bold text-primary hover:text-secondary">
+                Call Us
+              </h3>
+              <p className="mt-2 text-black">Mon-Fri, 8am - 5pm</p>
+              <motion.div
+                whileHover={{ x: 5 }}
+                className="text-black flex items-center gap-3 mt-2"
+              >
+                <FaPhoneAlt className="text-xl" />
+                <span className="hover:text-primary">+84 0327 908 007</span>
+              </motion.div>
             </div>
 
-            <div>
-              <h3 className="text-base font-semibold">Visit us</h3>
-              <p className="mt-2">Chat to us in person at our Da Nang.</p>
-              <a
+            {/* Visit Us */}
+            <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
+              <h3 className="text-xl font-bold text-primary hover:text-secondary">
+                Visit Us
+              </h3>
+              <p className="mt-2 text-black">Swing by our Da Nang office</p>
+              <motion.a
+                whileHover={{ x: 5 }}
                 href="https://maps.app.goo.gl/UCH3wA49oSKeEHoq7"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 flex items-center gap-2 mt-1"
+                className="text-black flex items-center gap-3 mt-2 hover:text-primary transition-colors duration-200"
               >
-                <FaLocationArrow /> 03 Quang Trung, Hải Châu, Đà Nẵng
-              </a>
+                <FaLocationArrow className="text-xl" />
+                03 Quang Trung, Hải Châu, Đà Nẵng
+              </motion.a>
             </div>
-            <div>
-              <h3 className="text-base font-semibold">Social network</h3>
-              <div className="flex space-x-6 py-3 text-blue-600">
-                <a
-                  href="https://www.instagram.com/huxtah/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaInstagram className="cursor-pointer  hover:scale-105 duration-200" />
-                </a>
-                <a href="" target="_blank" rel="noopener noreferrer">
-                  <FaYoutube className="cursor-pointer  hover:scale-105 duration-200" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@huxtah_"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaTiktok className="cursor-pointer  hover:scale-105 duration-200" />
-                </a>
+
+            {/* Social Networks */}
+            <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
+              <h3 className="text-xl font-bold text-primary hover:text-secondary">
+                Social Networks
+              </h3>
+              <div className="flex space-x-6 py-4">
+                {[
+                  {
+                    icon: FaInstagram,
+                    href: "https://www.instagram.com/huxtah/",
+                  },
+                  { icon: FaYoutube, href: "" },
+                  { icon: FaTiktok, href: "https://www.tiktok.com/@huxtah_" },
+                ].map((social, i) => (
+                  <motion.a
+                    key={i}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="text-black hover:text-primary transition-colors duration-300"
+                  >
+                    <social.icon className="text-2xl" />
+                  </motion.a>
+                ))}
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

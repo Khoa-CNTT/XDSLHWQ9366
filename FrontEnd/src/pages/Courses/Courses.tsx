@@ -10,6 +10,7 @@ import {
   MdStarRate,
 } from "react-icons/md";
 import CourseApi from "../../api/courseApi";
+import CountUp from "../../components/Animation/CountUp";
 
 const FadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -392,7 +393,15 @@ const Courses = () => {
                                   {getCourseDifficulty(course.maKhoaHoc)}
                                 </div>
                                 <div className="font-bold text-blue-800">
-                                  {course.hocPhi.toLocaleString()} VND
+                                  <CountUp
+                                    from={0}
+                                    to={course.hocPhi}
+                                    separator=","
+                                    direction="up"
+                                    duration={0.1}
+                                    className="count-up-text"
+                                  />
+                                  VND
                                 </div>
                               </div>
                             </div>

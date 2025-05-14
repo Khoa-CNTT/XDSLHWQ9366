@@ -89,14 +89,14 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 flex items-center justify-center bg-gradient-to-br bg-gray-100/40 backdrop-blur-sm z-50 p-4"
+          className="fixed inset-0 flex items-center justify-center bg-gradient-to-br bg-black/70 backdrop-blur-sm z-50 p-4"
         >
           <motion.div
             variants={modalVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl max-w-md w-full mx-auto p-8 relative overflow-hidden border border-white/20"
+            className="bg-white backdrop-blur-lg rounded-2xl shadow-2xl max-w-md w-full mx-auto p-8 relative overflow-hidden border border-white/20"
           >
             {/* Close Button */}
             <button
