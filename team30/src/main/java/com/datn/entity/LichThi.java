@@ -5,6 +5,7 @@ package com.datn.entity;/*
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -36,6 +37,7 @@ public class LichThi {
     @Column(name = "LEPHITHI")
     private double lePhiThi;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "lichThi")
     private List<ThiSinhDuThi> thiSinhDuThi;
 
