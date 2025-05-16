@@ -1,15 +1,20 @@
-package com.datn.repository.impl;
+package com.datn.repository.impl;/*
+ * @project team30
+ * @author Huy
+ */
 
 import com.datn.entity.NhanVien;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
 import com.datn.repository.NhanVienRepo;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class NhanVienRepoImpl implements NhanVienRepo {

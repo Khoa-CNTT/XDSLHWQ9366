@@ -3,11 +3,15 @@ package com.datn.entity;/*
  * @author Huy
  */
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "NHANVIENS")
@@ -15,6 +19,7 @@ public class NhanVien {
     @Id
     @Column(name = "MANHANVIEN", length = 255, nullable = false, updatable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
+    @JsonIgnore
     private String maNhanVien;
 
     @Column(name = "TENNHANVIEN", length = 255)
@@ -52,8 +57,26 @@ public class NhanVien {
     @Column(name = "URIHINHDAIDIEN", length = 255)
     private String uriHinhDaiDien;
 
+    @OneToMany(mappedBy = "nhanVien", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BaiViet> baiViets;
+
     public NhanVien() {
 
+    }
+
+    public NhanVien(String maNhanVien, String tenNhanVien, LocalDate ngaySinh, boolean gioiTinh, String soCMND, String soDienThoai, String email, String diaChi, ChucVu chucVu, String nguoiNhapThongTin, String ghiChu, String uriHinhDaiDien) {
+        this.maNhanVien = maNhanVien;
+        this.tenNhanVien = tenNhanVien;
+        this.ngaySinh = ngaySinh;
+        this.gioiTinh = gioiTinh;
+        this.soCMND = soCMND;
+        this.soDienThoai = soDienThoai;
+        this.email = email;
+        this.diaChi = diaChi;
+        this.chucVu = chucVu;
+        this.nguoiNhapThongTin = nguoiNhapThongTin;
+        this.ghiChu = ghiChu;
+        this.uriHinhDaiDien = uriHinhDaiDien;
     }
 
     public String getMaNhanVien() {

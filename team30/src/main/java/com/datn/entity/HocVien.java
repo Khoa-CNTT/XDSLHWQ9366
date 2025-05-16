@@ -3,6 +3,7 @@ package com.datn.entity;/*
  * @author Huy
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -49,6 +50,9 @@ public class HocVien {
 
     @Column(name = "NGAYCAPNHATGANNHAT", columnDefinition = "DATE")
     private LocalDate ngayCapNhatGanNhat = LocalDate.now();
+
+    @Column(name = "MATAIKHOAN", columnDefinition = "VARCHAR(255)")
+    private String maTaiKhoan;
 
     public HocVien() {
 
@@ -158,4 +162,11 @@ public class HocVien {
         this.ngayCapNhatGanNhat = ngayCapNhatGanNhat;
     }
 
+    public String getMaTaiKhoan() {
+        return maTaiKhoan;
+    }
+
+    public void setMaTaiKhoan(String maTaiKhoan) {
+        this.maTaiKhoan = maTaiKhoan;
+    }
 }

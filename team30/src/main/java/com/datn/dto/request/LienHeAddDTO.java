@@ -1,31 +1,14 @@
-package com.datn.entity;
-
-import jakarta.persistence.*;
+package com.datn.dto.request;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "LIENHES")
-public class LienHe {
+public class LienHeAddDTO {
 
-    @Id
-    @Column(name = "MAKHACH", length = 255)
     private String maKhach;
-
-    @Column(name = "HOTEN", length = 255)
     private String hoTen;
-
-    @Column(name = "EMAIL", length = 255)
     private String email;
-
-    @Column(name = "SODIENTHOAI", length = 255)
     private String soDienThoai;
-
-    @Lob
-    @Column(name = "YKIEN", columnDefinition = "TEXT")
     private String yKien;
-
-    @Column(name = "NGAYLIENHE")
     private LocalDate ngayLienHe;
 
     public String getMaKhach() {
@@ -60,11 +43,11 @@ public class LienHe {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getyKien() {
+    public String getYKien() {
         return yKien;
     }
 
-    public void setyKien(String yKien) {
+    public void setYKien(String yKien) {
         this.yKien = yKien;
     }
 

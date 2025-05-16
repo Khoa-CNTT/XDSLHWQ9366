@@ -46,7 +46,6 @@ public class ThiSinhDuThi {
     @JoinColumn(name = "MAPHONGTHI")
     private PhongHoc phongThi;
 
-
     @Column(name = "DIEM", columnDefinition = "DOUBLE")
     private double diem;
 

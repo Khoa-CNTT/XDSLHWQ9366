@@ -1,33 +1,18 @@
-package com.datn.entity;
-
-import jakarta.persistence.*;
+package com.datn.dto.request;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "LIENHES")
-public class LienHe {
+public class LienHeUpdateDTO {
 
-    @Id
-    @Column(name = "MAKHACH", length = 255)
-    private String maKhach;
+    private String maKhach; // dùng để xác định bản ghi cần cập nhật
 
-    @Column(name = "HOTEN", length = 255)
     private String hoTen;
-
-    @Column(name = "EMAIL", length = 255)
     private String email;
-
-    @Column(name = "SODIENTHOAI", length = 255)
     private String soDienThoai;
-
-    @Lob
-    @Column(name = "YKIEN", columnDefinition = "TEXT")
     private String yKien;
-
-    @Column(name = "NGAYLIENHE")
     private LocalDate ngayLienHe;
 
+    // Getters and Setters
     public String getMaKhach() {
         return maKhach;
     }
@@ -60,11 +45,11 @@ public class LienHe {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getyKien() {
+    public String getYKien() {
         return yKien;
     }
 
-    public void setyKien(String yKien) {
+    public void setYKien(String yKien) {
         this.yKien = yKien;
     }
 

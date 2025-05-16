@@ -3,8 +3,11 @@ package com.datn.entity;/*
  * @author Huy
  */
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -18,6 +21,9 @@ public class LinhVuc {
     @Column(name = "TENLINHVUC", columnDefinition = "VARCHAR(255)")
     private String tenLinhVuc;
 
+    @OneToMany(mappedBy = "linhVuc", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<LichThi> danhSachLichThi;
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "linhVuc")
     private List<GiangVien> giangViens;
@@ -42,6 +48,14 @@ public class LinhVuc {
         this.tenLinhVuc = tenLinhVuc;
     }
 
+    public List<LichThi> getDanhSachLichThi() {
+        return danhSachLichThi;
+    }
+
+    public void setDanhSachLichThi(List<LichThi> danhSachLichThi) {
+        this.danhSachLichThi = danhSachLichThi;
+    }
+    
     public List<GiangVien> getGiangViens() {
         return giangViens;
     }
