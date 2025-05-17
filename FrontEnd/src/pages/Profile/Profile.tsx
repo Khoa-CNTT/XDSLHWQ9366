@@ -12,26 +12,46 @@ import {
   MdCalendarToday,
   MdCardMembership,
   MdErrorOutline,
+  MdOutlineScore,
 } from "react-icons/md";
-import { FaUserCircle } from "react-icons/fa";
-import { profileData } from "../../constants/profileData";
+import { FaClipboardList, FaUserCircle } from "react-icons/fa";
 import Notification from "../../components/Notification/Notification";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import { useProfileValidation } from "../../components/Validate/ValidateProfile";
 
+// Interfaces
 interface HocVien {
   maHocVien: string;
   tenHocVien: string;
   ngaySinh: string;
-  gioiTinh: number;
+  gioiTinh: boolean;
   soCMND: string;
   soDienThoai: string;
   email: string;
   diaChi: string;
   tinhTrangHocTap: string;
+  nguoiNhapThongTin: string;
   ghiChu: string;
   uriHinhDaiDien: string;
   ngayCapNhatGanNhat: string;
+  maTaiKhoan?: string; // Optional field based on backend response
 }
 
+interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}
+
+interface UploadAvatarResponse {
+  status: number;
+  message: string;
+  data: string; // Path to the uploaded image
+}
+
+// Modal and input animation variants
 const modalVariants = {
   initial: { opacity: 0, scale: 0.98, y: 10 },
   animate: {
@@ -74,30 +94,59 @@ const Profile = () => {
     ghiChu: "",
     uriHinhDaiDien: "",
   });
-  const [errors, setErrors] = useState({
-    ngaySinh: "",
-    soCMND: "",
-    soDienThoai: "",
-    email: "",
-  });
+  const { errors, validateForm, clearErrors } = useProfileValidation(formData);
+
+  const { token, isAuthenticated } = useAuth(); // Get token and auth status
 
   useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setHocVien(profileData);
-      setFormData({
-        ngaySinh: profileData.ngaySinh,
-        soCMND: profileData.soCMND,
-        soDienThoai: profileData.soDienThoai,
-        email: profileData.email,
-        diaChi: profileData.diaChi,
-        ghiChu: profileData.ghiChu,
-        uriHinhDaiDien: profileData.uriHinhDaiDien,
-      });
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchHocVien = async () => {
+      if (!isAuthenticated || !token) {
+        setShowNotification({
+          type: "error",
+          message: "Vui lòng đăng nhập để xem thông tin học viên!",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await axios.get<ApiResponse<HocVien>>(
+          "http://localhost:8080/hocvien/getById/HV001",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (response.data.status === 200 && response.data.data) {
+          const data = response.data.data;
+          setHocVien(data);
+          setFormData({
+            ngaySinh: data.ngaySinh,
+            soCMND: data.soCMND,
+            soDienThoai: data.soDienThoai,
+            email: data.email,
+            diaChi: data.diaChi,
+            ghiChu: data.ghiChu,
+            uriHinhDaiDien: data.uriHinhDaiDien,
+          });
+        } else {
+          throw new Error(
+            response.data.message || "Không thể lấy thông tin học viên"
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+        setShowNotification({
+          type: "error",
+          message: "Không thể lấy thông tin học viên. Vui lòng thử lại!",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHocVien();
+  }, [isAuthenticated, token]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -115,42 +164,8 @@ const Profile = () => {
     return isNaN(date.getTime()) ? "" : date.toISOString().split("T")[0];
   };
 
-  const formatGioiTinh = (gioiTinh: number): string => {
-    return gioiTinh === 1 ? "Nam" : gioiTinh === 0 ? "Nữ" : "Khác";
-  };
-
-  const validateForm = () => {
-    const newErrors = {
-      ngaySinh: "",
-      soCMND: "",
-      soDienThoai: "",
-      email: "",
-    };
-    let isValid = true;
-
-    if (!formData.ngaySinh) {
-      newErrors.ngaySinh = "Vui lòng chọn ngày sinh";
-      isValid = false;
-    }
-
-    if (!formData.soCMND || formData.soCMND.length < 9) {
-      newErrors.soCMND = "Số CMND phải có ít nhất 9 ký tự";
-      isValid = false;
-    }
-
-    const phoneRegex = /^[0-9]{10,11}$/;
-    if (!formData.soDienThoai || !phoneRegex.test(formData.soDienThoai)) {
-      newErrors.soDienThoai = "Số điện thoại không hợp lệ (10-11 số)";
-      isValid = false;
-    }
-
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email không hợp lệ";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
+  const formatGioiTinh = (gioiTinh: boolean): string => {
+    return gioiTinh ? "Nam" : "Nữ";
   };
 
   const handleChange = (
@@ -158,20 +173,62 @@ const Profile = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // Xóa lỗi khi người dùng nhập
+    clearErrors(); // Xóa lỗi khi thay đổi input
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+    if (!file) return;
+
+    if (!isAuthenticated || !token) {
+      setShowNotification({
+        type: "error",
+        message: "Vui lòng đăng nhập để tải ảnh lên!",
+      });
+      return;
+    }
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+
+    try {
+      const response = await axios.post<UploadAvatarResponse>(
+        "http://localhost:8080/hocvien/upload-avatar/HV001",
+        formDataUpload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.data.status === 200 && response.data.data) {
+        const newImagePath = response.data.data;
         setFormData((prev) => ({
           ...prev,
-          uriHinhDaiDien: reader.result as string,
+          uriHinhDaiDien: newImagePath,
         }));
-      };
-      reader.readAsDataURL(file);
+        setHocVien((prev) =>
+          prev
+            ? {
+                ...prev,
+                uriHinhDaiDien: newImagePath,
+              }
+            : null
+        );
+        setShowNotification({
+          type: "success",
+          message: "Tải ảnh đại diện lên thành công!",
+        });
+      } else {
+        throw new Error(response.data.message || "Không thể tải ảnh lên");
+      }
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      setShowNotification({
+        type: "error",
+        message: "Không thể tải ảnh lên. Vui lòng thử lại!",
+      });
     }
   };
 
@@ -179,18 +236,52 @@ const Profile = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setHocVien((prev) => ({
-      ...prev!,
-      ...formData,
-      ngayCapNhatGanNhat: new Date().toISOString(),
-    }));
-    setIsModalOpen(false);
-    setShowNotification({
-      type: "success",
-      message: "Cập nhật hồ sơ thành công!",
-    });
+    if (!isAuthenticated || !token) {
+      setShowNotification({
+        type: "error",
+        message: "Vui lòng đăng nhập để cập nhật thông tin!",
+      });
+      return;
+    }
+
+    try {
+      const updatedHocVien = {
+        ...hocVien!,
+        ...formData,
+        ngayCapNhatGanNhat: new Date().toISOString(),
+      };
+
+      const response = await axios.put<ApiResponse<HocVien>>(
+        "http://localhost:8080/hocvien/update/HV001",
+        updatedHocVien,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status === 200 && response.data.data) {
+        setHocVien(response.data.data);
+        setIsModalOpen(false);
+        setShowNotification({
+          type: "success",
+          message: "Cập nhật hồ sơ thành công!",
+        });
+      } else {
+        throw new Error(response.data.message || "Không thể cập nhật hồ sơ");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setShowNotification({
+        type: "error",
+        message: "Không thể cập nhật hồ sơ. Vui lòng thử lại!",
+      });
+    }
   };
 
+  // Rest of the component remains the same
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50 pt-20">
@@ -259,14 +350,14 @@ const Profile = () => {
                   {hocVien.tenHocVien}
                 </h1>
                 <p className="text-blue-900 text-sm mb-3">
-                  Mã học viên: {hocVien.maHocVien}
+                  Student code: {hocVien.maHocVien}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-3">
                   <span className="bg-gray-50 text-blue-900 text-xs font-medium px-4 py-1.5 rounded-full">
                     {hocVien.tinhTrangHocTap}
                   </span>
                   <span className="text-xs text-blue-900">
-                    Cập nhật: {formatDate(hocVien.ngayCapNhatGanNhat)}
+                    Update: {formatDate(hocVien.ngayCapNhatGanNhat)}
                   </span>
                 </div>
               </div>
@@ -285,7 +376,7 @@ const Profile = () => {
             <div className="bg-white rounded-3xl shadow-lg p-8">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-2xl font-semibold text-neutral-800">
-                  Thông tin cá nhân
+                  Personal information
                 </h2>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -294,45 +385,45 @@ const Profile = () => {
                   className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-lg hover:bg-secondary transition text-sm font-medium"
                 >
                   <MdEdit />
-                  Chỉnh sửa
+                  Edit
                 </motion.button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
                   {
                     icon: MdPerson,
-                    label: "Họ và tên",
+                    label: "Full name",
                     value: hocVien.tenHocVien,
                     color: "text-indigo-500",
                   },
                   {
                     icon: MdCalendarToday,
-                    label: "Ngày sinh",
+                    label: "Date of birth",
                     value: formatDate(hocVien.ngaySinh),
                     color: "text-green-500",
                   },
                   {
                     icon: MdCardMembership,
-                    label: "Số CMND",
+                    label: "CCCD number",
                     value: hocVien.soCMND,
                     color: "text-purple-500",
                   },
                   {
                     icon: MdPhone,
-                    label: "Số điện thoại",
+                    label: "Phone number",
                     value: hocVien.soDienThoai,
                     color: "text-orange-500",
                   },
                   {
                     icon: MdEmail,
                     label: "Email",
-                    value: hocVien.email || "Chưa cập nhật",
+                    value: hocVien.email || "Not updated yet",
                     color: "text-red-500",
                   },
                   {
                     icon: MdLocationOn,
-                    label: "Địa chỉ",
-                    value: hocVien.diaChi || "Chưa cập nhật",
+                    label: "Address",
+                    value: hocVien.diaChi || "Not updated yet",
                     color: "text-teal-500",
                   },
                 ].map((item, i) => (
@@ -362,11 +453,9 @@ const Profile = () => {
                 >
                   <MdNote className="text-yellow-500 text-xl mt-1" />
                   <div>
-                    <p className="text-xs font-medium text-neutral-500">
-                      Ghi chú
-                    </p>
+                    <p className="text-xs font-medium text-neutral-500">Note</p>
                     <p className="text-sm font-semibold text-neutral-800">
-                      {hocVien.ghiChu || "Chưa có ghi chú"}
+                      {hocVien.ghiChu || "No notes yet"}
                     </p>
                   </div>
                 </motion.div>
@@ -381,37 +470,65 @@ const Profile = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="lg:col-span-1"
           >
-            <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-24">
-              <h3 className="text-xl font-semibold text-neutral-800 mb-6">
-                Tóm tắt
-              </h3>
-              <div className="space-y-4 text-sm">
-                <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
-                  <MdPerson className="text-indigo-500 text-lg" />
-                  <span className="text-neutral-700">
-                    Tình trạng:{" "}
-                    <span className="font-semibold">
-                      {hocVien.tinhTrangHocTap}
+            <div className="space-y-2">
+              <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-24">
+                <h3 className="text-xl font-semibold text-neutral-800 mb-6">
+                  Summary
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
+                    <MdPerson className="text-indigo-500 text-lg" />
+                    <span className="text-neutral-700">
+                      Status:{" "}
+                      <span className="font-semibold">
+                        {hocVien.tinhTrangHocTap}
+                      </span>
                     </span>
-                  </span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
+                    <MdCalendarToday className="text-green-500 text-lg" />
+                    <span className="text-neutral-700">
+                      Gender:{" "}
+                      <span className="font-semibold">
+                        {formatGioiTinh(hocVien.gioiTinh)}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
+                    <MdCardMembership className="text-purple-500 text-lg" />
+                    <span className="text-neutral-700">
+                      Update:{" "}
+                      <span className="font-semibold">
+                        {formatDate(hocVien.ngayCapNhatGanNhat)}
+                      </span>
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
-                  <MdCalendarToday className="text-green-500 text-lg" />
-                  <span className="text-neutral-700">
-                    Giới tính:{" "}
-                    <span className="font-semibold">
-                      {formatGioiTinh(hocVien.gioiTinh)}
-                    </span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
-                  <MdCardMembership className="text-purple-500 text-lg" />
-                  <span className="text-neutral-700">
-                    Cập nhật:{" "}
-                    <span className="font-semibold">
-                      {formatDate(hocVien.ngayCapNhatGanNhat)}
-                    </span>
-                  </span>
+              </div>
+              {/* Score */}
+              <div className="bg-white rounded-3xl shadow-lg p-8 sticky top-24">
+                <h3 className="text-xl font-semibold text-neutral-800 mb-6">
+                  Score
+                </h3>
+                <div className="space-y-2 text-sm cursor-pointer">
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
+                    <FaClipboardList className="text-indigo-500 text-lg" />
+                    <Link
+                      to="/result"
+                      className="font-semibold text-neutral-700"
+                    >
+                      Result
+                    </Link>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition">
+                    <MdOutlineScore className="text-green-500 text-lg" />
+                    <Link
+                      to="/test-scores"
+                      className="font-semibold text-neutral-700"
+                    >
+                      Test score
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -437,7 +554,7 @@ const Profile = () => {
             >
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-semibold text-neutral-800 ">
+                  <h2 className="text-2xl font-semibold text-neutral-800">
                     Edit Profile
                   </h2>
                   <p className="text-sm text-neutral-500 mt-1">
@@ -454,7 +571,7 @@ const Profile = () => {
                 </motion.button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6 ">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Avatar */}
                 <motion.div
                   variants={inputVariants}
@@ -559,7 +676,6 @@ const Profile = () => {
                     >
                       CCCD number
                     </label>
-
                     <MdCardMembership
                       className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
                         errors.soCMND ? "text-red-500" : "text-neutral-400"
