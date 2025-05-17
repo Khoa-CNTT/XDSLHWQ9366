@@ -3,7 +3,8 @@ import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import axios from "axios";
-
+import { useNotification } from "../../../context/NotificationContext";
+import { useSignInValidation } from "../../../components/Validate/ValidateSignIn";
 const SignIn = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [email, setEmail] = React.useState("");
@@ -11,10 +12,13 @@ const SignIn = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const { errors, validate, clearError } = useSignInValidation(email, password);
 
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const { notify } = useNotification();
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
 
     try {
       const response = await axios.post(
@@ -27,14 +31,15 @@ const SignIn = () => {
 
       if (response.data.status === 200) {
         const token = response.data.data;
-        login(token); // Save token via context or localStorage
-        navigate("/"); // Redirect to homepage
+        login(token);
+        navigate("/");
+        notify("success", "Đăng nhập thành công!");
       } else {
-        alert("Đăng nhập thất bại!");
+        notify("error", "Đăng nhập thất bại!");
       }
     } catch (error) {
       console.error("Đăng nhập lỗi:", error);
-      alert("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.");
+      notify("error", "Đăng nhập thất bại! Vui lòng kiểm tra thông tin.");
     }
   };
 
@@ -58,11 +63,19 @@ const SignIn = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError("email");
+              }}
               autoComplete="username"
               placeholder="Enter your email"
-              className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300 focus:border-sky-500 outline-none ease-in-out duration-300"
+              className={`max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border ${
+                errors.email ? "border-red-400" : "border-neutral-300"
+              } focus:border-sky-500 outline-none ease-in-out duration-300`}
             />
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -76,10 +89,15 @@ const SignIn = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError("password");
+                }}
                 autoComplete="current-password"
                 placeholder="Enter your password"
-                className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300 focus:border-sky-500 outline-none ease-in-out duration-300"
+                className={`max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border ${
+                  errors.password ? "border-red-400" : "border-neutral-300"
+                } focus:border-sky-500 outline-none ease-in-out duration-300`}
               />
               <button
                 type="button"
@@ -89,6 +107,9 @@ const SignIn = () => {
                 {showPassword ? <FaEye size={16} /> : <FaEyeSlash size={16} />}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+            )}
           </div>
 
           <div className="flex items-center justify-between gap-2 mt-1 w-full px-1">
