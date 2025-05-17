@@ -67,8 +67,15 @@ const CourseDetail = () => {
       const response = await axios.get<ApiResponse>(
         `http://localhost:8080/khoahoc/getById/${id}`
       );
-      setCourse(response.data.data);
-      fetchRelatedCourses(response.data.data.linhVuc.maLinhVuc);
+      const courseData = response.data.data;
+      if (courseData && courseData.linhVuc && courseData.linhVuc.maLinhVuc) {
+        setCourse(courseData);
+        fetchRelatedCourses(courseData.linhVuc.maLinhVuc);
+      } else {
+        throw new Error(
+          "Dữ liệu khóa học không hợp lệ hoặc thiếu trường linhVuc"
+        );
+      }
     } catch (err) {
       console.error("Lỗi khi lấy thông tin khóa học:", err);
       setError("Không thể lấy thông tin khóa học. Vui lòng thử lại.");
@@ -79,17 +86,26 @@ const CourseDetail = () => {
   };
 
   // Hàm lấy các khóa học liên quan
+  // Hàm lấy các khóa học liên quan
   const fetchRelatedCourses = async (maLinhVuc: string) => {
     try {
       const response = await axios.get<{
         status: number;
         message: string;
-        data: Course[];
-      }>(`http://localhost:8080/khoahoc/linhvuc/${maLinhVuc}`);
-      const filteredCourses = response.data.data.filter(
-        (c) => c.maKhoaHoc !== id
+        data: {
+          currentPage: number;
+          pageSize: number;
+          totalElements: number;
+          totalPages: number;
+          data: Course[];
+        };
+      }>(
+        `http://localhost:8080/khoahoc/getByMaLinhVuc?maLinhVuc=${maLinhVuc}&page=1&size=3`
       );
-      setRelatedCourses(filteredCourses.slice(0, 3));
+
+      const courses = response.data.data.data; // Access the array of courses
+      const filteredCourses = courses.filter((c) => c.maKhoaHoc !== id); // Exclude current course
+      setRelatedCourses(filteredCourses.slice(0, 3)); // Limit to 3 courses
     } catch (err) {
       console.error("Lỗi khi lấy khóa học liên quan:", err);
       setRelatedCourses([]);

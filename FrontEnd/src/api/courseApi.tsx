@@ -233,8 +233,9 @@ const CourseApi: React.FC<CourseApiProps> = ({ children }) => {
     setCurrentPage(page);
   };
 
-  const getCourseDifficulty = (courseId: string) => {
-    const difficultyIndex = courseId.length % 3;
+  const getCourseDifficulty = (courseId: string | undefined | null): string => {
+    if (!courseId || typeof courseId !== "string") return "Không xác định";
+    const difficultyIndex = courseId.length % difficulties.length;
     return difficulties[difficultyIndex];
   };
 
