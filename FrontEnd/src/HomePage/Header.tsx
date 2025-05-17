@@ -1,22 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/Account/AuthContext";
 import logo from "../assets/Logo.png";
+
 function Header() {
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, user, role, logout } = useAuth();
   const navigate = useNavigate();
+  console.log("User:", user);
+  console.log("Role:", role);
 
   const handleLogout = () => {
     logout();
-    navigate("/");
-  };
-
-  const handleLogin = () => {
     navigate("/signin");
   };
 
   return (
     <div>
-      <div className="flex h-16 w-full bg-blue-200 px-4 items-center justify-between">
+      <div className="flex h-16 w-full bg-orange-300 px-4 items-center justify-between">
         <button
           className="h-12 flex items-center gap-2 text-xl font-medium bg-white border border-black hover:bg-blue-500 hover:text-white "
           onClick={() => navigate("/")}
@@ -30,10 +29,10 @@ function Header() {
         <div className="flex items-center gap-2">
           {isLoggedIn ? (
             <>
-              <div className="flex p-1 items-center bg-blue-100 gap-2 rounded border ">
+              <div className="flex p-2 bg-yellow-50 items-center gap-2 rounded-xl border ">
                 <div className="flex flex-col items-start ">
                   <p className="font-semibold">Hello {user}</p>
-                  <p className="text-sm text-gray-600">Admin</p>
+                  <p className="text-sm text-gray-600">{role}</p>
                 </div>
               </div>
               <button
@@ -46,7 +45,7 @@ function Header() {
           ) : (
             <button
               className="p-2 bg-white border rounded-md hover:bg-blue-500 hover:text-white"
-              onClick={handleLogin}
+              onClick={() => navigate("/signin")}
             >
               Đăng nhập
             </button>

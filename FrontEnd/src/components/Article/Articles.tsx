@@ -120,7 +120,7 @@ export default function Articles() {
   return (
     <div className="h-full mt-2">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Danh sách Bài đăng</h2>
+        <h2 className="text-xl font-bold mx-4">Danh sách Bài viết</h2>
         <div className=" gap-4 inline-flex">
           <div className="flex items-center border px-2 rounded-lg bg-white">
             <input
@@ -236,12 +236,12 @@ export default function Articles() {
             >
               Trang sau
             </button>
-            <button
+            {/* <button
               // onClick={handleExportExcel}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PhieuChi } from "../Type/Types";
+import { exportPhieuChiToExcel } from "../../Service.tsx/ExportExcel/PhieuChiExp";
 
 export default function Disbursements() {
   const [search, setSearch] = useState("");
@@ -84,36 +85,40 @@ export default function Disbursements() {
   const demoList = useMemo<PhieuChi[]>(
     () => [
       {
-        maPhieuChi: "123456",
-        tenPhieuChi: "Điện",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNhan: "Lê Đức Thảo",
-        soTien: "1.000.000",
+        maPhieuChi: "PC01",
+        noiDung: "Tiền Điện",
+        maNhanVien: "Lê Thị A",
+        nguoiNhan: "Điện lực miền Trung",
+        soTien: "2.000.000",
         ngayChi: "2025-05-01",
+        diaChi: "180 Lê A",
       },
       {
-        maPhieuChi: "234",
-        tenPhieuChi: "Nước",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNhan: "Lê Đức Thảo",
+        maPhieuChi: "PC02",
+        noiDung: "Tiền Nước",
+        maNhanVien: "Lê Thị A",
+        nguoiNhan: "Cục Cấp nước Đà Nẵng",
         soTien: "1.000.000",
-        ngayChi: "2025-05-01",
+        ngayChi: "2025-05-02",
+        diaChi: "03 Quang Dũng",
       },
       {
-        maPhieuChi: "345",
-        tenPhieuChi: "Mạng",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNhan: "Lê Đức Thảo",
-        soTien: "1.000.000",
+        maPhieuChi: "PC03",
+        noiDung: "Mạng Internet",
+        maNhanVien: "Lê Thị Hằng",
+        nguoiNhan: "VNPT Đà Nẵng",
+        soTien: "800.000",
         ngayChi: "2025-05-01",
+        diaChi: "125 2/9",
       },
       {
-        maPhieuChi: "567",
-        tenPhieuChi: "Môi trường",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNhan: "Lê Đức Thảo",
-        soTien: "1.000.000",
+        maPhieuChi: "PC04",
+        noiDung: "Môi trường",
+        maNhanVien: "Lê Thị Hẵng",
+        nguoiNhan: "Ban môi trường TP",
+        soTien: "100.000",
         ngayChi: "2025-05-01",
+        diaChi: "125 Lê Thanh Nghị",
       },
     ],
     []
@@ -121,7 +126,7 @@ export default function Disbursements() {
 
   // Loại bỏ các giá trị trùng lặp
   const uniqueNotes = useMemo(() => {
-    const notes = demoList.map((item) => item.tenPhieuChi);
+    const notes = demoList.map((item) => item.noiDung);
     return Array.from(new Set(notes));
   }, [demoList]);
   //  10 items per page
@@ -130,8 +135,8 @@ export default function Disbursements() {
   const filteredList = (demoList || []).filter((c: PhieuChi) => {
     const matchSearch =
       c.maPhieuChi.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenPhieuChi.toLowerCase().includes(search.toLowerCase());
-    const matchNhanVien = !noiDung || c.tenPhieuChi === noiDung;
+      c.noiDung.toLowerCase().includes(search.toLowerCase());
+    const matchNhanVien = !noiDung || c.noiDung === noiDung;
 
     return matchSearch && matchNhanVien;
   });
@@ -237,7 +242,7 @@ export default function Disbursements() {
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </td>
                 <td className="p-2 text-center">{phieuchi.maPhieuChi}</td>
-                <td className="p-2 text-center">{phieuchi.tenPhieuChi}</td>
+                <td className="p-2 text-center">{phieuchi.noiDung}</td>
                 <td className="p-2 text-center">{phieuchi.maNhanVien}</td>
                 <td className="p-2 text-center">{phieuchi.nguoiNhan}</td>
                 <td className="p-2 text-center">{phieuchi.soTien}</td>
@@ -308,7 +313,7 @@ export default function Disbursements() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportPhieuChiToExcel(demoList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

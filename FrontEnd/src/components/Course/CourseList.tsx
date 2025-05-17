@@ -1,19 +1,19 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Course, linhVuc } from "../Type/Types";
+import { Course, LinhVuc } from "../Type/Types";
+import { exportKhoaHocToExcel } from "../../Service.tsx/ExportExcel/KhoaHocExp";
 
 export default function CourseList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [course, setCourse] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const [linhVuc, setLinhVuc] = useState<linhVuc | null>(null);
+  const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
 
   // Fetch data from API
   useEffect(() => {
@@ -23,9 +23,8 @@ export default function CourseList() {
         const response = await axios.get(
           `http://localhost:8080/khoahoc/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
-        const { content, totalPages } = response.data;
+        const { content } = response.data;
         setCourse(content);
-        setTotalPages(totalPages);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu Khoá học:", error);
       } finally {
@@ -49,8 +48,7 @@ export default function CourseList() {
     try {
       await axios.delete(`http://localhost:8080/khoahoc/delete/${id}`);
       alert("Xóa Khoá học thành công!");
-      // Cập nhật lại danh sách Khoá học sau khi xóa
-      setCourse((prev) => prev.filter((course) => course.id !== id));
+      setCourse((prev) => prev.filter((course) => course.maKhoaHoc !== id));
     } catch (error) {
       console.error("Lỗi khi xóa Khoá học:", error);
       alert("Xóa Khoá học thất bại!");
@@ -58,7 +56,7 @@ export default function CourseList() {
   };
 
   const handleView = (course: Course) => {
-    navigate(`/khoahoc/get-khoahoc/${course.id}`, {
+    navigate(`/khoahoc/get-khoahoc/${course.maKhoaHoc}`, {
       state: { course },
     });
   };
@@ -67,88 +65,88 @@ export default function CourseList() {
   const courseList = useMemo<Course[]>(
     () => [
       {
-        id: "HANTA1",
-        name: "HỌC CÙNG HANTA 1",
+        maKhoaHoc: "HANTA1",
+        tenKhoaHoc: "HỌC CÙNG HANTA 1",
         noidung: "Tristique libero...",
         fee: "150000",
         sobuoi: 2,
         linhVuc: "iot",
       },
       {
-        id: "HANTA2",
-        name: "HỌC CÙNG HANTA 2",
+        maKhoaHoc: "HANTA2",
+        tenKhoaHoc: "HỌC CÙNG HANTA 2",
         noidung: "Tristique libero...",
         fee: "150000",
         sobuoi: 2,
         linhVuc: "khmt",
       },
       {
-        id: "HANTA3",
-        name: "HỌC CÙNG HANTA 3",
+        maKhoaHoc: "HANTA3",
+        tenKhoaHoc: "HỌC CÙNG HANTA 3",
         noidung: "Tristique libero...",
         fee: "150000",
         sobuoi: 2,
         linhVuc: "cntt",
       },
       {
-        id: "HANTA4",
-        name: "HỌC CÙNG HANTA 4",
+        maKhoaHoc: "HANTA4",
+        tenKhoaHoc: "HỌC CÙNG HANTA 4",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "200000",
         sobuoi: 3,
         linhVuc: "java",
       },
       {
-        id: "HANTA5",
-        name: "HỌC CÙNG HANTA 5",
+        maKhoaHoc: "HANTA5",
+        tenKhoaHoc: "HỌC CÙNG HANTA 5",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "250000",
         sobuoi: 4,
         linhVuc: "iot",
       },
       {
-        id: "HANTA6",
-        name: "HỌC CÙNG HANTA 6",
+        maKhoaHoc: "HANTA6",
+        tenKhoaHoc: "HỌC CÙNG HANTA 6",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "300000",
         sobuoi: 5,
         linhVuc: "khmt",
       },
       {
-        id: "HANTA7",
-        name: "HỌC CÙNG HANTA 7",
+        maKhoaHoc: "HANTA7",
+        tenKhoaHoc: "HỌC CÙNG HANTA 7",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "350000",
         sobuoi: 6,
         linhVuc: "cntt",
       },
       {
-        id: "HANTA8",
-        name: "HỌC CÙNG HANTA 8",
+        maKhoaHoc: "HANTA8",
+        tenKhoaHoc: "HỌC CÙNG HANTA 8",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "400000",
         sobuoi: 7,
         linhVuc: "java",
       },
       {
-        id: "HANTA9",
-        name: "HỌC CÙNG HANTA 9",
+        maKhoaHoc: "HANTA9",
+        tenKhoaHoc: "HỌC CÙNG HANTA 9",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "450000",
         sobuoi: 8,
         linhVuc: "iot",
       },
       {
-        id: "HANTA10",
-        name: "HỌC CÙNG HANTA 10",
+        maKhoaHoc: "HANTA10",
+        tenKhoaHoc: "HỌC CÙNG HANTA 10",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "500000",
         sobuoi: 9,
         linhVuc: "khmt",
       },
       {
-        id: "HANTA11",
-        name: "HỌC CÙNG HANTA 11",
+        maKhoaHoc: "HANTA11",
+        tenKhoaHoc: "HỌC CÙNG HANTA 11",
         noidung: "Lorem ipsum dolor sit amet...",
         fee: "550000",
         sobuoi: 10,
@@ -157,36 +155,41 @@ export default function CourseList() {
     ],
     []
   );
-  const linhVucList = useMemo(
+  const linhVucList = useMemo<LinhVuc[]>(
     () => [
       {
-        id: "java",
-        name: "Java",
+        maLinhVuc: "java",
+        tenLinhVuc: "Java",
       },
       {
-        id: "iot",
-        name: "IOT",
+        maLinhVuc: "iot",
+        tenLinhVuc: "IOT",
       },
       {
-        id: "cntt",
-        name: "Công nghệ thông tin",
+        maLinhVuc: "cntt",
+        tenLinhVuc: "Công nghệ thông tin",
       },
       {
-        id: "khmt",
-        name: "Khoa học máy tính",
+        maLinhVuc: "khmt",
+        tenLinhVuc: "Khoa học máy tính",
       },
     ],
     []
   );
+
+  const displayList = course.length > 0 ? course : courseList;
+
   //  10 items per page
-  const itemsPerPage = 10;
-  const filteredList = courseList.filter((c) => {
+  const filteredList = displayList.filter((c) => {
     const matchSearch =
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.id.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.linhVuc === linhVuc.id;
+      c.maKhoaHoc.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenKhoaHoc.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || c.linhVuc === linhVuc.maLinhVuc;
     return matchSearch && matchLinhVuc;
   });
+
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
@@ -211,7 +214,7 @@ export default function CourseList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              {linhVuc ? linhVuc.name : "Tất cả lĩnh vực"}
+              {linhVuc ? linhVuc.tenLinhVuc : "Tất cả lĩnh vực"}
               {!linhVuc && (
                 <svg
                   className="w-4 h-4 ml-2 inline"
@@ -230,14 +233,14 @@ export default function CourseList() {
                 <div className="py-1">
                   {linhVucList.map((item) => (
                     <button
-                      key={item.id}
+                      key={item.maLinhVuc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         setLinhVuc(item);
                         setIsOpenMenu(false);
                       }}
                     >
-                      {item.name}
+                      {item.tenLinhVuc}
                     </button>
                   ))}
                   <button
@@ -277,12 +280,12 @@ export default function CourseList() {
           </thead>
           <tbody>
             {paginatedList.map((course, index) => (
-              <tr key={course.id} className="border-b">
+              <tr key={course.maKhoaHoc} className="border-b">
                 <td className="p-2 text-center">
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </td>
-                <td className="p-2 text-center">{course.id}</td>
-                <td className="p-2 text-center">{course.name}</td>
+                <td className="p-2 text-center">{course.maKhoaHoc}</td>
+                <td className="p-2 text-center">{course.tenKhoaHoc}</td>
 
                 <td className="p-2 text-center">{course.fee}</td>
                 <td className="p-2 text-center">{course.sobuoi}</td>
@@ -290,8 +293,9 @@ export default function CourseList() {
                 <td className="p-2 text-center">
                   {linhVucList.find(
                     (lv) =>
-                      lv.id.toLowerCase() === course.linhVuc?.toLowerCase()
-                  )?.name || course.linhVuc}
+                      lv.maLinhVuc.toLowerCase() ===
+                      course.linhVuc?.toLowerCase()
+                  )?.tenLinhVuc || course.linhVuc}
                 </td>
 
                 <td className="p-2 text-center">
@@ -316,7 +320,7 @@ export default function CourseList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(course.id)}
+                    onClick={() => handleDelete(course.maKhoaHoc)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +364,7 @@ export default function CourseList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportKhoaHocToExcel(displayList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Employee } from "../Type/Types";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { exportNhanVienToExcel } from "../../Service.tsx/ExportExcel/NhanVienExp";
 
 export default function EmployeeList() {
   const [search, setSearch] = useState("");
@@ -9,7 +10,6 @@ export default function EmployeeList() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [selectedLinhVuc, setSelectedLinhVuc] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [employees, setemployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,9 +21,8 @@ export default function EmployeeList() {
           `http://localhost:8080/nhanvien/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
         if (response.status === 200) {
-          const { content, totalPages } = response.data;
+          const { content } = response.data;
           setemployees(content);
-          setTotalPages(totalPages);
         } else {
           console.error("API trả về lỗi:", response.status);
         }
@@ -50,7 +49,9 @@ export default function EmployeeList() {
       await axios.delete(`http://localhost:8080/nhanvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
       // Cập nhật lại danh sách giảng viên sau khi xóa
-      setemployees((prev) => prev.filter((employee) => employee.id !== id));
+      setemployees((prev) =>
+        prev.filter((employee) => employee.maNhanVien !== id)
+      );
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
       alert("Xóa giảng viên thất bại!");
@@ -58,7 +59,7 @@ export default function EmployeeList() {
   };
 
   const handleView = (employee: Employee) => {
-    navigate(`/nhanvien/get-nhanvien/${employee.id}`, {
+    navigate(`/nhanvien/get-nhanvien/${employee.maNhanVien}`, {
       state: { employee },
     });
   };
@@ -67,10 +68,10 @@ export default function EmployeeList() {
   const employeelist = useMemo<Employee[]>(
     () => [
       {
-        id: "NV01",
-        name: "Lê Văn A",
+        maNhanVien: "NV01",
+        tenNhanVien: "Lê Văn A",
         dob: "1997-08-15",
-        gioiTinh: "true",
+        gioiTinh: "Nam",
         CCCD: "048097000077",
         SDT: "0385665243",
         email: "abc123@gmail.com",
@@ -81,10 +82,10 @@ export default function EmployeeList() {
         ghiChu: "",
       },
       {
-        id: "NV02",
-        name: "Nguyễn Văn B",
+        maNhanVien: "NV02",
+        tenNhanVien: "Nguyễn Văn B",
         dob: "1995-05-20",
-        gioiTinh: "true",
+        gioiTinh: "Nam",
         CCCD: "048097000078",
         SDT: "0385665243",
         email: "123123123",
@@ -108,11 +109,13 @@ export default function EmployeeList() {
     setIsOpenMenu(false);
   };
   //  10 items per page
+  const displayList = employees.length > 0 ? employees : employeelist;
   const itemsPerPage = 10;
-  const filteredList = employeelist.filter((c) => {
+  const totalPages = Math.ceil(displayList.length / itemsPerPage);
+  const filteredList = displayList.filter((c) => {
     const matchSearch =
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.id.toLowerCase().includes(search.toLowerCase());
+      c.maNhanVien.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenNhanVien.toLowerCase().includes(search.toLowerCase());
     const matchLinhVuc = !selectedLinhVuc || c.linhVuc === selectedLinhVuc;
     return matchSearch && matchLinhVuc;
   });
@@ -121,6 +124,7 @@ export default function EmployeeList() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   return (
     <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
@@ -196,11 +200,10 @@ export default function EmployeeList() {
           </thead>
           <tbody>
             {paginatedList.map((employee, index) => (
-              <tr key={employee.id} className="border-b">
+              <tr key={employee.maNhanVien} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{employee.id}</td>
-                <td className="p-2 text-center">{employee.name}</td>
-
+                <td className="p-2 text-center">{employee.maNhanVien}</td>
+                <td className="p-2 text-center">{employee.tenNhanVien}</td>
                 <td className="p-2 text-center">{employee.SDT}</td>
                 <td className="p-2 text-center">{employee.email}</td>
                 <td className="p-2 text-center">{employee.linhVuc}</td>
@@ -226,7 +229,7 @@ export default function EmployeeList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(employee.id)}
+                    onClick={() => handleDelete(employee.maNhanVien)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -270,7 +273,7 @@ export default function EmployeeList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportNhanVienToExcel(displayList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

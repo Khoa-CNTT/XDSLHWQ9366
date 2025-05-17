@@ -24,6 +24,7 @@ export default function AddField() {
     } catch (err) {
       if (err instanceof Error) {
         alert("Lỗi kết nối backend: " + err.message);
+        console.log(err);
       } else {
         alert("Đã có lỗi xảy ra.");
       }

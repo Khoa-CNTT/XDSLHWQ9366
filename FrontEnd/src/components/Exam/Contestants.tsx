@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThiSinh } from "../Type/Types";
+import { exportThiSinhToExcel } from "../../Service.tsx/ExportExcel/ThiSinhExp";
 
 export default function Contestants() {
   const [search, setSearch] = useState("");
@@ -308,7 +309,7 @@ export default function Contestants() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportThiSinhToExcel(thiSinhList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

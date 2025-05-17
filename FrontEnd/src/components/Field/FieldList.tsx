@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinhVuc } from "../Type/Types";
 
@@ -66,16 +66,37 @@ export default function FieldList() {
       state: { linhvuc },
     });
   };
+  const linhVucList = useMemo(
+    () => [
+      {
+        id: "LV01",
+        name: "Java",
+      },
+      {
+        id: "LV02",
+        name: "IOT",
+      },
+      {
+        id: "LV03",
+        name: "Công nghệ thông tin",
+      },
+      {
+        id: "LV04",
+        name: "Khoa học máy tính",
+      },
+    ],
+    []
+  );
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   //  10 items per page
   const [linhVuc, setLinhVuc] = useState<string | null>(null);
   const itemsPerPage = 10;
-  const filteredList = (linhvucs || []).filter((c) => {
+  const filteredList = (linhVucList || []).filter((c) => {
     const matchSearch =
-      c.maLinhVuc.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenLinhVuc.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.maLinhVuc === linhVuc;
+      c.id.toLowerCase().includes(search.toLowerCase()) ||
+      c.name.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || c.id === linhVuc;
     return matchSearch && matchLinhVuc;
   });
 
@@ -98,52 +119,6 @@ export default function FieldList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="relative" ref={menuRef}>
-            {/* Button */}
-            <button
-              onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
-            >
-              Tất cả Lĩnh vực
-              <svg
-                className="w-4 h-4 ml-12 -mr-1 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpenMenu && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  {linhvucs.map((item) => (
-                    <button
-                      key={item.maLinhVuc}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => {
-                        setLinhVuc(item.maLinhVuc);
-                        setIsOpenMenu(false);
-                      }}
-                    >
-                      {item.tenLinhVuc}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setLinhVuc(null);
-                      setIsOpenMenu(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
-                  >
-                    Huỷ
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
 
           <button
             className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
@@ -173,14 +148,14 @@ export default function FieldList() {
               </tr>
             ) : (
               paginatedList.map((linhvuc, index) => (
-                <tr key={linhvuc.maLinhVuc} className="border-b">
+                <tr key={linhvuc.id} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{linhvuc.maLinhVuc}</td>
-                  <td className="p-2 text-center">{linhvuc.tenLinhVuc}</td>
+                  <td className="p-2 text-center">{linhvuc.id}</td>
+                  <td className="p-2 text-center">{linhvuc.name}</td>
 
                   <td className="p-2 text-center">
                     <button
-                      onClick={() => handleView(linhvuc)}
+                      // onClick={() => handleView(linhvuc)}
                       className=" mx-2 border p-2 rounded-md items-center align-middle"
                     >
                       <svg
@@ -200,7 +175,7 @@ export default function FieldList() {
                     </button>
                     <button
                       className="border p-2 rounded-md items-center align-middle"
-                      onClick={() => handleDelete(linhvuc.maLinhVuc)}
+                      // onClick={() => handleDelete(linhvuc.maLinhVuc)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -243,12 +218,6 @@ export default function FieldList() {
               className="px-4 py-2  bg-gray-300 rounded hover:bg-gray-500 disabled:opacity-50"
             >
               Trang sau
-            </button>
-            <button
-              // onClick={handleExportExcel}
-              className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
-            >
-              Export Excel
             </button>
           </div>
         </div>

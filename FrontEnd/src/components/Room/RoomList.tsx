@@ -2,13 +2,13 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Room } from "../Type/Types";
+import { exportPhongHocToExcel } from "../../Service.tsx/ExportExcel/PhongHocExp";
 
 export default function RoomList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [phongHocs, setPhongHoc] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,9 +21,8 @@ export default function RoomList() {
         const response = await axios.get(
           `http://localhost:8080/phonghoc/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
-        const { content, totalPages } = response.data;
+        const { content } = response.data;
         setPhongHoc(content);
-        setTotalPages(totalPages);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu phòng học:", error);
       } finally {
@@ -102,16 +101,16 @@ export default function RoomList() {
 
   //  10 items per page
   const [ghiChu, setghiChu] = useState<string | null>(null);
-
+  const displayList = phongHocs.length > 0 ? phongHocs : roomList;
   const itemsPerPage = 10;
-  const filteredList = roomList.filter((c) => {
+  const filteredList = displayList.filter((c) => {
     const matchSearch =
       c.tenPhongHoc.toLowerCase().includes(search.toLowerCase()) ||
       c.maPhongHoc.toLowerCase().includes(search.toLowerCase());
     const matchLinhVuc = !ghiChu || c.ghiChu === ghiChu;
     return matchSearch && matchLinhVuc;
   });
-
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -269,7 +268,7 @@ export default function RoomList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportPhongHocToExcel(roomList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

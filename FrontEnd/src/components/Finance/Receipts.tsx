@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PhieuThu } from "../Type/Types";
+import { exportPhieuThuToExcel } from "../../Service.tsx/ExportExcel/PhieuThuExp";
 
 export default function Receipts() {
   const [search, setSearch] = useState("");
@@ -84,36 +85,43 @@ export default function Receipts() {
   const demoList = useMemo<PhieuThu[]>(
     () => [
       {
-        maPhieuThu: "123456",
-        tenPhieuThu: "Học phí",
-        maNhanVien: "Lê Thị ABC",
+        maPhieuThu: "PT01",
+        noiDung: "Học phí",
+        maNhanVien: "Lê Thị A",
         nguoiNop: "Lê Đức Thảo",
         soTien: "1.000.000",
         ngayThu: "2025-05-01",
+        diaChi: "108 Nguyễn Chánh",
       },
       {
-        maPhieuThu: "234",
-        tenPhieuThu: "Quỹ",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNop: "Lê Đức Thảo",
-        soTien: "1.000.000",
-        ngayThu: "2025-05-01",
+        maPhieuThu: "PT02",
+        noiDung: "Quỹ",
+        maNhanVien: "Lê Thị B",
+        nguoiNop: "Trương Thị Ngọc Ánh",
+        soTien: "1.500.000",
+        ngayThu: "2025-05-02",
+
+        diaChi: "03 Quang Trung",
       },
       {
-        maPhieuThu: "345",
-        tenPhieuThu: "Test",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNop: "Lê Đức Thảo",
-        soTien: "1.000.000",
-        ngayThu: "2025-05-01",
+        maPhieuThu: "PT03",
+        noiDung: "Test",
+        maNhanVien: "Nguyễn Thanh C",
+        nguoiNop: "Nguyễn Thanh Anh",
+        soTien: "800.000",
+        ngayThu: "2025-05-03",
+
+        diaChi: "209 Phan Thanh",
       },
       {
-        maPhieuThu: "567",
-        tenPhieuThu: "Thi",
-        maNhanVien: "Lê Thị ABC",
-        nguoiNop: "Lê Đức Thảo",
-        soTien: "1.000.000",
-        ngayThu: "2025-05-01",
+        maPhieuThu: "PT04",
+        noiDung: "Thi Đầu Ra",
+        maNhanVien: "Lê Thị A",
+        nguoiNop: "Đoàn Văn Huy",
+        soTien: "1.200.000",
+        ngayThu: "2025-05-06",
+
+        diaChi: "05 Núi Thành",
       },
     ],
     []
@@ -121,7 +129,7 @@ export default function Receipts() {
 
   // Loại bỏ các giá trị trùng lặp
   const uniqueNotes = useMemo(() => {
-    const notes = demoList.map((item) => item.tenPhieuThu);
+    const notes = demoList.map((item) => item.noiDung);
     return Array.from(new Set(notes));
   }, [demoList]);
   //  10 items per page
@@ -130,8 +138,8 @@ export default function Receipts() {
   const filteredList = (demoList || []).filter((c: PhieuThu) => {
     const matchSearch =
       c.maPhieuThu.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenPhieuThu.toLowerCase().includes(search.toLowerCase());
-    const matchNhanVien = !noiDung || c.tenPhieuThu === noiDung;
+      c.noiDung.toLowerCase().includes(search.toLowerCase());
+    const matchNhanVien = !noiDung || c.noiDung === noiDung;
 
     return matchSearch && matchNhanVien;
   });
@@ -249,7 +257,7 @@ export default function Receipts() {
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </td>
                 <td className="p-2 text-center">{phieuthu.maPhieuThu}</td>
-                <td className="p-2 text-center">{phieuthu.tenPhieuThu}</td>
+                <td className="p-2 text-center">{phieuthu.noiDung}</td>
                 <td className="p-2 text-center">{phieuthu.maNhanVien}</td>
                 <td className="p-2 text-center">{phieuthu.nguoiNop}</td>
                 <td className="p-2 text-center">{phieuthu.soTien}</td>
@@ -320,7 +328,7 @@ export default function Receipts() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportPhieuThuToExcel(demoList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

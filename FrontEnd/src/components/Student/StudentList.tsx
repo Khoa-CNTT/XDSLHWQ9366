@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 import { Student } from "../Type/Types";
 import axios from "axios";
+import { exportHocVienToExcel } from "../../Service.tsx/ExportExcel/HocVienExp";
 
 export default function StudentList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [students, setstudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(10);
@@ -41,8 +40,7 @@ export default function StudentList() {
           if (paginationData) {
             // Lấy danh sách giảng viên từ paginationData.data
             const studentList = paginationData.data;
-            setstudents(studentList || []);
-            setTotalPages(paginationData.totalPages || 1);
+            setstudents(studentList);
           }
         } else {
           console.error("API trả về lỗi:", response.status);
@@ -83,15 +81,7 @@ export default function StudentList() {
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(students);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachHocVien");
-
-    XLSX.writeFile(workbook, "danh_sach_hoc_vien.xlsx");
-  };
-
-  const studentList = useMemo(
+  const studentList = useMemo<Student[]>(
     () => [
       {
         maHocVien: "HV01",
@@ -146,7 +136,8 @@ export default function StudentList() {
   );
 
   // 10 items per page
-  const filteredList = (studentList || []).filter((c) => {
+  const displayList = students.length > 0 ? students : studentList;
+  const filteredList = (displayList || []).filter((c) => {
     const matchSearch =
       c.tenHocVien.toLowerCase().includes(search.toLowerCase()) ||
       c.maHocVien.toLowerCase().includes(search.toLowerCase());
@@ -154,6 +145,7 @@ export default function StudentList() {
       !selectedTinhTrang || c.tinhTrangHocTap === selectedTinhTrang.id;
     return matchSearch && matchTinhTrang;
   });
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
   const paginatedList = (filteredList || []).slice(
     (currentPage - 1) * itemsPerPage,
@@ -320,7 +312,7 @@ export default function StudentList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportHocVienToExcel(studentList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

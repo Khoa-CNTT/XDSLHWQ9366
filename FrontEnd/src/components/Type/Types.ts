@@ -9,7 +9,7 @@ export interface Lecturer  {
   diaChi: string;
   coQuanCongTac: string;
   tinhTrangCongTac: string;
-  linhVuc?: LinhVuc | null;
+  maLinhVuc: string;
   ghiChu: string;
   urlHinhDaiDien: string | null;
   };
@@ -154,7 +154,9 @@ export interface Room  {
           ngayDang: string;
           };
 
-
+interface Window {
+  showSaveFilePicker?: () => Promise<any>;
+}
   export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
   export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
   export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;

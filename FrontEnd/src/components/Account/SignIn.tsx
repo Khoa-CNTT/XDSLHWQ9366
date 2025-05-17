@@ -9,15 +9,25 @@ const SignIn = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignIn = () => {
-    if (email === "admin@gmail.com" && password === "123456") {
-      login("example-token", email); // Lưu token và email vào context
-      navigate("/"); // Điều hướng đến trang chủ
+  const handleSignIn = async () => {
+    // Giả lập API trả về thông tin người dùng
+    const mockDatabase = [
+      { email: "admin@gmail.com", password: "123456", role: "Admin" },
+      { email: "ketoan@gmail.com", password: "123456", role: "Finance" },
+      { email: "lecture@gmail.com", password: "123456", role: "Lecture" },
+    ];
+
+    const user = mockDatabase.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (user) {
+      login("example-token", user.email, user.role);
+      navigate("/");
     } else {
       setError("Email hoặc mật khẩu không đúng!");
     }
   };
-
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full bg-neutral-50 shadow-sm rounded-xl p-8">

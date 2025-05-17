@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { exportUsersToExcel } from "../../Service.tsx/ExportExcel/ExportUser";
 type User = {
   id: string;
   user: string;
@@ -100,7 +101,7 @@ export default function UserList() {
         ghiChu: "",
       },
       {
-        id: "GV04",
+        id: "KT01",
         name: "Đoàn Văn Huy",
         user: "doanhuy2112",
         password: "123456",
@@ -108,7 +109,7 @@ export default function UserList() {
         ghiChu: "",
       },
       {
-        id: "GV05",
+        id: "HV05",
         name: "Nguyễn Hữu Thành",
         user: "huuthanh2112",
         password: "123456",
@@ -116,7 +117,7 @@ export default function UserList() {
         ghiChu: "",
       },
       {
-        id: "GV06",
+        id: "NV06",
         name: "Lê Văn A",
         user: "levana2112",
         password: "123456",
@@ -180,7 +181,7 @@ export default function UserList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              {role ? role.name : "Tất cả lĩnh vực"}
+              {role ? role.name : "Tất cả tài khoản"}
               {!role && (
                 <svg
                   className="w-4 h-4 ml-2 inline"
@@ -238,7 +239,7 @@ export default function UserList() {
               <th className="p-2 border">STT</th>
               <th>Mã Tài khoản</th>
               <th className="p-2 border">Tên Tài khoản</th>
-              <th className="p-2 border">Mật khẩu</th>
+              {/* <th className="p-2 border">Mật khẩu</th> */}
               <th className="p-2 border">Nhân viên</th>
               <th className="p-2 border">Quyền Đăng nhập</th>
               <th className="p-2 border">Thao tác</th>
@@ -253,7 +254,7 @@ export default function UserList() {
                 </td>
                 <td className="p-2 text-center">{User.id}</td>
                 <td className="p-2 text-center">{User.user}</td>
-                <td className="p-2 text-center">{User.password}</td>
+                {/* <td className="p-2 text-center">{User.password}</td> */}
                 <td className="p-2 text-center">{User.name}</td>
                 <td className="p-2 text-center">
                   {roleList.find(
@@ -327,7 +328,7 @@ export default function UserList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportUsersToExcel(userList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

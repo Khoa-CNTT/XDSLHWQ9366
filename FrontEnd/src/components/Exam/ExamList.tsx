@@ -2,13 +2,13 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LichThi } from "../Type/Types";
+import { exportLichThiToExcel } from "../../Service.tsx/ExportExcel/LichThiExp";
 
 export default function ExamList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [lichthis, setlichthi] = useState<LichThi[]>([]);
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(10);
@@ -26,7 +26,6 @@ export default function ExamList() {
             // Lấy danh sách lịch thi từ paginationData.data
             const classList = paginationData.data;
             setlichthi(classList || []);
-            setTotalPages(paginationData.totalPages || 1);
           }
         } else {
           console.error("API trả về lỗi:", response.status);
@@ -98,15 +97,15 @@ export default function ExamList() {
   );
   //  10 items per page
   const [linhVuc, setLinhVuc] = useState<string | null>(null);
-
-  const filteredList = (examList || []).filter((c) => {
+  const displayList = lichthis.length > 0 ? lichthis : examList;
+  const filteredList = (displayList || []).filter((c) => {
     const matchSearch =
       c.tenChungChi.toLowerCase().includes(search.toLowerCase()) ||
       c.maLichThi.toLowerCase().includes(search.toLowerCase());
     const matchThanhToan = !linhVuc || c.maLinhVuc === linhVuc;
     return matchSearch && matchThanhToan;
   });
-
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const paginatedList = (filteredList || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -269,7 +268,7 @@ export default function ExamList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportLichThiToExcel(displayList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

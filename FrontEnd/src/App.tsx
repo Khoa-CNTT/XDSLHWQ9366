@@ -51,6 +51,8 @@ import UserList from "./components/User/UserList";
 import AddUser from "./components/User/AddUser";
 import UserDetail from "./components/User/UserDetail";
 import { AuthProvider } from "./components/Account/AuthContext";
+import AccountSettings from "./components/Account/AccountSetting";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -167,6 +169,8 @@ function App() {
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/change-password" element={<AccountSettings />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </div>
         </div>

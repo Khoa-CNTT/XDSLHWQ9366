@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LienHe } from "../Type/Types";
 import { toast } from "react-toastify"; // 👈 Thêm dòng này
+import { exportLienHeToExcel } from "../../Service.tsx/ExportExcel/ContactExp";
 
 export default function Contacts() {
   const [search, setSearch] = useState("");
@@ -62,7 +63,7 @@ export default function Contacts() {
   const demoList = useMemo<LienHe[]>(
     () => [
       {
-        maKhach: "NV01",
+        maKhach: "KH001",
         hoTen: "Lê Văn A",
         soDienThoai: "0385665243",
         email: "abc123@gmail.com",
@@ -70,7 +71,7 @@ export default function Contacts() {
         ngayLienHe: "2025-01-01",
       },
       {
-        maKhach: "NV02",
+        maKhach: "KH002",
         hoTen: "Lê Văn B",
         soDienThoai: "0385665243",
         email: "zxc456@gmail.com",
@@ -78,7 +79,7 @@ export default function Contacts() {
         ngayLienHe: "2025-01-02",
       },
       {
-        maKhach: "NV03",
+        maKhach: "KH003",
         hoTen: "Lê Văn C",
         soDienThoai: "0385665243",
         email: "xyz789@gmail.com",
@@ -230,7 +231,7 @@ export default function Contacts() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportLienHeToExcel(demoList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

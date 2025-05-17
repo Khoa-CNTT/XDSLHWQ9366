@@ -2,14 +2,14 @@ import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lecturer, LinhVuc } from "../Type/Types";
+import { exportGiangVienToExcel } from "../../Service.tsx/ExportExcel/LectureExp";
 
 export default function LectureList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [lecturers, setLecturers] = useState<Lecturer[]>([]);
+  const [giangviens, setGiangVien] = useState<Lecturer[]>([]);
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(10);
   const navigate = useNavigate();
@@ -29,8 +29,7 @@ export default function LectureList() {
           if (paginationData) {
             // Lấy danh sách giảng viên từ paginationData.data
             const lecturerList = paginationData.data;
-            setLecturers(lecturerList || []);
-            setTotalPages(paginationData.totalPages || 1);
+            setGiangVien(lecturerList || []);
           }
         } else {
           console.error("API trả về lỗi:", response.status);
@@ -57,8 +56,8 @@ export default function LectureList() {
       await axios.delete(`http://localhost:8080/giangvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
       // Cập nhật lại danh sách giảng viên sau khi xóa
-      setLecturers((prev) =>
-        prev.filter((lecturer) => lecturer.maGiangVien !== id)
+      setGiangVien((prev) =>
+        prev.filter((giangvien) => giangvien.maGiangVien !== id)
       );
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
@@ -72,44 +71,81 @@ export default function LectureList() {
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-
-  const linhVucList = useMemo(
+  const giangvienList = useMemo<Lecturer[]>(
     () => [
       {
-        id: "LV01",
-        name: "Java",
+        maGiangVien: "GV001",
+        tenGiangVien: "Le Đức Thảo",
+        ngaySinh: "1997-08-15",
+        gioiTinh: true,
+        soCMND: "048097000077",
+        soDienThoai: "0385665243",
+        email: "ducthao2112@GMAIL.com",
+        diaChi: "108 Nguyễn Chánh",
+        coQuanCongTac: "Đại học Duy tân",
+        tinhTrangCongTac: "Đang dạy",
+        maLinhVuc: "LV01",
+        ghiChu: "Cộng tác viên",
+        urlHinhDaiDien: "",
       },
       {
-        id: "LV02",
-        name: "IOT",
-      },
-      {
-        id: "LV03",
-        name: "Công nghệ thông tin",
-      },
-      {
-        id: "LV04",
-        name: "Khoa học máy tính",
+        maGiangVien: "GV002",
+        tenGiangVien: "Nguyễn Hữu Thành",
+        ngaySinh: "2003-08-10",
+        gioiTinh: true,
+        soCMND: "123456789",
+        soDienThoai: "0385665243",
+        email: "thanhnh2112@GMAIL.com",
+        diaChi: "108 Nguyễn Chánh",
+        coQuanCongTac: "Đại học Duy tân",
+        tinhTrangCongTac: "Đã nghỉ",
+        maLinhVuc: "LV02",
+        ghiChu: "Thực tập",
+        urlHinhDaiDien: "",
       },
     ],
     []
   );
+
+  const linhVucList = useMemo<LinhVuc[]>(
+    () => [
+      {
+        maLinhVuc: "LV01",
+        tenLinhVuc: "Java",
+      },
+      {
+        maLinhVuc: "LV02",
+        tenLinhVuc: "IOT",
+      },
+      {
+        maLinhVuc: "LV03",
+        tenLinhVuc: "Công nghệ thông tin",
+      },
+      {
+        maLinhVuc: "LV04",
+        tenLinhVuc: "Khoa học máy tính",
+      },
+    ],
+    []
+  );
+
+  const displayList = giangviens.length > 0 ? giangviens : giangvienList;
   //  10 items per page
-  const filteredList = (lecturers || []).filter((c) => {
+  const filteredList = (displayList || []).filter((c) => {
     const matchSearch =
       c.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
       c.maGiangVien.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.linhVuc?.name === linhVuc.name;
+    const matchLinhVuc = !linhVuc || c.maLinhVuc === linhVuc.maLinhVuc;
     return matchSearch && matchLinhVuc;
   });
-
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const paginatedList = (filteredList || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  if (loading) {
-    return <div>Đang tải dữ liệu...</div>;
-  }
+  // if (loading) {
+  //   return <div>Đang tải dữ liệu...</div>;
+  // }
   return (
     <div className="h-full pt-2">
       <div className="flex justify-between items-center mb-4">
@@ -147,14 +183,14 @@ export default function LectureList() {
                 <div className="py-1">
                   {linhVucList.map((item) => (
                     <button
-                      key={item.id}
+                      key={item.maLinhVuc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         setLinhVuc(item);
                         setIsOpenMenu(false);
                       }}
                     >
-                      {item.name}
+                      {item.tenLinhVuc}
                     </button>
                   ))}
                   <button
@@ -204,10 +240,10 @@ export default function LectureList() {
                 <td className="p-2 text-center">{lecturer.soDienThoai}</td>
                 <td className="p-2 text-center">{lecturer.email}</td>
                 <td className="p-2 text-center">
-                  {lecturer.linhVuc
+                  {lecturer.maLinhVuc
                     ? linhVucList.find(
-                        (lv) => lv.id === lecturer.linhVuc?.maLinhVuc
-                      )?.name || "Không xác định"
+                        (lv) => lv.maLinhVuc === lecturer?.maLinhVuc
+                      )?.tenLinhVuc || "Không xác định"
                     : "Không xác định"}
                 </td>
 
@@ -277,7 +313,7 @@ export default function LectureList() {
               Trang sau
             </button>
             <button
-              // onClick={handleExportExcel}
+              onClick={() => exportGiangVienToExcel(displayList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel
