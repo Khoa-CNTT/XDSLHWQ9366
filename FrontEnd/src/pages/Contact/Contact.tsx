@@ -8,15 +8,20 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import { FaEnvelope, FaLocationArrow } from "react-icons/fa6";
+import { useNotification } from "../../context/NotificationContext";
+import { useContactValidation } from "../../components/Validate/ValidateContact";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    firstname: "",
+    lastname: "",
     email: "",
     phone: "",
     message: "",
   });
+  const { validateForm, clearErrors } = useContactValidation(formData);
+
+  const { notify } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
@@ -24,18 +29,24 @@ const Contact = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    clearErrors();
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) {
+      notify("error", "Vui lòng kiểm tra lại thông tin!");
+      setIsSubmitting(false);
+      return;
+    }
     setIsSubmitting(true);
     setTimeout(() => {
       console.log("Sending", formData);
-      alert("Message sent successfully!");
+      notify("success", "Message sent successfully!");
       setIsSubmitting(false);
       setFormData({
-        firstName: "",
-        lastName: "",
+        firstname: "",
+        lastname: "",
         email: "",
         phone: "",
         message: "",
@@ -101,7 +112,7 @@ const Contact = () => {
                   <input
                     type="text"
                     name="firstName"
-                    value={formData.firstName}
+                    value={formData.firstname}
                     onChange={handleChange}
                     className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
                     placeholder="First Name"
@@ -119,7 +130,7 @@ const Contact = () => {
                   <input
                     type="text"
                     name="lastName"
-                    value={formData.lastName}
+                    value={formData.lastname}
                     onChange={handleChange}
                     className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
                     placeholder="Last Name"
