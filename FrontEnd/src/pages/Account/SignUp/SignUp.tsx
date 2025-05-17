@@ -3,15 +3,21 @@ import axios from "axios";
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNotification } from "../../../context/NotificationContext";
+import { useSignInValidation } from "../../../components/Validate/ValidateSignIn";
+
 const SignUp = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
-
+  const { errors, validate, clearError } = useSignInValidation(
+    username,
+    password
+  );
   const { notify } = useNotification();
   const handleSignUp = async () => {
+    if (!validate()) return;
     try {
       const response = await axios.post(
         "http://localhost:8080/taikhoan/register",
@@ -52,10 +58,17 @@ const SignUp = () => {
               type="text"
               placeholder="Enter username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300
-               focus:border-sky-500 outline-none ease-in-out duration-300 "
+              onChange={(e) => {
+                setUsername(e.target.value);
+                clearError("email");
+              }}
+              className={`max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border ${
+                errors.email ? "border-red-400" : "border-neutral-300"
+              } focus:border-sky-500 outline-none ease-in-out duration-300`}
             />
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -68,10 +81,17 @@ const SignUp = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border border-neutral-300
-               focus:border-sky-500 outline-none ease-in-out duration-300 "
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError("password");
+                }}
+                className={`max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border ${
+                  errors.password ? "border-red-400" : "border-neutral-300"
+                } focus:border-sky-500 outline-none ease-in-out duration-300`}
               />
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+              )}
               <button
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
