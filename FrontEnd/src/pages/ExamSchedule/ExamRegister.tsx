@@ -10,6 +10,9 @@ import {
   FaMapMarkerAlt,
   FaTransgenderAlt,
 } from "react-icons/fa";
+import { MdErrorOutline } from "react-icons/md";
+import { useExamRegisterValidation } from "../../components/Validate/ValidateExamRegister";
+import { useNotification } from "../../context/NotificationContext";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -39,6 +42,19 @@ const modalVariants = {
     },
   },
 };
+const inputVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: (custom: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: custom * 0.1,
+      type: "spring",
+      stiffness: 200,
+      damping: 20,
+    },
+  }),
+};
 
 const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
   const [formData, setFormData] = useState({
@@ -51,6 +67,11 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
     address: "",
   });
 
+  const { notify } = useNotification();
+
+  const { errors, validateForm, clearErrors } =
+    useExamRegisterValidation(formData);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -58,6 +79,7 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    clearErrors();
   };
 
   const handleClear = () => {
@@ -70,17 +92,20 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
       email: "",
       address: "",
     });
+    clearErrors();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Register for:", examName);
-    console.log("Form data:", formData);
-    alert("Registration successful!");
-    onClose();
+    if (validateForm()) {
+      notify("success", "Registration successful!");
+      onClose();
+    } else {
+      notify("error", "Please check your information and try again.");
+    }
   };
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -118,170 +143,301 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Full Name */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white rounded-lg p-0.5">
-                  <div className="flex items-center">
-                    <div className="pl-3 text-gray-400">
-                      <FaUser className="w-5 h-5" />
-                    </div>
-                    <input
-                      type="text"
-                      name="fullname"
-                      placeholder="Full Name"
-                      value={formData.fullname}
-                      onChange={handleChange}
-                      required
-                      className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
+              <motion.div
+                variants={inputVariants}
+                custom={0}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="fullname"
+                    id="fullname"
+                    value={formData.fullname}
+                    onChange={handleChange}
+                    className={`peer w-full pl-12 pr-4 py-3.5 border ${
+                      errors.fullname ? "border-red-400" : "border-neutral-300"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm`}
+                    placeholder=" "
+                    required
+                  />
+                  <label
+                    htmlFor="fullname"
+                    className={`absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500 ${
+                      errors.fullname ? "text-red-500" : ""
+                    }`}
+                  >
+                    Full Name
+                  </label>
+                  <FaUser
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      errors.fullname ? "text-red-500" : "text-neutral-400"
+                    }`}
+                  />
+                  {errors.fullname && (
+                    <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                      <MdErrorOutline className="text-sm" />
+                      {errors.fullname}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Gender & DOB Row */}
               <div className="flex space-x-4">
                 {/* Gender */}
-                <div className="relative group w-1/2">
-                  <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                  <div className="relative bg-white rounded-lg p-0.5">
-                    <div className="flex items-center">
-                      <div className="pl-3 text-gray-400">
-                        <FaTransgenderAlt className="w-5 h-5" />
-                      </div>
-                      <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        required
-                        className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 appearance-none"
-                      >
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
+                <motion.div
+                  variants={inputVariants}
+                  custom={1}
+                  initial="initial"
+                  animate="animate"
+                  className="w-1/2"
+                >
+                  <div className="relative">
+                    <select
+                      name="gender"
+                      id="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="peer w-full pl-12 pr-4 py-3.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm appearance-none"
+                      required
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <label
+                      htmlFor="gender"
+                      className="absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500"
+                    >
+                      Gender
+                    </label>
+                    <FaTransgenderAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400" />
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Date of Birth */}
-                <div className="relative group w-1/2">
-                  <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                  <div className="relative bg-white rounded-lg p-0.5">
-                    <div className="flex items-center">
-                      <div className="pl-3 text-gray-400">
-                        <FaRegCalendarAlt className="w-5 h-5" />
-                      </div>
-                      <input
-                        type="date"
-                        name="dob"
-                        value={formData.dob}
-                        onChange={handleChange}
-                        required
-                        className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700"
-                      />
-                    </div>
+                <motion.div
+                  variants={inputVariants}
+                  custom={2}
+                  initial="initial"
+                  animate="animate"
+                  className="w-1/2"
+                >
+                  <div className="relative">
+                    <input
+                      type="date"
+                      name="dob"
+                      id="dob"
+                      value={formData.dob}
+                      onChange={handleChange}
+                      className={`peer w-full pl-12 pr-4 py-3.5 border ${
+                        errors.dob ? "border-red-400" : "border-neutral-300"
+                      } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm`}
+                      required
+                    />
+                    <label
+                      htmlFor="dob"
+                      className={`absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500 ${
+                        errors.dob ? "text-red-500" : ""
+                      }`}
+                    >
+                      Date of birth
+                    </label>
+                    <FaRegCalendarAlt
+                      className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                        errors.dob ? "text-red-500" : "text-neutral-400"
+                      }`}
+                    />
+                    {errors.dob && (
+                      <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                        <MdErrorOutline className="text-sm" />
+                        {errors.dob}
+                      </p>
+                    )}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* ID Number */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white rounded-lg p-0.5">
-                  <div className="flex items-center">
-                    <div className="pl-3 text-gray-400">
-                      <FaIdCard className="w-5 h-5" />
-                    </div>
-                    <input
-                      type="text"
-                      name="cccd"
-                      placeholder="Identification Number"
-                      value={formData.cccd}
-                      onChange={handleChange}
-                      required
-                      className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
+              <motion.div
+                variants={inputVariants}
+                custom={3}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="cccd"
+                    id="cccd"
+                    value={formData.cccd}
+                    onChange={handleChange}
+                    className={`peer w-full pl-12 pr-4 py-3.5 border ${
+                      errors.cccd ? "border-red-400" : "border-neutral-300"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm`}
+                    placeholder=" "
+                    required
+                  />
+                  <label
+                    htmlFor="cccd"
+                    className={`absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500 ${
+                      errors.cccd ? "text-red-500" : ""
+                    }`}
+                  >
+                    CCCD number
+                  </label>
+                  <FaIdCard
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      errors.cccd ? "text-red-500" : "text-neutral-400"
+                    }`}
+                  />
+                  {errors.cccd && (
+                    <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                      <MdErrorOutline className="text-sm" />
+                      {errors.cccd}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Phone Number */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white rounded-lg p-0.5">
-                  <div className="flex items-center">
-                    <div className="pl-3 text-gray-400">
-                      <FaPhone className="w-5 h-5" />
-                    </div>
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone Number"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      required
-                      className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
+              <motion.div
+                variants={inputVariants}
+                custom={4}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`peer w-full pl-12 pr-4 py-3.5 border ${
+                      errors.phone ? "border-red-400" : "border-neutral-300"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm`}
+                    placeholder=" "
+                    required
+                  />
+                  <label
+                    htmlFor="phone"
+                    className={`absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500 ${
+                      errors.phone ? "text-red-500" : ""
+                    }`}
+                  >
+                    Phone number
+                  </label>
+                  <FaPhone
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      errors.phone ? "text-red-500" : "text-neutral-400"
+                    }`}
+                  />
+                  {errors.phone && (
+                    <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                      <MdErrorOutline className="text-sm" />
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Email */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white rounded-lg p-0.5">
-                  <div className="flex items-center">
-                    <div className="pl-3 text-gray-400">
-                      <FaEnvelope className="w-5 h-5" />
-                    </div>
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email (Optional)"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
+              <motion.div
+                variants={inputVariants}
+                custom={5}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`peer w-full pl-12 pr-4 py-3.5 border ${
+                      errors.email ? "border-red-400" : "border-neutral-300"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm`}
+                    placeholder=" "
+                  />
+                  <label
+                    htmlFor="email"
+                    className={`absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500 ${
+                      errors.email ? "text-red-500" : ""
+                    }`}
+                  >
+                    Email
+                  </label>
+                  <FaEnvelope
+                    className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
+                      errors.email ? "text-red-500" : "text-neutral-400"
+                    }`}
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                      <MdErrorOutline className="text-sm" />
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Address */}
-              <div className="relative group">
-                <div className="absolute -inset-0.5 border border-black rounded-lg opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white rounded-lg p-0.5">
-                  <div className="flex items-start">
-                    <div className="pl-3 pt-3 text-gray-400">
-                      <FaMapMarkerAlt className="w-5 h-5" />
-                    </div>
-                    <textarea
-                      name="address"
-                      placeholder="Address (Optional)"
-                      value={formData.address}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full py-3 pl-2 pr-4 rounded-lg focus:outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
+              <motion.div
+                variants={inputVariants}
+                custom={6}
+                initial="initial"
+                animate="animate"
+              >
+                <div className="relative">
+                  <textarea
+                    name="address"
+                    id="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="peer w-full pl-12 pr-4 py-3.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-transparent text-neutral-800 placeholder-neutral-400 shadow-sm"
+                    placeholder=" "
+                    rows={3}
+                  />
+                  <label
+                    htmlFor="address"
+                    className="absolute left-12 top-0 -translate-y-1/2 px-1 bg-white text-neutral-500 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-indigo-500"
+                  >
+                    Address
+                  </label>
+                  <FaMapMarkerAlt className="absolute left-4 top-4 text-neutral-400" />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-4 mt-6">
-                <button
+              <motion.div
+                variants={inputVariants}
+                custom={7}
+                initial="initial"
+                animate="animate"
+                className="flex gap-4 pt-2"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="submit"
-                  className="w-1/2 bg-gradient-to-r bg-primary text-white py-3 rounded-lg hover:bg-secondary transition-colors shadow-lg transform hover:-translate-y-1 active:translate-y-0"
+                  className="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-secondary transition text-sm font-medium shadow-md"
                 >
                   Register
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={handleClear}
-                  className="w-1/2 bg-secondary text-white py-3 rounded-lg hover:bg-primary transition-colors shadow-lg transform hover:-translate-y-1 active:translate-y-0"
+                  className="flex-1 bg-secondary text-white py-3 rounded-lg hover:bg-primary transition text-sm font-medium shadow-md"
                 >
                   Clear
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </form>
           </motion.div>
         </motion.div>

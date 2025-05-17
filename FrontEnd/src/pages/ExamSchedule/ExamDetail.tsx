@@ -22,9 +22,15 @@ import {
 } from "react-icons/fa";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import { useAuth } from "../../context/AuthContext";
+
 interface LinhVuc {
   maLinhVuc: string;
   tenLinhVuc: string;
+}
+
+interface Candidate {
+  id: string;
+  name: string;
 }
 
 interface Exam {
@@ -34,7 +40,7 @@ interface Exam {
   ngayThi: string;
   thongTinChiTiet: string;
   lePhiThi: number;
-  thiSinhDuThi: unknown[];
+  thiSinhDuThi: Candidate[];
 }
 
 interface ApiResponse {
@@ -82,15 +88,33 @@ const ExamDetail = () => {
       const response = await axios.get<ApiResponse>(
         `http://localhost:8080/lichthi/getById/${id}`
       );
-      setExam(response.data.data);
-      fetchRelatedExams(response.data.data.linhVuc.maLinhVuc);
+      const examData = response.data.data;
+      if (
+        response.data.status === 200 &&
+        examData &&
+        examData.maLichThi &&
+        examData.linhVuc &&
+        examData.linhVuc.maLinhVuc &&
+        examData.tenChungChi &&
+        examData.ngayThi &&
+        examData.thongTinChiTiet &&
+        examData.lePhiThi !== undefined
+      ) {
+        examData.thiSinhDuThi = Array.isArray(examData.thiSinhDuThi)
+          ? examData.thiSinhDuThi
+          : [];
+        setExam(examData);
+        fetchRelatedExams(examData.linhVuc.maLinhVuc);
+      } else {
+        throw new Error("Dữ liệu kỳ thi không đầy đủ hoặc không hợp lệ");
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(
-          err.response?.data?.message || "Unable to fetch exam details."
+          err.response?.data?.message || "Không thể lấy chi tiết kỳ thi."
         );
       } else {
-        setError("An unexpected error occurred.");
+        setError("Đã xảy ra lỗi không xác định.");
       }
       setExam(null);
     } finally {
@@ -104,10 +128,16 @@ const ExamDetail = () => {
       const response = await axios.get<ApiResponseList>(
         `http://localhost:8080/lichthi/getAll`
       );
-      const filteredExams = response.data.data
-        .filter((e) => e.linhVuc.maLinhVuc === maLinhVuc && e.maLichThi !== id)
-        .slice(0, 3);
-      setRelatedExams(filteredExams);
+      if (response.data.status === 200 && Array.isArray(response.data.data)) {
+        const filteredExams = response.data.data
+          .filter(
+            (e) => e.linhVuc.maLinhVuc === maLinhVuc && e.maLichThi !== id
+          )
+          .slice(0, 3);
+        setRelatedExams(filteredExams);
+      } else {
+        throw new Error("Dữ liệu kỳ thi liên quan không hợp lệ");
+      }
     } catch (err) {
       console.error("Lỗi khi lấy kỳ thi liên quan:", err);
       setRelatedExams([]);
@@ -485,8 +515,8 @@ const ExamDetail = () => {
                     <span>Exam Date: {formatDate(exam.ngayThi)}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MdInfo className="text-5xl text-blue-600" />
-                    <span> {exam.thongTinChiTiet.split(".")[0]}</span>
+                    <MdInfo className="text-xl text-blue-600" />
+                    <span>{exam.thongTinChiTiet.split(".")[0]}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <MdPeople className="text-xl text-blue-600" />
