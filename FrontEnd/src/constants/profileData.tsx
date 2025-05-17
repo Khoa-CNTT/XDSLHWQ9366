@@ -8,8 +8,8 @@ export const profileData = {
   soDienThoai: "0327908007",
   email: "nhtthanh633@gmail.com",
   diaChi: "B1 Hồng Phước, Hòa Khánh Bắc, Liên Chiểu, Đà Nẵng",
-  tinhTrangHocTap: "Đang học",
-  ghiChu: "Học viên xuất sắc",
+  tinhTrangHocTap: "Studying",
+  ghiChu: "Excellent student",
   uriHinhDaiDien: "https://cdn-icons-png.flaticon.com/512/147/147140.png",
   ngayCapNhatGanNhat: "2023-10-10",
 };
