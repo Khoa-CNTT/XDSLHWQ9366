@@ -2,6 +2,7 @@ import { FaBell } from "react-icons/fa";
 import BgImage from "../../../assets/bg.png";
 import { motion } from "framer-motion";
 import CountUp from "../../../components/Animation/CountUp";
+import { Link } from "react-router-dom";
 
 const bgStyle = {
   backgroundImage: `url(${BgImage})`,
@@ -38,13 +39,13 @@ const Subscribe = () => {
               K+ Students are learning from us
             </h1>
             <p>Enhance your skills, conquer the future!</p>
-            <a
-              href=""
+            <Link
+              to="/courses"
               className="primary-btn !mt-8 inline-flex items-center gap-4 group"
             >
               Subscribe Now
               <FaBell className="group-hover:animate-bounce group-hover:text-lg duration-200" />
-            </a>
+            </Link>
           </div>
         </motion.div>
       </motion.div>

@@ -13,7 +13,6 @@ import CourseDetail from "./pages/Courses/CourseDetail";
 import Contact from "./pages/Contact/Contact";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import Results from "./pages/Result/Result";
-import ResultDetail from "./pages/Result/ResultDetail";
 import TestScores from "./pages/TestScores/TestScores";
 import TestScoreDetail from "./pages/TestScores/TestScoreDetail";
 import News from "./pages/News/News";
@@ -44,7 +43,6 @@ function App() {
               <Route path="/course/:id" element={<CourseDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/result" element={<Results />} />
-              <Route path="/result/:id" element={<ResultDetail />} />
               <Route path="/test-scores" element={<TestScores />} />
               <Route path="/test-scores/:id" element={<TestScoreDetail />} />
               <Route path="/news" element={<News />} />
