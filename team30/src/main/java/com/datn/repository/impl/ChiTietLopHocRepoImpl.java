@@ -1,6 +1,7 @@
 package com.datn.repository.impl;
 
 import com.datn.entity.ChiTietLopHoc;
+import com.datn.entity.LichThi;
 import com.datn.repository.ChiTietLopHocRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -61,6 +62,10 @@ public class ChiTietLopHocRepoImpl implements ChiTietLopHocRepo {
         typedQuery.setMaxResults(pageSize);
 
         return typedQuery.getResultList();
+    }
+    @Override
+    public List<ChiTietLopHoc> getAllChiTietLopHoc() {
+        return entityManager.createQuery("SELECT l FROM ChiTietLopHoc l", getEntityClass()).getResultList();
     }
 
     private Class<ChiTietLopHoc> getEntityClass() {

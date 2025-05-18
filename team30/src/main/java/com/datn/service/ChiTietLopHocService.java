@@ -4,6 +4,8 @@ import com.datn.dto.request.ChiTietLopHocAddDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.ChiTietLopHoc;
 
+import java.util.List;
+
 
 public interface ChiTietLopHocService {
 
@@ -12,5 +14,7 @@ public interface ChiTietLopHocService {
     ChiTietLopHoc add(ChiTietLopHocAddDTO dto);
 
     PaginationResponse<ChiTietLopHoc> pagination(int pageNumber, int pageSize);
+
+    List<ChiTietLopHoc> getAllChiTietLopHoc();
 
 }

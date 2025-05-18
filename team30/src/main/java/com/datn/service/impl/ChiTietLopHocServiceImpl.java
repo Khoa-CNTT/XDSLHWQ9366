@@ -4,6 +4,7 @@ import com.datn.dto.request.ChiTietLopHocAddDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.HocVien;
+import com.datn.entity.LichThi;
 import com.datn.entity.LopHoc;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.exception.lophoc.LopHocNotFoundException;
@@ -31,7 +32,10 @@ public class ChiTietLopHocServiceImpl implements ChiTietLopHocService {
         this.hocVienService = hocVienService;
         this.lopHocService = lopHocService;
     }
-
+    @Override
+    public List<ChiTietLopHoc> getAllChiTietLopHoc() {
+        return chiTietLopHocRepo.getAllChiTietLopHoc();
+    }
     @Override
     public ChiTietLopHoc findById(String maCTLH) {
         return this.chiTietLopHocRepo.findById(maCTLH);
