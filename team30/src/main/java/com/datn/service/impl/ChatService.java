@@ -8,46 +8,75 @@ public class ChatService {
     public String generateReply(String message) {
         message = message.toLowerCase();
 
-        if (message.contains("html") || message.contains("css")) {
-            return "Khóa học 'HTML & CSS Cơ bản': Học cách tạo giao diện web cơ bản. Học phí: 1.500.000 VNĐ, 10 buổi. Nội dung chi tiết: HTML, CSS, layout, responsive. Khóa học này dành cho người mới bắt đầu và không yêu cầu kinh nghiệm lập trình trước.";
+        if (message.contains("html")) {
+            return "Khóa học HTML giúp bạn tạo cấu trúc website cơ bản đến nâng cao.";
+        } else if (message.contains("css")) {
+            return "Khóa học CSS giúp bạn thiết kế giao diện đẹp mắt, responsive cho website.";
         } else if (message.contains("javascript")) {
-            return "Khóa học 'JavaScript Nâng cao': Lập trình web tương tác với JavaScript. Học phí: 2.000.000 VNĐ, 12 buổi. Nội dung chi tiết: DOM, AJAX, Fetch API, ES6+. Khóa học này giúp bạn hiểu rõ về các kỹ thuật lập trình web động.";
+            return "Khóa học JavaScript dạy bạn lập trình web động, xử lý sự kiện và thao tác DOM.";
+        } else if (message.contains("js")) {
+            return "Bạn đang hỏi về JavaScript phải không? Đây là khóa học JS chi tiết dành cho bạn.";
+        } else if (message.contains("react")) {
+            return "ReactJS là thư viện frontend hiện đại. Khóa học React của chúng tôi giúp bạn xây dựng SPA.";
         } else if (message.contains("reactjs")) {
-            return "Khóa học 'ReactJS từ cơ bản đến nâng cao': Học ReactJS và tạo ứng dụng SPA. Học phí: 2.500.000 VNĐ, 15 buổi. Nội dung chi tiết: Components, Props, State, Hooks, Routing. Phù hợp với những ai muốn phát triển ứng dụng web hiện đại.";
+            return "Bạn sẽ học được cách dùng JSX, state, props, component và hook trong ReactJS.";
+
+        } else if (message.contains("spring")) {
+            return "Khóa học Spring Boot sẽ giúp bạn tạo REST API backend chuyên nghiệp với Java.";
         } else if (message.contains("spring boot")) {
-            return "Khóa học 'Spring Boot Web API': Tạo API REST với Spring Boot. Học phí: 2.800.000 VNĐ, 18 buổi. Nội dung chi tiết: Spring MVC, JPA, Security, Swagger. Học viên sẽ nắm vững cách xây dựng ứng dụng Java hiệu quả với Spring Boot.";
-        } else if (message.contains("flutter")) {
-            return "Khóa học 'Flutter cơ bản': Học Flutter và Dart để tạo ứng dụng mobile. Học phí: 2.300.000 VNĐ, 12 buổi. Nội dung chi tiết: Widgets, Navigation, API, Firebase. Khóa học này thích hợp cho người mới bắt đầu và muốn phát triển ứng dụng đa nền tảng.";
-        } else if (message.contains("react native")) {
-            return "Khóa học 'React Native nâng cao': Phát triển ứng dụng mobile đa nền tảng. Học phí: 2.700.000 VNĐ, 14 buổi. Nội dung chi tiết: Redux, Performance, Native Modules. Dành cho lập trình viên muốn tạo ứng dụng mobile chất lượng cao với React Native.";
-        } else if (message.contains("android") || message.contains("kotlin")) {
-            return "Khóa học 'Lập trình Android với Kotlin': Học Android cơ bản và nâng cao. Học phí: 2.500.000 VNĐ, 16 buổi. Nội dung chi tiết: Activity, Fragment, Room, Retrofit. Khóa học này sẽ giúp bạn tạo ra các ứng dụng Android mạnh mẽ với Kotlin.";
-        } else if (message.contains("ios") || message.contains("swift")) {
-            return "Khóa học 'Lập trình iOS với Swift': Học lập trình ứng dụng iOS. Học phí: 2.600.000 VNĐ, 14 buổi. Nội dung chi tiết: Storyboard, SwiftUI, CoreData. Khóa học phù hợp với những ai muốn phát triển ứng dụng trên hệ điều hành iOS.";
-        } else if (message.contains("sql")) {
-            return "Khóa học 'SQL Cơ bản': Học cú pháp SQL cơ bản. Học phí: 1.200.000 VNĐ, 8 buổi. Nội dung chi tiết: SELECT, INSERT, UPDATE, DELETE. Phù hợp cho người mới bắt đầu học về cơ sở dữ liệu.";
+            return "Spring Boot: Học cách cấu hình, tạo controller, service, repository, và kết nối DB.";
+        }
+
+        else if (message.contains("flutter")) {
+            return "Flutter là framework của Google để tạo app Android/iOS từ một codebase.";
+        } else if (message.contains("dart")) {
+            return "Bạn sẽ học ngôn ngữ Dart – nền tảng để lập trình Flutter trong khóa học của chúng tôi.";
+        } else if (message.contains("android")) {
+            return "Khóa học Android native sẽ giúp bạn dùng Java hoặc Kotlin để tạo ứng dụng.";
+        } else if (message.contains("java android")) {
+            return "Bạn sẽ được hướng dẫn xây app Android bằng Java trong khóa học chi tiết này.";
+        }
+
+        else if (message.contains("sql")) {
+            return "Khóa học SQL cơ bản đến nâng cao: SELECT, JOIN, GROUP BY, Subquery,...";
         } else if (message.contains("mysql")) {
-            return "Khóa học 'MySQL Nâng cao': Tối ưu và quản lý MySQL hiệu quả. Học phí: 1.800.000 VNĐ, 10 buổi. Nội dung chi tiết: JOIN, Subquery, Indexing, Stored Procedures. Dành cho những ai muốn nâng cao kỹ năng quản lý cơ sở dữ liệu MySQL.";
-        } else if (message.contains("postgresql")) {
-            return "Khóa học 'PostgreSQL cho Developer': Khám phá tính năng mạnh của PostgreSQL. Học phí: 1.900.000 VNĐ, 10 buổi. Nội dung chi tiết: CTE, JSONB, Indexes, Performance. Khóa học này giúp bạn hiểu sâu về PostgreSQL và cách tối ưu hóa cơ sở dữ liệu.";
-        } else if (message.contains("sql server")) {
-            return "Khóa học 'SQL Server từ A-Z': Quản lý và lập trình với SQL Server. Học phí: 2.100.000 VNĐ, 12 buổi. Nội dung chi tiết: T-SQL, View, Trigger, Function. Phù hợp cho những ai muốn học lập trình SQL chuyên sâu với SQL Server.";
-        } else if (message.contains("devops")) {
-            return "Khóa học 'DevOps cơ bản với Git & Jenkins': Hiểu quy trình CI/CD cơ bản. Học phí: 2.000.000 VNĐ, 10 buổi. Nội dung chi tiết: Git, Jenkins, Pipeline. Khóa học này giúp bạn hiểu về quy trình phát triển phần mềm và triển khai ứng dụng tự động.";
-        } else if (message.contains("docker")) {
-            return "Khóa học 'CI/CD nâng cao với Docker & Kubernetes': Triển khai ứng dụng với container. Học phí: 2.800.000 VNĐ, 14 buổi. Nội dung chi tiết: Dockerfile, Helm, Ingress, Autoscaling. Dành cho các DevOps muốn học cách triển khai ứng dụng trên nền tảng container.";
+            return "MySQL là hệ quản trị CSDL phổ biến – khóa học này sẽ hướng dẫn cài đặt và truy vấn dữ liệu.";
+        } else if (message.contains("database")) {
+            return "Bạn muốn học về cơ sở dữ liệu? Hãy bắt đầu với SQL hoặc MySQL.";
+        }
+
+        else if (message.contains("docker")) {
+            return "Docker giúp bạn đóng gói và triển khai ứng dụng dễ dàng – đây là khóa học dành cho bạn.";
+        } else if (message.contains("jenkins")) {
+            return "Jenkins dùng để CI/CD – bạn sẽ học cách tự động hóa quá trình build và deploy.";
         } else if (message.contains("prometheus")) {
-            return "Khóa học 'Giám sát hệ thống với Prometheus & Grafana': Theo dõi và cảnh báo hiệu năng. Học phí: 2.200.000 VNĐ, 10 buổi. Nội dung chi tiết: Metric, Dashboard, Alerting. Khóa học này giúp bạn giám sát và phân tích dữ liệu hệ thống.";
-        } else if (message.contains("linux")) {
-            return "Khóa học 'Linux cho DevOps': Làm việc với Linux trong môi trường DevOps. Học phí: 2.000.000 VNĐ, 12 buổi. Nội dung chi tiết: Shell, systemctl, logs, network. Khóa học này sẽ giúp bạn làm quen với hệ điều hành Linux cho DevOps.";
-        } else if (message.contains("network")) {
-            return "Khóa học 'Mạng máy tính cơ bản': Kiến thức nền tảng về mạng máy tính. Học phí: 1.500.000 VNĐ, 10 buổi. Nội dung chi tiết: OSI, TCP/IP, subnet, routing. Phù hợp với những ai muốn hiểu về cách thức hoạt động của mạng máy tính.";
-        } else if (message.contains("ethical hacking")) {
-            return "Khóa học 'Ethical Hacking cơ bản': Kỹ thuật tấn công và phòng thủ. Học phí: 2.200.000 VNĐ, 12 buổi. Nội dung chi tiết: Recon, Exploit, Mitigation. Khóa học này giúp bạn hiểu các phương thức tấn công và bảo vệ hệ thống an toàn.";
+            return "Prometheus là công cụ monitoring phổ biến – khóa học sẽ giúp bạn nắm vững cách dùng nó.";
+        } else if (message.contains("devops")) {
+            return "Khóa học DevOps bao gồm Docker, Jenkins, CI/CD pipelines, Prometheus, và hơn thế nữa.";
+        }
+
+        else if (message.contains("security")) {
+            return "Khóa học này giúp bạn nắm được các kỹ thuật bảo mật cơ bản và nâng cao.";
+        } else if (message.contains("hacking")) {
+            return "Bạn quan tâm đến hacking? Hãy học ethical hacking một cách hợp pháp và an toàn.";
         } else if (message.contains("firewall")) {
-            return "Khóa học 'Firewall & IDS nâng cao': Bảo vệ hệ thống với firewall và IDS. Học phí: 2.100.000 VNĐ, 10 buổi. Nội dung chi tiết: iptables, Snort, Suricata. Khóa học này giúp bạn triển khai các hệ thống bảo vệ mạng tiên tiến.";
-        } else {
-            return "Xin chào! Bạn muốn tìm hiểu về khóa học nào? (Ví dụ: Java, Python, Web, Mobile, DevOps...)";
+            return "Firewall là lớp bảo vệ quan trọng – khóa học này sẽ giúp bạn cấu hình và kiểm soát firewall.";
+        }
+
+        else {
+            return """
+                    Xin chào! Mình chưa rõ bạn đang quan tâm đến lĩnh vực nào.
+                    Bạn có thể hỏi về các chủ đề sau:
+                    
+                    - Web: HTML, CSS, JavaScript, ReactJS
+                    - Backend: Spring Boot
+                    - Mobile: Flutter, Android
+                    - Database: SQL, MySQL
+                    - DevOps: Docker, Jenkins, Prometheus
+                    - Security: Ethical Hacking, Firewall
+                    
+                    Ví dụ: "Tôi muốn học về backend với Java"
+                    """;
         }
     }
 }
