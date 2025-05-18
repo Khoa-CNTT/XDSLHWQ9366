@@ -10,8 +10,10 @@ import {
 import { FaEnvelope, FaLocationArrow } from "react-icons/fa6";
 import { useNotification } from "../../context/NotificationContext";
 import { useContactValidation } from "../../components/Validate/ValidateContact";
+import axios from "axios";
 
 const Contact = () => {
+  // State lưu trữ dữ liệu form liên hệ
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -19,41 +21,76 @@ const Contact = () => {
     phone: "",
     message: "",
   });
+
+  // Custom hook kiểm tra hợp lệ form
   const { validateForm, clearErrors } = useContactValidation(formData);
 
+  // Hook thông báo (toast)
   const { notify } = useNotification();
+
+  // State kiểm soát trạng thái gửi form (loading)
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Hàm xử lý thay đổi input/textarea trong form
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    clearErrors();
+    setFormData((prev) => ({ ...prev, [name]: value })); // Cập nhật giá trị mới vào state
+    clearErrors(); // Xóa lỗi cũ nếu có
   };
 
+  // Hàm xử lý khi submit form liên hệ
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Ngăn reload trang mặc định
     if (!validateForm()) {
-      notify("error", "Vui lòng kiểm tra lại thông tin!");
+      notify("error", "Vui lòng kiểm tra lại thông tin!"); // Báo lỗi nếu form không hợp lệ
       setIsSubmitting(false);
       return;
     }
-    setIsSubmitting(true);
-    setTimeout(() => {
-      console.log("Sending", formData);
-      notify("success", "Message sent successfully!");
+    setIsSubmitting(true); // Bật trạng thái loading
+
+    // Chuẩn bị dữ liệu gửi lên backend
+    const payload = {
+      maKhach: "",
+      hoTen: `${formData.firstname} ${formData.lastname}`.trim(),
+      email: formData.email,
+      soDienThoai: formData.phone,
+      yKien: formData.message,
+      ngayLienHe: new Date().toISOString().split("T")[0], // yyyy-MM-dd
+    };
+
+    try {
+      // Gửi POST request đến backend
+      const res = await axios.post("http://localhost:8080/lienhe/add", payload);
+      if (res.data.status === 200) {
+        // Nếu thành công, giả lập hiệu ứng gửi trong 1.5s rồi thông báo thành công và reset form
+        setTimeout(() => {
+          console.log("Sending", formData);
+          notify("success", "Gửi liên hệ thành công!");
+          setIsSubmitting(false);
+          setFormData({
+            firstname: "",
+            lastname: "",
+            email: "",
+            phone: "",
+            message: "",
+          });
+        }, 1500);
+      } else {
+        // Nếu backend trả về lỗi
+        notify("error", res.data.message || "Gửi liên hệ thất bại!");
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      // Nếu có lỗi khi gọi API
+      notify("error", "Có lỗi khi gửi liên hệ!");
+      console.error(error);
       setIsSubmitting(false);
-      setFormData({
-        firstname: "",
-        lastname: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-    }, 1500);
+    }
   };
 
+  // Các biến animation cho framer-motion
   const sectionVariants = {
     initial: { opacity: 0, y: 50 },
     animate: {
@@ -101,7 +138,9 @@ const Contact = () => {
             initial="initial"
             animate="animate"
           >
+            {/* Các input của form */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Họ */}
               <motion.div
                 variants={inputVariants}
                 custom={0}
@@ -111,7 +150,7 @@ const Contact = () => {
                 <div className="relative">
                   <input
                     type="text"
-                    name="firstName"
+                    name="firstname"
                     value={formData.firstname}
                     onChange={handleChange}
                     className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
@@ -120,6 +159,7 @@ const Contact = () => {
                   />
                 </div>
               </motion.div>
+              {/* Tên */}
               <motion.div
                 variants={inputVariants}
                 custom={1}
@@ -129,7 +169,7 @@ const Contact = () => {
                 <div className="relative">
                   <input
                     type="text"
-                    name="lastName"
+                    name="lastname"
                     value={formData.lastname}
                     onChange={handleChange}
                     className="w-full pl-5 pr-4 py-4 bg-gray-50 border border-secondary rounded-lg hover:border-secondary  transition-all duration-300 text-black placeholder-gray-500 shadow-md"
@@ -138,6 +178,7 @@ const Contact = () => {
                 </div>
               </motion.div>
             </div>
+            {/* Email */}
             <motion.div
               variants={inputVariants}
               custom={2}
@@ -157,6 +198,7 @@ const Contact = () => {
                 />
               </div>
             </motion.div>
+            {/* Số điện thoại */}
             <motion.div
               variants={inputVariants}
               custom={3}
@@ -175,6 +217,7 @@ const Contact = () => {
                 />
               </div>
             </motion.div>
+            {/* Nội dung liên hệ */}
             <motion.div
               variants={inputVariants}
               custom={4}
@@ -193,6 +236,7 @@ const Contact = () => {
                 />
               </div>
             </motion.div>
+            {/* Nút gửi form với hiệu ứng loading */}
             <motion.button
               whileHover={{
                 scale: 1.05,
@@ -218,14 +262,14 @@ const Contact = () => {
             </motion.button>
           </motion.form>
 
-          {/* Info Section */}
+          {/* Info Section - Thông tin liên hệ, mạng xã hội, địa chỉ */}
           <motion.div
             variants={sectionVariants}
             initial="initial"
             animate="animate"
             className="lg:col-span-2 space-y-4 mt-2 lg:mt-0"
           >
-            {/* Chat with Us */}
+            {/* Chat với chúng tôi */}
             <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
               <h3 className="text-xl font-bold text-primary hover:text-secondary">
                 Chat with Us
@@ -262,7 +306,7 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Call Us */}
+            {/* Gọi cho chúng tôi */}
             <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
               <h3 className="text-xl font-bold text-primary hover:text-secondary">
                 Call Us
@@ -277,7 +321,7 @@ const Contact = () => {
               </motion.div>
             </div>
 
-            {/* Visit Us */}
+            {/* Địa chỉ văn phòng */}
             <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
               <h3 className="text-xl font-bold text-primary hover:text-secondary">
                 Visit Us
@@ -295,7 +339,7 @@ const Contact = () => {
               </motion.a>
             </div>
 
-            {/* Social Networks */}
+            {/* Mạng xã hội */}
             <div className="bg-gray-50 backdrop-blur-lg rounded-2xl p-3 shadow-lg border border-black">
               <h3 className="text-xl font-bold text-primary hover:text-secondary">
                 Social Networks
