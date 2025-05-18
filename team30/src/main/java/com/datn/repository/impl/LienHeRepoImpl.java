@@ -3,7 +3,6 @@ package com.datn.repository.impl;/*
  * @author Huy
  */
 
-import com.datn.dto.request.LienHeUpdateDTO;
 import com.datn.entity.LienHe;
 import com.datn.repository.LienHeRepo;
 import jakarta.persistence.EntityManager;
@@ -17,16 +16,6 @@ public class LienHeRepoImpl implements LienHeRepo {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Override
-    public LienHe update(String id, LienHeUpdateDTO lienHe) {
-        return entityManager.createQuery("UPDATE LienHe l SET l.tenKhach = :tenKhach, l.email = :email, l.dienThoai = :dienThoai WHERE l.id = :id", LienHe.class)
-                .setParameter("tenKhach", lienHe.getHoTen())
-                .setParameter("email", lienHe.getEmail())
-                .setParameter("dienThoai", lienHe.getSoDienThoai())
-                .setParameter("id", id)
-                .executeUpdate();
-    }
 
     @Override
     public LienHe save(LienHe lienHe) {

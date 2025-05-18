@@ -1,13 +1,14 @@
 package com.datn.controller.admin;/*
  * @project team30
- * @author Huy
  */
 
 import com.datn.dto.request.LienHeAddDTO;
 import com.datn.dto.request.LienHeUpdateDTO;
+import com.datn.dto.response.ApiResponse;
 import com.datn.entity.LienHe;
 import com.datn.service.LienHeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,48 +18,61 @@ import java.util.List;
 @RequestMapping("/lienhe")
 public class LienHeController {
 
-    @Autowired
-    private LienHeService lienHeService;
+    private final LienHeService lienHeService;
 
-    @GetMapping
-    public ResponseEntity<List<LienHe>> getAllContacts() {
-        return ResponseEntity.ok(lienHeService.getAllContacts());
+    public LienHeController(LienHeService lienHeService) {
+        this.lienHeService = lienHeService;
     }
 
-    @GetMapping("/{maKhach}")
-    public ResponseEntity<LienHe> getContactById(@PathVariable String maKhach) {
-        LienHe lienHe = lienHeService.getContactById(maKhach);
-        if (lienHe == null) {
-            return ResponseEntity.notFound().build();
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse<LienHe>> add(@Valid @RequestBody LienHeAddDTO lienHe) {
+        try {
+            LienHe addedLienHe = lienHeService.createContact(lienHe);
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Thêm liên hệ thành công", addedLienHe));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
         }
-        return ResponseEntity.ok(lienHe);
     }
 
-    @PostMapping
-    public ResponseEntity<LienHe> createContact(@RequestBody LienHeAddDTO lienHe) {
-        return ResponseEntity.ok(lienHeService.createContact(lienHe));
-    }
-
-    @PutMapping("/{maKhach}")
-    public ResponseEntity<LienHe> updateContact(@PathVariable String maKhach, @RequestBody LienHeUpdateDTO lienHeDetails) {
-        LienHe lienHe = lienHeService.getContactById(maKhach);
-        if (lienHe == null) {
-            return ResponseEntity.notFound().build();
+    @PutMapping("/update/{maKhach}")
+    public ResponseEntity<ApiResponse<LienHe>> update(
+            @PathVariable String maKhach,
+            @Valid @RequestBody LienHeUpdateDTO lienHeDetails) {
+        try {
+            LienHe updatedLienHe = lienHeService.updateContact(maKhach, lienHeDetails);
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Cập nhật liên hệ thành công", updatedLienHe));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
         }
-
-        lienHe.setHoTen(lienHeDetails.getHoTen());
-        lienHe.setEmail(lienHeDetails.getEmail());
-        lienHe.setSoDienThoai(lienHeDetails.getSoDienThoai());
-        lienHe.setyKien(lienHeDetails.getYKien());
-        lienHe.setNgayLienHe(lienHeDetails.getNgayLienHe());
-
-        return ResponseEntity.ok(lienHeService.saveContact(lienHe));
     }
 
-    @DeleteMapping("/{maKhach}")
-    public ResponseEntity<Void> deleteContact(@PathVariable String maKhach) {
-        lienHeService.deleteContact(maKhach);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/delete/{maKhach}")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String maKhach) {
+        try {
+            lienHeService.deleteContact(maKhach);
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Xóa liên hệ thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<LienHe>>> getAll() {
+        try {
+            List<LienHe> lienHeList = lienHeService.getAllContacts();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách liên hệ thành công", lienHeList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/getById/{maKhach}")
+    public ResponseEntity<ApiResponse<LienHe>> getById(@PathVariable String maKhach) {
+        try {
+            LienHe lienHe = lienHeService.getContactById(maKhach);
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy liên hệ thành công", lienHe));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
+    }
 }
