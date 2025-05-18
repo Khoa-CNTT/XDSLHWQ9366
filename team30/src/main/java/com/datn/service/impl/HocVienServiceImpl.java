@@ -3,8 +3,10 @@ package com.datn.service.impl;
 import com.datn.dto.request.HocVienAddDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.HocVien;
+import com.datn.entity.TaiKhoan;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.repository.HocVienRepo;
+import com.datn.repository.TaiKhoanRepo;
 import com.datn.service.HocVienService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,12 @@ import java.util.List;
 public class HocVienServiceImpl implements HocVienService {
 
     private final HocVienRepo hocVienRepo;
+    private final TaiKhoanRepo taiKhoanRepo;
 
     @Autowired
-    public HocVienServiceImpl(HocVienRepo hocVienRepo) {
+    public HocVienServiceImpl(HocVienRepo hocVienRepo, TaiKhoanRepo taiKhoanRepo) {
         this.hocVienRepo = hocVienRepo;
+        this.taiKhoanRepo = taiKhoanRepo;
     }
 
     @Override
@@ -40,6 +44,9 @@ public class HocVienServiceImpl implements HocVienService {
         hocVien.setTinhTrangHocTap(hocVienAddDTO.getTinhTrangHocTap());
         hocVien.setNguoiNhapThongTin(hocVienAddDTO.getNguoiNhapThongTin());
         hocVien.setGhiChu(hocVienAddDTO.getGhiChu());
+
+        TaiKhoan taiKhoan = this.taiKhoanRepo.findByIdTaiKhoan(hocVienAddDTO.getMaTaiKhoan()).get();
+        hocVien.setTaiKhoan(taiKhoan);
 
         return this.hocVienRepo.add(hocVien);
     }

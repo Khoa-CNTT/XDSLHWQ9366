@@ -50,8 +50,20 @@ public class HocVien {
     @Column(name = "NGAYCAPNHATGANNHAT", columnDefinition = "DATE")
     private LocalDate ngayCapNhatGanNhat = LocalDate.now();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MATAIKHOAN", nullable = true, foreignKey = @ForeignKey(name = "FK_HOCVIENS_TAIKHOANS"))
+    public TaiKhoan taiKhoan;
+
     public HocVien() {
 
+    }
+
+    public TaiKhoan getTaiKhoan() {
+        return taiKhoan;
+    }
+
+    public void setTaiKhoan(TaiKhoan taiKhoan) {
+        this.taiKhoan = taiKhoan;
     }
 
     public String getMaHocVien() {

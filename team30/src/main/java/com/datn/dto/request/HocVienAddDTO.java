@@ -39,8 +39,18 @@ public class HocVienAddDTO {
 
     private String ghiChu;
 
+    private String maTaiKhoan;
+
     public HocVienAddDTO() {
 
+    }
+
+    public String getMaTaiKhoan() {
+        return maTaiKhoan;
+    }
+
+    public void setMaTaiKhoan(String maTaiKhoan) {
+        this.maTaiKhoan = maTaiKhoan;
     }
 
     public String getTenHocVien() {
