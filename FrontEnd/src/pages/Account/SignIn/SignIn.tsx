@@ -30,10 +30,15 @@ const SignIn = () => {
       );
 
       if (response.data.status === 200) {
-        const token = response.data.data;
+        const { token, maTaiKhoan } = response.data.data;
         login(token);
+        localStorage.setItem("maTaiKhoan", maTaiKhoan);
         navigate("/");
         notify("success", "Đăng nhập thành công!");
+        console.log(
+          "maTaiKhoan trong localStorage:",
+          localStorage.getItem("maTaiKhoan")
+        );
       } else {
         notify("error", "Đăng nhập thất bại!");
       }
