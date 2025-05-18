@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -57,16 +59,39 @@ public class TaiKhoanController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody TaiKhoanDTO dto) {
-        Optional<TaiKhoan> taiKhoan = taiKhoanService.findByUsername(dto.getTenTaiKhoan());
-        if (taiKhoan.isPresent() && passwordEncoder.matches(dto.getMatKhau(), taiKhoan.get().getMatKhau())) {
-            String token = jwtUtil.generateToken(dto.getTenTaiKhoan());
-            return ResponseEntity.ok(
-                    new ApiResponse<>(HttpStatus.OK.value(), "Đăng nhập thành công", token)
+    public ResponseEntity<ApiResponse<Map<String, String>>> login(@RequestBody TaiKhoanDTO dto) {
+        // Kiểm tra dữ liệu đầu vào
+        if (dto == null || dto.getTenTaiKhoan() == null || dto.getTenTaiKhoan().trim().isEmpty() ||
+                dto.getMatKhau() == null || dto.getMatKhau().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Tên tài khoản và mật khẩu không được để trống", null)
             );
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "Sai tài khoản hoặc mật khẩu", null)
+
+        // Tìm tài khoản theo tên người dùng
+        Optional<TaiKhoan> taiKhoan = taiKhoanService.findByUsername(dto.getTenTaiKhoan());
+        if (taiKhoan.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "Tài khoản không tồn tại", null)
+            );
+        }
+
+        // So sánh mật khẩu
+        if (!passwordEncoder.matches(dto.getMatKhau(), taiKhoan.get().getMatKhau())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "Mật khẩu không đúng", null)
+            );
+        }
+
+        // Tạo token và trả về cả token và maTaiKhoan
+        String token = jwtUtil.generateToken(dto.getTenTaiKhoan());
+        String maTaiKhoan = taiKhoan.get().getMaTaiKhoan();
+        Map<String, String> data = new HashMap<>();
+        data.put("token", token);
+        data.put("maTaiKhoan", maTaiKhoan);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(HttpStatus.OK.value(), "Đăng nhập thành công", data)
         );
     }
 
@@ -108,4 +133,3 @@ public class TaiKhoanController {
         );
     }
 }
-
