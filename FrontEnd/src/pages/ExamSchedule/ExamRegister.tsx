@@ -13,7 +13,7 @@ import {
 import { MdErrorOutline } from "react-icons/md";
 import { useExamRegisterValidation } from "../../components/Validate/ValidateExamRegister";
 import { useNotification } from "../../context/NotificationContext";
-
+import axios from "axios";
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -94,14 +94,71 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
     });
     clearErrors();
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  // Thêm các trường cần thiết cho backend
+  const extraFields = {
+    dienDangKy: "ONLINE",
+    maLichThi: "LT001",
+    maPhongThi: "PT001",
+    diem: 0,
+    xepLoai: "",
+    ngayCapChungChi: "",
+    ghiChu: "",
+  };
+  // Sửa hàm handleSubmit để gọi API backend
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      notify("success", "Registration successful!");
-      onClose();
-    } else {
+    if (!validateForm()) {
       notify("error", "Please check your information and try again.");
+      return;
+    }
+
+    const payload = {
+      tenThiSinhDuThi: formData.fullname,
+      ngaySinh: formData.dob || null,
+      gioiTinh:
+        formData.gender === "Male"
+          ? true
+          : formData.gender === "Female"
+          ? false
+          : null,
+      soCMND: formData.cccd,
+      soDienThoai: formData.phone,
+      email: formData.email,
+      diaChi: formData.address,
+      dienDangKy: extraFields.dienDangKy,
+      maLichThi: extraFields.maLichThi,
+      maPhongThi: extraFields.maPhongThi,
+      diem: extraFields.diem,
+      xepLoai: extraFields.xepLoai,
+      ngayCapChungChi: extraFields.ngayCapChungChi || null,
+      ghiChu: extraFields.ghiChu,
+    };
+
+    console.log("Payload gửi lên:", payload);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/thisinh/add",
+        payload
+      );
+      if (res.data.status === 201) {
+        notify("success", "Đăng ký dự thi thành công!");
+        onClose();
+      } else {
+        notify("error", res.data.message || "Đăng ký thất bại!");
+      }
+    } catch (error: unknown) {
+      // Kiểm tra error có phải là AxiosError không
+      if (axios.isAxiosError(error)) {
+        notify(
+          "error",
+          error.response?.data?.message || "Có lỗi khi đăng ký dự thi!"
+        );
+        console.error(error.response?.data);
+      } else {
+        notify("error", "Có lỗi khi đăng ký dự thi!");
+        console.error(error);
+      }
     }
   };
 

@@ -86,7 +86,6 @@ const CourseDetail = () => {
   };
 
   // Hàm lấy các khóa học liên quan
-  // Hàm lấy các khóa học liên quan
   const fetchRelatedCourses = async (maLinhVuc: string) => {
     try {
       const response = await axios.get<{
