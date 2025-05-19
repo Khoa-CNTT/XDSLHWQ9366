@@ -1,9 +1,9 @@
 import { FiLogOut, FiShoppingCart } from "react-icons/fi";
 import { IoMdMenu, IoMdClose } from "react-icons/io";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import navItems from "../../constants/navbarData";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { FaUser } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
@@ -15,19 +15,32 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
-
+  const navigate = useNavigate();
   const toggleNavbar = () => setIsOpen(!isOpen);
   const closeNavbar = () => setIsOpen(false);
 
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const handleScroll = () => {
     setIsScrolled(window.scrollY > 100);
   };
 
   useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      // Nếu click ngoài vùng userMenuRef thì đóng menu
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowCart(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
-
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all font-semibold duration-300 ease-in-out ${
@@ -89,8 +102,11 @@ const Navbar = () => {
               <FiShoppingCart className="text-xl" />
             </Link>
             {isAuthenticated ? (
-              <div className="relative" onClick={() => setShowCart(!showCart)}>
-                <button className="text-sm font-medium">
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  className="text-sm font-medium"
+                  onClick={() => setShowCart((prev) => !prev)}
+                >
                   <FaUser className="text-xl" />
                 </button>
                 {showCart && (
@@ -106,20 +122,12 @@ const Navbar = () => {
                           Personal information
                         </Link>
                       </li>
-                      {/* <li>
-                      <Link
-                        to="/scores"
-                        className="block px-4 py-2 text-sm hover:bg-gray-200"
-                        onClick={() => setShowCart(false)}
-                      >
-                        Xem điểm
-                      </Link>
-                    </li> */}
                       <li>
                         <button
                           onClick={() => {
                             logout();
                             setShowCart(false);
+                            navigate("/");
                           }}
                           className="flex items-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-secondary text-left"
                         >
