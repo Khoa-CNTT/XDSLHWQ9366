@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FaFacebook,
@@ -11,8 +11,10 @@ import { FaEnvelope, FaLocationArrow } from "react-icons/fa6";
 import { useNotification } from "../../context/NotificationContext";
 import { useContactValidation } from "../../components/Validate/ValidateContact";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const Contact = () => {
+  const location = useLocation();
   // State lưu trữ dữ liệu form liên hệ
   const [formData, setFormData] = useState({
     firstname: "",
@@ -21,7 +23,17 @@ const Contact = () => {
     phone: "",
     message: "",
   });
-
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const emailFromFooter = params.get("email");
+    if (emailFromFooter) {
+      setFormData((prev) => ({
+        ...prev,
+        email: emailFromFooter,
+      }));
+    }
+    // eslint-disable-next-line
+  }, [location.search]);
   // Custom hook kiểm tra hợp lệ form
   const { validateForm, clearErrors } = useContactValidation(formData);
 
