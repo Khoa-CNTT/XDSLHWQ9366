@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   MdOndemandVideo,
   MdOutlineDevices,
@@ -27,6 +27,8 @@ import { FadeUp } from "../Home/Hero/Hero";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import { useNotification } from "../../context/NotificationContext";
 import CountUp from "../../components/Animation/CountUp";
+import { useAuth } from "../../context/AuthContext";
+
 // Định nghĩa interface cho dữ liệu khóa học
 interface LinhVuc {
   maLinhVuc: string;
@@ -58,6 +60,8 @@ const CourseDetail = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const { notify } = useNotification();
   // Hàm lấy thông tin chi tiết khóa học
   const fetchCourse = async () => {
@@ -118,6 +122,12 @@ const CourseDetail = () => {
   }, [id]);
 
   const addToCart = () => {
+    if (!isAuthenticated) {
+      notify("info", "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+      navigate("/signin");
+      return;
+    }
+
     if (!course || !course.maKhoaHoc || !course.tenKhoaHoc || !course.hocPhi) {
       console.error("Dữ liệu khóa học không hợp lệ:", course);
       notify(
@@ -180,7 +190,6 @@ const CourseDetail = () => {
       );
     }
   };
-
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
   };
