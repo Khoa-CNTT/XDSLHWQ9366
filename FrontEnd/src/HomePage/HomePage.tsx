@@ -2,7 +2,9 @@ import { IoIosArrowRoundForward } from "react-icons/io";
 import Blob from "../assets/blob.svg";
 import HeroPng from "../assets/hero.png";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/Account/AuthContext";
+import { useState } from "react";
 
 export const FadeUp = (delay: number) => {
   return {
@@ -25,9 +27,26 @@ export const FadeUp = (delay: number) => {
 };
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const [showMsg, setShowMsg] = useState(false);
+  const handleGetStarted = () => {
+    if (isLoggedIn) {
+      localStorage.setItem("sidebar-selected-key", "QLThongKe");
+      navigate("/dashboard");
+    } else {
+      setShowMsg(true);
+      setTimeout(() => setShowMsg(false), 2000);
+    }
+  };
   return (
     <div className="text-xxl">
       {" "}
+      {showMsg && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-2 rounded shadow z-50">
+          Vui lòng đăng nhập để sử dụng chức năng này!
+        </div>
+      )}
       <section className="bg-light overflow-hidden relative min-h-screen flex items-center">
         <div className="container grid grid-cols-1 md:grid-cols-2 items-center relative">
           {/* Brand info */}
@@ -48,13 +67,13 @@ export default function HomePage() {
                 animate="animate"
                 className="flex justify-center md:justify-start "
               >
-                <Link
-                  to="/dashboard"
+                <button
+                  onClick={handleGetStarted}
                   className="primary-btn flex items-center gap-2"
                 >
                   Get started
                   <IoIosArrowRoundForward className="text-xl group-hover:translate-x-2 group-hover:-rotate-45 duration-300" />
-                </Link>
+                </button>
               </motion.div>
             </div>
           </div>

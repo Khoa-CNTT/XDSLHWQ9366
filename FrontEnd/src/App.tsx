@@ -50,17 +50,17 @@ import ForgotPassword from "./components/Account/ForgotPass";
 import UserList from "./components/User/UserList";
 import AddUser from "./components/User/AddUser";
 import UserDetail from "./components/User/UserDetail";
-import { AuthProvider } from "./components/Account/AuthContext";
+import { AuthProvider, useAuth } from "./components/Account/AuthContext";
 import AccountSettings from "./components/Account/AccountSetting";
 import Dashboard from "./components/Dashboard/Dashboard";
 
-function App() {
+function AppContent() {
+  const { isLoggedIn } = useAuth();
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <div>
-          <Header />
-        </div>
+    <BrowserRouter>
+      <Header />
+
+      {isLoggedIn ? (
         <div className="flex flex-row h-screen bg-gray-100">
           <div className="w-1/5">
             <Sidebar />
@@ -174,7 +174,98 @@ function App() {
             </Routes>
           </div>
         </div>
-      </BrowserRouter>
+      ) : (
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+
+          <Route path="/khoahoc" element={<CourseList />} />
+          <Route path="/khoahoc/add-khoahoc" element={<AddCourse />} />
+          <Route path="/khoahoc/get-khoahoc/:id" element={<CourseDetail />} />
+
+          <Route path="/giangvien/add-giangvien" element={<AddLecture />} />
+          <Route path="/giangvien" element={<LectureList />} />
+          <Route
+            path="/giangvien/get-giangvien/:id"
+            element={<LectureDetail />}
+          />
+
+          <Route path="/nhanvien" element={<EmployeeList />} />
+          <Route path="/nhanvien/add-nhanvien" element={<AddEmployee />} />
+          <Route
+            path="/nhanvien/get-nhanvien/:id"
+            element={<EmployeeDetail />}
+          />
+
+          <Route path="/hocvien" element={<StudentList />} />
+          <Route path="/hocvien/add-hocvien" element={<AddStudent />} />
+          <Route path="/hocvien/get-hocvien/:id" element={<StudentDetail />} />
+          <Route path="/lophoc" element={<ClassList />} />
+          <Route path="/lophoc/add-lophoc" element={<AddClass />} />
+          <Route path="/lophoc/get-lophoc/:id" element={<ClassDetail />} />
+
+          <Route path="/phonghoc" element={<RoomList />} />
+          <Route path="/phonghoc/add-phonghoc" element={<AddRoom />} />
+          <Route path="/phonghoc/get-phonghoc/:id" element={<RoomDetail />} />
+
+          <Route path="/lichthi" element={<ExamList />} />
+          <Route path="/lichthi/add-lichthi" element={<AddExam />} />
+          <Route path="/lichthi/get-lichthi/:id" element={<ExamDetail />} />
+
+          <Route path="/thisinh" element={<Contestants />} />
+          <Route path="/thisinh/add-thisinh" element={<AddContestant />} />
+          <Route
+            path="/thisinh/get-thisinh/:id"
+            element={<ContestantDetail />}
+          />
+
+          <Route path="/phieuthu" element={<Receipts />} />
+          <Route path="/phieuthu/add-phieuthu" element={<AddReceipt />} />
+          <Route
+            path="/phieuthu/get-phieuthu/:id"
+            element={<ReceiptDetail />}
+          />
+
+          <Route path="/phieuchi" element={<Disbursements />} />
+          <Route path="/phieuchi/add-phieuchi" element={<AddDisbursement />} />
+          <Route
+            path="/phieuchi/get-phieuchi/:id"
+            element={<DisbursementDetail />}
+          />
+
+          <Route path="/lienhe" element={<Contacts />} />
+          <Route path="/lienhe/add-lienhe" element={<AddContact />} />
+          <Route path="/lienhe/get-lienhe/:id" element={<ContactDetail />} />
+
+          <Route path="/baiviet" element={<Articles />} />
+          <Route path="/baiviet/add-baiviet" element={<AddArticle />} />
+          <Route path="/baiviet/get-baiviet/:id" element={<ArticleDetail />} />
+
+          <Route path="/linhvuc" element={<FieldList />} />
+          <Route path="/linhvuc/add-linhvuc" element={<AddField />} />
+          <Route path="/linhvuc/get-linhvuc/:id" element={<FieldDetail />} />
+
+          <Route path="/chucvu" element={<RoleList />} />
+          <Route path="/chucvu/add-chucvu" element={<AddRole />} />
+          <Route path="/chucvu/get-chucvu/:id" element={<RoleDetail />} />
+
+          <Route path="/taikhoan" element={<UserList />} />
+          <Route path="/taikhoan/add-taikhoan" element={<AddUser />} />
+          <Route path="/taikhoan/get-taikhoan/:id" element={<UserDetail />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/change-password" element={<AccountSettings />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      )}
+    </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 }

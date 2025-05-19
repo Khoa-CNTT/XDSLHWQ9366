@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/Account/AuthContext";
-import logo from "../assets/Logo.png";
+import TrueFocus from "./TrueFocus";
 
 function Header() {
   const { isLoggedIn, user, role, logout } = useAuth();
@@ -20,8 +20,14 @@ function Header() {
           className="h-12 flex items-center  text-xl font-medium"
           onClick={() => navigate("/")}
         >
-          <img src={logo} className="h-14 rounded-full w-auto" alt="Logo" />
-          {/* <span className=" text-xl font-bold text-gray-700 ">Trang chủ</span> */}
+          <TrueFocus
+            sentence="HANTA Elearning"
+            manualMode={false}
+            blurAmount={5}
+            borderColor="rgba(247, 186, 52, 0.6)"
+            animationDuration={2}
+            pauseBetweenAnimations={1}
+          />
         </button>
 
         {/* Nút Trang chủ */}
