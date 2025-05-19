@@ -14,7 +14,6 @@ import Contact from "./pages/Contact/Contact";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import Results from "./pages/Result/Result";
 import TestScores from "./pages/TestScores/TestScores";
-import TestScoreDetail from "./pages/TestScores/TestScoreDetail";
 import News from "./pages/News/News";
 import NewsDetail from "./pages/News/NewsDetail";
 import Cart from "./pages/Cart/Cart";
@@ -44,7 +43,6 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/result" element={<Results />} />
               <Route path="/test-scores" element={<TestScores />} />
-              <Route path="/test-scores/:id" element={<TestScoreDetail />} />
               <Route path="/news" element={<News />} />
               <Route path="/news/:mabaiviet" element={<NewsDetail />} />
               <Route path="/cart" element={<Cart />} />

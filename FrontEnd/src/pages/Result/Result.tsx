@@ -57,10 +57,10 @@ const Results = () => {
           );
           setCourses(filtered);
         } else {
-          setError("Không thể lấy dữ liệu từ máy chủ.");
+          setError("Cannot fetch data from server.");
         }
       } catch {
-        setError("Lỗi khi kết nối tới máy chủ.");
+        setError("Failed to connect to server.");
       } finally {
         setLoading(false);
       }
@@ -69,11 +69,11 @@ const Results = () => {
   }, [maTaiKhoan]);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-white text-black pt-24">
+      <div className="max-w-6xl mx-auto px-6 py-10">
         {/* Header */}
         <div className="mb-6 text-left">
-          <h1 className="text-4xl font-extrabold">Test Scores</h1>
+          <h1 className="text-4xl font-extrabold">Result</h1>
           <p className="text-sm text-gray-500 mt-1">
             <Link to="/" className="text-blue-600 hover:underline">
               Home
@@ -104,11 +104,11 @@ const Results = () => {
               <table className="w-full text-sm text-left">
                 <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
                   <tr>
-                    <th className="py-4 px-6 font-semibold">STT</th>
-                    <th className="py-4 px-6 font-semibold">Lĩnh vực</th>
-                    <th className="py-4 px-6 font-semibold">Tên khóa học</th>
-                    <th className="py-4 px-6 font-semibold">Điểm</th>
-                    <th className="py-4 px-6 font-semibold">Xếp loại</th>
+                    <th className="py-4 px-6 font-semibold">No.</th>
+                    <th className="py-4 px-6 font-semibold">Field</th>
+                    <th className="py-4 px-6 font-semibold">Course Name</th>
+                    <th className="py-4 px-6 font-semibold">Score</th>
+                    <th className="py-4 px-6 font-semibold">Classification</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-700">
@@ -147,7 +147,7 @@ const Results = () => {
                         colSpan={5}
                         className="py-12 text-center text-gray-500"
                       >
-                        Không tìm thấy khóa học nào.
+                        No courses found.
                       </td>
                     </tr>
                   )}
