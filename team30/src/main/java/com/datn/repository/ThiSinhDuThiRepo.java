@@ -2,6 +2,7 @@ package com.datn.repository;
 
 
 
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.ThiSinhDuThi;
 
 import java.util.List;
@@ -21,5 +22,6 @@ public interface ThiSinhDuThiRepo {
     ThiSinhDuThi update(ThiSinhDuThi thiSinhDuThi);
 
     void delete(String maThiSinhDuThi);
+    List<ThiSinhDuThi> getAllThiSinhDuThi();
 
 }

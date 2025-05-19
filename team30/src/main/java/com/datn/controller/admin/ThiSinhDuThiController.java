@@ -4,6 +4,7 @@ import com.datn.dto.request.ThiSinhDuThiAddDTO;
 import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.ApiResponse;
 import com.datn.dto.response.PaginationResponse;
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.ThiSinhDuThi;
 import com.datn.exception.base.NotFoundException;
 import com.datn.service.ThiSinhDuThiService;
@@ -216,6 +217,16 @@ public class ThiSinhDuThiController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<ThiSinhDuThi>>> getAll() {
+        try {
+            List<ThiSinhDuThi> thiSinhDuThiList = thiSinhDuThiService.getAllThiSinhDuThi();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách thí sinh dự thi thành công", thiSinhDuThiList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.datn.repository.impl;
 
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.ThiSinhDuThi;
 import com.datn.exception.thisinh.ThiSinhNotFoundException;
 import com.datn.repository.ThiSinhDuThiRepo;
@@ -73,6 +74,10 @@ public class ThiSinhDuThiRepoImpl implements ThiSinhDuThiRepo {
         this.entityManager.flush();
 
         return thiSinhDuThi;
+    }
+    @Override
+    public List<ThiSinhDuThi> getAllThiSinhDuThi() {
+        return entityManager.createQuery("SELECT l FROM ThiSinhDuThi l", getEntityClass()).getResultList();
     }
 
     @Override

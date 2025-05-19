@@ -3,6 +3,7 @@ package com.datn.service;
 import com.datn.dto.request.ThiSinhDuThiAddDTO;
 import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.ThiSinhDuThi;
 
 import java.util.List;
@@ -22,5 +23,6 @@ public interface ThiSinhDuThiService {
     List<ThiSinhDuThi> findByTenThiSinhDuThi(String tenThiSinhDuThi);
 
     ThiSinhDuThi findById(String maThiSinhDuThi);
+    List<ThiSinhDuThi> getAllThiSinhDuThi();
 
 }

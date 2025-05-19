@@ -3,6 +3,7 @@ package com.datn.service.impl;
 import com.datn.dto.request.ThiSinhDuThiAddDTO;
 import com.datn.dto.request.ThiSinhDuThiUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.ThiSinhDuThi;
 import com.datn.exception.base.NotFoundException;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
@@ -31,7 +32,10 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
         this.lichThiRepo = lichThiRepo;
         this.phongHocRepo = phongHocRepo;
     }
-
+    @Override
+    public List<ThiSinhDuThi> getAllThiSinhDuThi() {
+        return thiSinhDuThiRepo.getAllThiSinhDuThi();
+    }
     @Override
     public ThiSinhDuThi add(ThiSinhDuThiAddDTO dto) {
         ThiSinhDuThi entity = new ThiSinhDuThi();
