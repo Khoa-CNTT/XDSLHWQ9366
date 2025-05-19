@@ -1,8 +1,19 @@
 import { FaInstagram, FaFacebook, FaYoutube, FaTiktok } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Footer = () => {
+  const [footerEmail, setFooterEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleGo = () => {
+    if (footerEmail.trim()) {
+      navigate(`/contact?email=${encodeURIComponent(footerEmail.trim())}`);
+    } else {
+      navigate("/contact");
+    }
+  };
   return (
     <footer className="py-28 bg-[#f7f7f7]">
       <motion.div
@@ -75,10 +86,16 @@ const Footer = () => {
             <div className="flex items-center">
               <input
                 type="text"
+                value={footerEmail}
+                onChange={(e) => setFooterEmail(e.target.value)}
                 placeholder="Enter your email"
                 className="p-3 rounded-s-xl bg-white w-full py-4 focus:ring-0 focus:outline-none placeholder:text-dark2"
               />
-              <button className="bg-primary text-white font-semibold py-4 px-6 rounded-e-xl">
+              <button
+                className="bg-primary text-white font-semibold py-4 px-6 rounded-e-xl"
+                onClick={handleGo}
+                type="button"
+              >
                 Go
               </button>
             </div>
