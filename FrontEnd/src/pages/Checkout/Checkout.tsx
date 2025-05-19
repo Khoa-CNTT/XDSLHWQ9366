@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import QR from "../../assets/QR.jpg";
+import { useNotification } from "../../context/NotificationContext";
 
 // Define interfaces consistent with Cart and CourseDetail
 interface LinhVuc {
@@ -25,6 +26,7 @@ const Checkout = () => {
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const navigate = useNavigate();
+  const { notify } = useNotification();
 
   useEffect(() => {
     try {
@@ -52,9 +54,10 @@ const Checkout = () => {
 
   const handleApplyPromo = () => {
     if (promoCode === "KM10") {
+      notify("success", "Promo code applied successfully");
       setDiscount(totalPrice * 0.1);
     } else {
-      alert("Invalid promo code.");
+      notify("error", "Invalid promo code!");
       setDiscount(0);
     }
   };
