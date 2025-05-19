@@ -3,6 +3,7 @@ package com.datn.service;
 import com.datn.dto.request.HocVienAddDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.HocVien;
+import com.datn.entity.ThiSinhDuThi;
 
 import java.util.List;
 
@@ -21,5 +22,7 @@ public interface HocVienService {
     PaginationResponse<HocVien> pagination(int pageNumber, int pageSize);
 
     List<HocVien> findByTenHocVien(String tenHocVien);
+
+    List<HocVien> getAllHocVien();
 
 }

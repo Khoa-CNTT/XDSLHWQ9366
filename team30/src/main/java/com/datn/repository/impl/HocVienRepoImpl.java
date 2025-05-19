@@ -1,6 +1,7 @@
 package com.datn.repository.impl;
 
 import com.datn.entity.HocVien;
+import com.datn.entity.ThiSinhDuThi;
 import com.datn.exception.hocvien.DuplicateHocVienException;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.repository.HocVienRepo;
@@ -131,6 +132,11 @@ public class HocVienRepoImpl implements HocVienRepo {
 
     private Class<HocVien> getEntityClass() {
         return HocVien.class;
+    }
+
+    @Override
+    public List<HocVien> getAllHocVien() {
+        return entityManager.createQuery("SELECT l FROM HocVien l", getEntityClass()).getResultList();
     }
 
 }

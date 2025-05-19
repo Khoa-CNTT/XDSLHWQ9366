@@ -2,6 +2,7 @@ package com.datn.repository;
 
 
 import com.datn.entity.HocVien;
+import com.datn.entity.ThiSinhDuThi;
 
 import java.util.List;
 
@@ -26,5 +27,6 @@ public interface HocVienRepo {
     void checkSoDienThoaiExists(String soDienThoai);
 
     void checkEmailExists(String email);
+    List<HocVien> getAllHocVien();
 
 }

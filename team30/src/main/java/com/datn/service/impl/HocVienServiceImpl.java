@@ -3,6 +3,7 @@ package com.datn.service.impl;
 import com.datn.dto.request.HocVienAddDTO;
 import com.datn.dto.response.PaginationResponse;
 import com.datn.entity.HocVien;
+import com.datn.entity.ThiSinhDuThi;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.repository.HocVienRepo;
 import com.datn.service.HocVienService;
@@ -58,7 +59,10 @@ public class HocVienServiceImpl implements HocVienService {
     public List<HocVien> findAll() {
         return this.hocVienRepo.findAll();
     }
-
+    @Override
+    public List<HocVien> getAllHocVien() {
+        return hocVienRepo.getAllHocVien();
+    }
     @Override
     @Transactional
     public HocVien update(HocVien hocVien) {

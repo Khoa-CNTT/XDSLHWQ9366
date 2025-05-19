@@ -4,6 +4,7 @@ import com.datn.dto.request.HocVienAddDTO;
 import com.datn.dto.request.HocVienUpdateDTO;
 import com.datn.dto.response.ApiResponse;
 import com.datn.dto.response.PaginationResponse;
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.HocVien;
 import com.datn.exception.hocvien.HocVienNotFoundException;
 import com.datn.service.HocVienService;
@@ -34,7 +35,7 @@ import java.util.UUID;
 public class HocVienController {
 
     private static final String PATH_UPLOADS =
-            "D:/DATN/Demo_DATN_2025/team30/src/main/java/com/datn/uploads";
+            "D:/DATN_BE_HANTA_2025_MERGE_TEST/XDSLHWQ9366/team30/src/main/java/com/datn/uploads";
 
     private final HocVienService hocVienService;
 
@@ -251,6 +252,15 @@ public class HocVienController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<HocVien>>> getAll() {
+        try {
+            List<HocVien> hocVienList = hocVienService.getAllHocVien();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách học viên thành công", hocVienList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
         }
     }
 
