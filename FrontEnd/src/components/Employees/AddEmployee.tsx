@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { Employee } from "../Type/Types";
+import { NhanVien } from "../Type/Types";
 import { useNavigate } from "react-router-dom";
 
 export default function AddEmployee() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<Employee>({
-    id: "",
-    name: "",
-    dob: "",
+  const [formData, setFormData] = useState<NhanVien>({
+    maNhanVien: "",
+    tenNhanVien: "",
+    ngaySinh: "",
     gioiTinh: "",
-    CCCD: "",
-    SDT: "",
+    soCMND: "",
+    soDienThoai: "",
     email: "",
-    address: "",
+    diaChi: "",
     coQuan: "",
     tinhTrang: "",
-    linhVuc: "",
+    maLinhVuc: "",
     ghiChu: "",
   });
 
@@ -51,9 +51,9 @@ export default function AddEmployee() {
   };
 
   const handleChangeData = async () => {
-    const { id, name, dob, email } = formData;
+    const { maNhanVien, tenNhanVien, ngaySinh, email } = formData;
 
-    if (!id || !name || !dob || !email) {
+    if (!maNhanVien || !tenNhanVien || !ngaySinh || !email) {
       alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
       return;
     }
@@ -68,17 +68,17 @@ export default function AddEmployee() {
 
   const handleClear = () => {
     setFormData({
-      id: "",
-      name: "",
-      dob: "",
+      maNhanVien: "",
+      tenNhanVien: "",
+      ngaySinh: "",
       gioiTinh: "",
-      CCCD: "",
-      SDT: "",
+      soCMND: "",
+      soDienThoai: "",
       email: "",
-      address: "",
+      diaChi: "",
       coQuan: "",
       tinhTrang: "",
-      linhVuc: "",
+      maLinhVuc: "",
       ghiChu: "",
     });
   };
@@ -111,10 +111,9 @@ export default function AddEmployee() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
+                placeholder="Mã tự động cập nhật"
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
@@ -126,8 +125,8 @@ export default function AddEmployee() {
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -142,8 +141,8 @@ export default function AddEmployee() {
 
               <input
                 type="text"
-                name="CCCD"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -187,8 +186,8 @@ export default function AddEmployee() {
               </label>
               <div className="w-full">
                 <select
-                  name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
+                  name="maLinhVuc"
+                  value={formData.maLinhVuc} // Gán giá trị từ formData
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -212,7 +211,7 @@ export default function AddEmployee() {
               <input
                 type="text"
                 name="name"
-                value={formData.name}
+                value={formData.tenNhanVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -247,8 +246,8 @@ export default function AddEmployee() {
 
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
+                name="soDienThoai"
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -263,8 +262,8 @@ export default function AddEmployee() {
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

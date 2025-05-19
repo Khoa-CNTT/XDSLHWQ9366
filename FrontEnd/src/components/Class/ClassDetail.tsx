@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Class } from "../Type/Types";
+import { LopHoc } from "../Type/Types";
 
 export default function ClassDetail() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState(
     location.state?.lopHoc || {
       maLopHoc: "",
@@ -15,10 +16,10 @@ export default function ClassDetail() {
       ngayKetThuc: "",
       thuLao: "",
       daThanhToan: "",
-      khoaHoc: [],
-      phongHoc: [],
-      giangVien: [],
-      nhanVien: [],
+      maKhoaHoc: "",
+      maPhongHoc: "",
+      maGiangVien: "",
+      maNhanVien: "",
       ghiChu: "",
     }
   );
@@ -35,7 +36,7 @@ export default function ClassDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: Class) => ({ ...prev, [name]: value }));
+    setFormData((prev: LopHoc) => ({ ...prev, [name]: value }));
   };
 
   if (!formData) {
@@ -45,7 +46,7 @@ export default function ClassDetail() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/lophoc/update/${formData.id}?malophoc=${formData.id}`,
+        `http://localhost:8080/lophoc/update/${formData.maLopHoc}?malophoc=${formData.maLopHoc}`,
         {
           method: "PUT",
           headers: {
@@ -159,7 +160,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenKhoaHoc"
-                value={formData.khoaHoc[0]?.tenKhoaHoc || ""}
+                value={formData.maKhoaHoc}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -174,7 +175,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenGiangVien"
-                value={formData.giangVien[0]?.tenGiangVien || ""}
+                value={formData.maGiangVien}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -260,7 +261,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenPhongHoc"
-                value={formData.phongHoc[0]?.tenPhongHoc || ""}
+                value={formData.maPhongHoc}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -275,7 +276,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenNhanVien"
-                value={formData.nhanVien[0]?.tenNhanVien}
+                value={formData.maNhanVien}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

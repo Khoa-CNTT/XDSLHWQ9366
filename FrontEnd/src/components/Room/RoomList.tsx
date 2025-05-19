@@ -268,7 +268,7 @@ export default function RoomList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportPhongHocToExcel(roomList)}
+              onClick={() => exportPhongHocToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

@@ -1,43 +1,35 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Class } from "../Type/Types";
+import { LopHoc } from "../Type/Types";
 import { exportLopHocToExcel } from "../../Service.tsx/ExportExcel/LopHocExp";
+import { useLopHocData } from "../../hooks/useClassData";
 
 export default function ClassList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lopHocs, setLopHoc] = useState<Class[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [tinhTrang, settinhTrang] = useState<string | null>(null);
+  const itemsPerPage = 10;
+  const { lopHocs, loading } = useLopHocData();
   const navigate = useNavigate();
+  const totalPages = Math.ceil(lopHocs.length / itemsPerPage);
 
-  useEffect(() => {
-    const fetchclass = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/lophoc/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        if (response.status === 200) {
-          const { data: paginationData } = response.data;
-          if (paginationData) {
-            // Lấy danh sách lớp học từ paginationData.data
-            const classList = paginationData.data;
-            setLopHoc(classList || []);
-          }
-        } else {
-          console.error("API trả về lỗi:", response.status);
-        }
-      } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchclass();
-  }, [currentPage]);
+  const filteredList = lopHocs.filter((c) => {
+    const matchSearch =
+      c.tenLopHoc.toLowerCase().includes(search.toLowerCase()) ||
+      c.maLopHoc.toLowerCase().includes(search.toLowerCase());
+    const matchThanhToan = !tinhTrang || c.tinhTrang === tinhTrang;
+    return matchSearch && matchThanhToan;
+  });
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
+
   // Handle button
   const handleAdd = () => {
     navigate("/lophoc/add-lophoc");
@@ -51,183 +43,18 @@ export default function ClassList() {
     try {
       await axios.delete(`http://localhost:8080/lophoc/delete/${id}`);
       alert("Xóa lớp học thành công!");
-      // Cập nhật lại danh sách lớp học sau khi xóa
-      setLopHoc((prev) => prev.filter((c) => c.maLopHoc !== id));
     } catch (error) {
       console.error("Lỗi khi xóa lớp học:", error);
       alert("Xóa lớp học thất bại!");
     }
   };
 
-  const handleView = (lopHoc: Class) => {
+  const handleView = (lopHoc: LopHoc) => {
     navigate(`/lophoc/get-lophoc/${lopHoc.maLopHoc}`, {
       state: { lopHoc },
     });
   };
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const classList = useMemo<Class[]>(
-    () => [
-      {
-        maLopHoc: "L001",
-        tenLopHoc: "Lớp học Lập trình C/C++ cơ bản",
-        lichHoc: "Thứ 2, 4, 6 - 18:00 đến 20:00",
-        tinhTrang: "Đang mở đăng ký",
-        ngayBatDau: "2023-10-01",
-        ngayKetThuc: "2023-12-31",
-        thuLao: 2000000,
-        daThanhToan: "Chưa thanh toán",
-        khoaHoc: [
-          {
-            maKhoaHoc: "KH001",
-            tenKhoaHoc: "Lập trình C/C++ cơ bản",
-          },
-        ],
-        phongHoc: [
-          {
-            maPhongHoc: "PH001",
-            tenPhongHoc: "lớp học A",
-          },
-        ],
-        giangVien: [
-          {
-            maGiangVien: "GV001",
-            tenGiangVien: "Nguyễn Văn A",
-          },
-        ],
-        nhanVien: [
-          {
-            maNhanVien: "NV001",
-            tenNhanVien: "Trần Thị B",
-          },
-        ],
-        ghiChu: "Lớp học này dành cho người mới bắt đầu.",
-      },
-      {
-        maLopHoc: "L002",
-        tenLopHoc: "Lớp học lập trình Java cơ bản",
-        lichHoc: "Thứ 3, 5, 7 - 18:00 đến 20:00",
-        tinhTrang: "Đã đầy",
-        ngayBatDau: "2023-11-01",
-        ngayKetThuc: "2024-01-31",
-        thuLao: 2500000,
-        daThanhToan: "Đã thanh toán",
-        khoaHoc: [
-          {
-            maKhoaHoc: "KH002",
-            tenKhoaHoc: "Lập trình Java cơ bản",
-          },
-        ],
-        phongHoc: [
-          {
-            maPhongHoc: "PH002",
-            tenPhongHoc: "lớp học B",
-          },
-        ],
-        giangVien: [
-          {
-            maGiangVien: "GV002",
-            tenGiangVien: "Lê Văn C",
-          },
-        ],
-        nhanVien: [
-          {
-            maNhanVien: "NV002",
-            tenNhanVien: "Nguyễn Thị D",
-          },
-        ],
-        ghiChu: "Lớp học này dành cho người mới bắt đầu học lập trình.",
-      },
-      {
-        maLopHoc: "L003",
-        tenLopHoc: "Lớp học lập trình Python cơ bản",
-        lichHoc: "Thứ 3, 5, 7 - 18:00 đến 20:00",
-        tinhTrang: "Đã đầy",
-        ngayBatDau: "2023-11-01",
-        ngayKetThuc: "2024-01-31",
-        thuLao: 2500000,
-        daThanhToan: "Đã thanh toán",
-        khoaHoc: [
-          {
-            maKhoaHoc: "KH002",
-            tenKhoaHoc: "Lập trình Python cơ bản",
-          },
-        ],
-        phongHoc: [
-          {
-            maPhongHoc: "PH002",
-            tenPhongHoc: "lớp học B",
-          },
-        ],
-        giangVien: [
-          {
-            maGiangVien: "GV002",
-            tenGiangVien: "Lê Văn C",
-          },
-        ],
-        nhanVien: [
-          {
-            maNhanVien: "NV002",
-            tenNhanVien: "Nguyễn Thị D",
-          },
-        ],
-        ghiChu: "Lớp học này dành cho người mới bắt đầu học lập trình.",
-      },
-      {
-        maLopHoc: "L004",
-        tenLopHoc: "Lớp học lập trình Java nâng cao",
-        lichHoc: "Thứ 3, 5, 7 - 18:00 đến 20:00",
-        tinhTrang: "Đang mở đăng ký",
-        ngayBatDau: "2023-11-01",
-        ngayKetThuc: "2024-01-31",
-        thuLao: 2500000,
-        daThanhToan: "Đã thanh toán",
-        khoaHoc: [
-          {
-            maKhoaHoc: "KH002",
-            tenKhoaHoc: "Lập trình Java nâng cao",
-          },
-        ],
-        phongHoc: [
-          {
-            maPhongHoc: "PH002",
-            tenPhongHoc: "lớp học B",
-          },
-        ],
-        giangVien: [
-          {
-            maGiangVien: "GV002",
-            tenGiangVien: "Lê Văn C",
-          },
-        ],
-        nhanVien: [
-          {
-            maNhanVien: "NV002",
-            tenNhanVien: "Nguyễn Thị D",
-          },
-        ],
-        ghiChu: "Lớp học này dành cho người mới bắt đầu học lập trình.",
-      },
-    ],
-    []
-  );
 
-  //  10 items per page
-  const [tinhTrang, settinhTrang] = useState<string | null>(null);
-  const itemsPerPage = 10;
-  const displayList = lopHocs.length > 0 ? lopHocs : classList;
-  const totalPages = Math.ceil(displayList.length / itemsPerPage);
-  const filteredList = displayList.filter((c) => {
-    const matchSearch =
-      c.tenLopHoc.toLowerCase().includes(search.toLowerCase()) ||
-      c.maLopHoc.toLowerCase().includes(search.toLowerCase());
-    const matchThanhToan = !tinhTrang || c.tinhTrang === tinhTrang;
-    return matchSearch && matchThanhToan;
-  });
-
-  const paginatedList = (filteredList || []).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }
@@ -265,7 +92,7 @@ export default function ClassList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {classList.map((item) => (
+                  {lopHocs.map((item) => (
                     <button
                       key={item.tinhTrang}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -389,7 +216,7 @@ export default function ClassList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportLopHocToExcel(displayList)}
+              onClick={() => exportLopHocToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

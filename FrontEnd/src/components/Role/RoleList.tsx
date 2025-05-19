@@ -1,48 +1,29 @@
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChucVu } from "../Type/Types";
+import { useChucVuData } from "../../hooks/useChucVuData";
 
 export default function RoleList() {
   const [search, setSearch] = useState("");
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [chucvus, setchucvu] = useState<ChucVu[]>([]);
-  const [loading, setLoading] = useState(false);
+  const itemsPerPage = 10;
+  const { chucVus, loading } = useChucVuData();
   const navigate = useNavigate();
-  // Fetch data from API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/chucvu/chucvus"
-        );
-        console.log("API Response:", response.data);
 
-        const chucvuList = response.data.data;
-        // Kiểm tra dữ liệu trả về từ API
-        setchucvu(chucvuList);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredList = chucVus.filter((c) => {
+    const matchSearch =
+      c.maChucVu.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenChucVu.toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
+  });
 
-    fetchCourses();
-  }, [currentPage]);
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
-  useEffect(() => {
-    console.log("Danh sách lĩnh vực:", chucvus); // Kiểm tra dữ liệu trong state
-  }, [chucvus]);
-  // Handle button
-  const handleAdd = () => {
-    navigate("/chucvu/add-chucvu");
-  };
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -53,8 +34,6 @@ export default function RoleList() {
     try {
       await axios.delete(`http://localhost:8080/chucvu/delete/${id}`);
       alert("Xóa lĩnh vực thành công!");
-      // Cập nhật lại danh sách lĩnh vực sau khi xóa
-      setchucvu((prev) => prev.filter((chucvu) => chucvu.maChucVu !== id));
     } catch (error) {
       console.error("Lỗi khi xóa lĩnh vực:", error);
       alert("Xóa lĩnh vực thất bại!");
@@ -66,24 +45,7 @@ export default function RoleList() {
       state: { chucvu },
     });
   };
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  //  10 items per page
-  const [chucVu, setChucVu] = useState<string | null>(null);
-  const itemsPerPage = 10;
-  const filteredList = (chucvus || []).filter((c) => {
-    const matchSearch =
-      c.maChucVu.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenChucVu.toLowerCase().includes(search.toLowerCase());
-    const matchChucVu = !chucVu || c.maChucVu === chucVu;
-
-    return matchSearch && matchChucVu;
-  });
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }
@@ -99,56 +61,12 @@ export default function RoleList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="relative" ref={menuRef}>
-            {/* Button */}
-            <button
-              onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
-            >
-              Tất cả chức vụ
-              <svg
-                className="w-4 h-4 ml-12 -mr-1 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpenMenu && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  {chucvus.map((item) => (
-                    <button
-                      key={item.maChucVu}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => {
-                        setChucVu(item.maChucVu);
-                        setIsOpenMenu(false);
-                      }}
-                    >
-                      {item.trangThai}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setChucVu(null);
-                      setIsOpenMenu(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
-                  >
-                    Huỷ
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
 
           <button
             className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
-            onClick={handleAdd}
+            onClick={() => {
+              navigate("/chucvu/add-chucvu");
+            }}
           >
             Thêm
           </button>
@@ -179,7 +97,9 @@ export default function RoleList() {
                   <td className="p-2 text-center">{chucvu.maChucVu}</td>
                   <td className="p-2 text-center">{chucvu.tenChucVu}</td>
 
-                  <td className="p-2 text-center">{chucvu.trangThai}</td>
+                  <td className="p-2 text-center">
+                    {chucvu.trangThai ? "Đang hoạt động" : "Tạm dừng"}
+                  </td>
                   <td className="p-2 text-center">
                     <button
                       onClick={() => handleView(chucvu)}

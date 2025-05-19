@@ -10,17 +10,17 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate("/signin");
+    navigate("/");
   };
 
   return (
     <div>
-      <div className="flex h-16 w-full bg-orange-300 px-4 items-center justify-between">
+      <div className="flex h-16 w-full bg-gradient-to-r from-orange-500 to-blue-400 px-4 items-center justify-between ">
         <button
-          className="h-12 flex items-center gap-2 text-xl font-medium bg-white border border-black hover:bg-blue-500 hover:text-white "
+          className="h-12 flex items-center  text-xl font-medium"
           onClick={() => navigate("/")}
         >
-          <img src={logo} className="h-14 w-auto" alt="Logo" />
+          <img src={logo} className="h-14 rounded-full w-auto" alt="Logo" />
           {/* <span className=" text-xl font-bold text-gray-700 ">Trang chủ</span> */}
         </button>
 
@@ -29,14 +29,14 @@ function Header() {
         <div className="flex items-center gap-2">
           {isLoggedIn ? (
             <>
-              <div className="flex p-2 bg-yellow-50 items-center gap-2 rounded-xl border ">
+              <div className="flex px-2 py-1 bg-yellow-50 items-center gap-2 rounded-xl border">
                 <div className="flex flex-col items-start ">
                   <p className="font-semibold">Hello {user}</p>
                   <p className="text-sm text-gray-600">{role}</p>
                 </div>
               </div>
               <button
-                className="p-2 bg-white border rounded-md hover:bg-blue-500 hover:text-white"
+                className="min-w-[120px] p-2 font-medium bg-orange-400  text-gray-700 border rounded-md hover:bg-orange-500 hover:text-white hover:font-bold"
                 onClick={handleLogout}
               >
                 Đăng xuất
@@ -44,7 +44,7 @@ function Header() {
             </>
           ) : (
             <button
-              className="p-2 bg-white border rounded-md hover:bg-blue-500 hover:text-white"
+              className="min-w-[120px] p-2 font-medium bg-orange-400  text-gray-700 border rounded-md hover:bg-orange-500 hover:text-white hover:font-bold"
               onClick={() => navigate("/signin")}
             >
               Đăng nhập

@@ -11,6 +11,7 @@ export default function AddRole() {
   });
 
   const saveToBackend = async () => {
+    console.log(formData);
     try {
       const res = await fetch("http://localhost:8080/chucvu/add", {
         method: "POST",
@@ -32,14 +33,12 @@ export default function AddRole() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "trangThai" ? value === "1" : value,
     }));
   };
 
@@ -109,13 +108,16 @@ export default function AddRole() {
                 Trạng thái
               </label>
               <div className="flex w-full items-center mx-2 gap-2">
-                <input
-                  type="text"
+                <select
                   name="trangThai"
                   value={formData.trangThai}
                   onChange={handleChange}
                   className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                >
+                  <option value="">-- Chọn trạng thái --</option>
+                  <option value="1">Đang hoạt động</option>
+                  <option value="0">Tạm ngừng</option>
+                </select>
               </div>
             </div>
           </div>

@@ -1,23 +1,30 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NhanVien } from "../Type/Types";
+import LinhVucSelect from "../Common/LinhVucSelect";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function EmployeeDetail() {
+  const location = useLocation();
   const navigate = useNavigate();
+  const { linhVucs } = useLinhVucData();
 
-  const [formData, setFormData] = useState({
-    id: "NV01",
-    name: "Lê Văn A",
-    dob: "1997-08-15",
-    gioiTinh: "true",
-    CCCD: "048097000077",
-    SDT: "0385665243",
-    email: "abc123@gmail.com",
-    address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-    coQuan: "HANTA",
-    tinhTrang: "dangLam",
-    linhVuc: "keToan",
-    ghiChu: "",
-  });
+  const [formData, setFormData] = useState(
+    location.state?.employee || {
+      maNhanVien: "",
+      tenNhanVien: "",
+      ngaySinh: "",
+      gioiTinh: "",
+      soCMND: "",
+      soDienThoai: "",
+      email: "",
+      diaChi: "",
+      coQuan: "",
+      tinhTrang: "",
+      maLinhVuc: "",
+      ghiChu: "",
+    }
+  );
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -25,7 +32,7 @@ export default function EmployeeDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev: NhanVien) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
@@ -56,14 +63,14 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Mã Nhân viên
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maNhanVien"
+                value={formData.maNhanVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -71,14 +78,14 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Ngày sinh
               </label>
               <input
                 type="date"
-                name="dob"
-                value={formData.dob}
+                name="ngaySinh"
+                value={formData.ngaySinh}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -86,15 +93,15 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Số CMND
               </label>
 
               <input
                 type="text"
-                name="salary"
-                value={formData.CCCD}
+                name="soCMND"
+                value={formData.soCMND}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -102,7 +109,7 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Email
               </label>
@@ -117,7 +124,7 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Cơ quan công tác
               </label>
@@ -132,22 +139,17 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Lĩnh vực
               </label>
               <div className="w-full">
-                <select
-                  name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Lĩnh vực --</option>
-                  <option value="keToan">Kế toán</option>
-                  <option value="laoCong">Lao công</option>
-                  <option value="eng">Kỹ thuật</option>
-                </select>
+                <LinhVucSelect
+                  value={formData.maLinhVuc}
+                  onChange={handleChange}
+                  linhVucs={linhVucs}
+                  name="maLinhVuc"
+                />
               </div>
             </div>
           </div>
@@ -156,14 +158,14 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Tên nhân viên
               </label>
               <input
                 type="text"
-                name="classname"
-                value={formData.name}
+                name="tenNhanVien"
+                value={formData.tenNhanVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -171,7 +173,7 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Giới tính
               </label>
@@ -191,15 +193,15 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Số điện thoại
               </label>
 
               <input
                 type="text"
-                name="SDT"
-                value={formData.SDT}
+                name="soDienThoai"
+                value={formData.soDienThoai}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -208,14 +210,14 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-between border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Địa chỉ
               </label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="diaChi"
+                value={formData.diaChi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -224,22 +226,17 @@ export default function EmployeeDetail() {
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="classDetail"
+                htmlFor="employeeDetail"
               >
                 Tình trạng công tác
               </label>
-              <div className="w-full">
-                <select
-                  name="tinhTrang"
-                  value={formData.tinhTrang} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Tình trạng --</option>
-                  <option value="dangLam">Đang làm</option>
-                  <option value="thucTap">Thực tập</option>
-                </select>
-              </div>
+              <input
+                type="text"
+                name="tinhTrang"
+                value={formData.tinhTrang}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
         </div>
@@ -252,7 +249,8 @@ export default function EmployeeDetail() {
           </label>
 
           <textarea
-            name="description"
+            name="ghiChu"
+            value={formData.ghiChu}
             rows={4}
             placeholder="Nhập nội dung..."
             className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"

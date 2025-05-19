@@ -1,10 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Lecturer } from "../Type/Types";
+import { GiangVien } from "../Type/Types";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
+import LinhVucSelect from "../Common/LinhVucSelect";
 
 export default function LectureDetail() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { linhVucs } = useLinhVucData();
+
   const [formData, setFormData] = useState(
     location.state?.lecturer || {
       maGiangVien: "",
@@ -17,35 +21,12 @@ export default function LectureDetail() {
       diaChi: "",
       coQuanCongTac: "",
       tinhTrangCongTac: "",
-      linhVuc: {
-        id: "",
-        name: "",
-      },
+      maLinhVucL: "",
       ghiChu: "",
       urlHinhDaiDien: null,
     }
   );
-  const linhVucList = useMemo(
-    () => [
-      {
-        id: "LV01",
-        name: "Java",
-      },
-      {
-        id: "LV02",
-        name: "IOT",
-      },
-      {
-        id: "LV03",
-        name: "Công nghệ thông tin",
-      },
-      {
-        id: "LV04",
-        name: "Khoa học máy tính",
-      },
-    ],
-    []
-  );
+
   useEffect(() => {
     if (!formData) {
       console.warn("Không có dữ liệu giảng viên được truyền!");
@@ -58,7 +39,7 @@ export default function LectureDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: Lecturer) => ({ ...prev, [name]: value }));
+    setFormData((prev: GiangVien) => ({ ...prev, [name]: value }));
   };
 
   if (!formData) {
@@ -107,6 +88,54 @@ export default function LectureDetail() {
           >
             Quay lại
           </button>
+        </div>
+        {/* //Chèn thêm mục hiển thị ảnh và nút thêm ảnh chọn từ windows */}
+        <div className="flex flex-col items-center mb-4">
+          <div className="w-32 h-36 mb-2">
+            {formData.urlHinhDaiDien ? (
+              <img
+                src={formData.urlHinhDaiDien}
+                alt="Hình đại diện"
+                className="w-full h-full object-cover rounded-xl border"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className=""
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  setFormData((prev: GiangVien) => ({
+                    ...prev,
+                    urlHinhDaiDien: event.target?.result as string,
+                  }));
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="text-sm text-gray-600"
+          />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="col-start">
@@ -194,19 +223,14 @@ export default function LectureDetail() {
                 Lĩnh vực
               </label>
               <div className="w-full">
-                <select
-                  name="linhVuc"
-                  value={formData.linhVuc.id} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Lĩnh vực --</option>
-                  {linhVucList.map((item) => (
-                    <option key={item.name} value={item.name}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="w-full">
+                  <LinhVucSelect
+                    value={formData.maLinhVuc}
+                    onChange={handleChange}
+                    linhVucs={linhVucs}
+                    name="maLinhVuc"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -287,18 +311,14 @@ export default function LectureDetail() {
               >
                 Tình trạng công tác
               </label>
-              <div className="w-full">
-                <select
-                  name="tinhTrangCongTac"
-                  value={formData.tinhTrangCongTac}
-                  onChange={handleChange}
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Tình trạng --</option>
-                  <option value="true">Đang công tác</option>
-                  <option value="false">Đã nghỉ</option>
-                </select>
-              </div>
+
+              <input
+                type="text"
+                name="tinhTrangCongTac"
+                value={formData.tinhTrangCongTac}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
           </div>
         </div>

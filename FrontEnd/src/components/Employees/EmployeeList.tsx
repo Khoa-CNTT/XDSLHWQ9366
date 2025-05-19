@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Employee } from "../Type/Types";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { NhanVien } from "../Type/Types";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { exportNhanVienToExcel } from "../../Service.tsx/ExportExcel/NhanVienExp";
+import { useNhanVienData } from "../../hooks/useNhanVienData";
+import axios from "axios";
 
 export default function EmployeeList() {
   const [search, setSearch] = useState("");
@@ -10,32 +11,20 @@ export default function EmployeeList() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [selectedLinhVuc, setSelectedLinhVuc] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [employees, setemployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { nhanViens, loading } = useNhanVienData();
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchemployees = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/nhanvien/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        if (response.status === 200) {
-          const { content } = response.data;
-          setemployees(content);
-        } else {
-          console.error("API trả về lỗi:", response.status);
-        }
-      } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchemployees();
-  }, [currentPage]);
+
+  const uniqueLinhVuc = useMemo(() => {
+    const linhVucList = nhanViens.map((e) => e.maLinhVuc);
+    return Array.from(new Set(linhVucList));
+  }, [nhanViens]);
 
   // Handle button
+  const handleSelectLinhVuc = (linhVuc: string | null) => {
+    setSelectedLinhVuc(linhVuc);
+    setIsOpenMenu(false);
+  };
+
   const handleAdd = () => {
     navigate("/nhanvien/add-nhanvien");
   };
@@ -48,75 +37,29 @@ export default function EmployeeList() {
     try {
       await axios.delete(`http://localhost:8080/nhanvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
-      // Cập nhật lại danh sách giảng viên sau khi xóa
-      setemployees((prev) =>
-        prev.filter((employee) => employee.maNhanVien !== id)
-      );
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
       alert("Xóa giảng viên thất bại!");
     }
   };
 
-  const handleView = (employee: Employee) => {
+  const handleView = (employee: NhanVien) => {
     navigate(`/nhanvien/get-nhanvien/${employee.maNhanVien}`, {
       state: { employee },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const employeelist = useMemo<Employee[]>(
-    () => [
-      {
-        maNhanVien: "NV01",
-        tenNhanVien: "Lê Văn A",
-        dob: "1997-08-15",
-        gioiTinh: "Nam",
-        CCCD: "048097000077",
-        SDT: "0385665243",
-        email: "abc123@gmail.com",
-        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuan: "HANTA",
-        tinhTrang: "dangLam",
-        linhVuc: "Kế toán",
-        ghiChu: "",
-      },
-      {
-        maNhanVien: "NV02",
-        tenNhanVien: "Nguyễn Văn B",
-        dob: "1995-05-20",
-        gioiTinh: "Nam",
-        CCCD: "048097000078",
-        SDT: "0385665243",
-        email: "123123123",
-        address: "108 Nguyễn Chánh, Liên Chiểu, Đà Nẵng",
-        coQuan: "HANTA",
-        tinhTrang: "dangLam",
-        linhVuc: "Thư ký",
-        ghiChu: "",
-      },
-    ],
-    []
-  );
-
-  const uniqueLinhVuc = useMemo(() => {
-    const linhVucList = employeelist.map((e) => e.linhVuc);
-    return Array.from(new Set(linhVucList));
-  }, [employeelist]);
-
-  const handleSelectLinhVuc = (linhVuc: string | null) => {
-    setSelectedLinhVuc(linhVuc);
-    setIsOpenMenu(false);
-  };
   //  10 items per page
-  const displayList = employees.length > 0 ? employees : employeelist;
   const itemsPerPage = 10;
+  const displayList = nhanViens;
   const totalPages = Math.ceil(displayList.length / itemsPerPage);
+
   const filteredList = displayList.filter((c) => {
     const matchSearch =
       c.maNhanVien.toLowerCase().includes(search.toLowerCase()) ||
       c.tenNhanVien.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !selectedLinhVuc || c.linhVuc === selectedLinhVuc;
+    const matchLinhVuc = !selectedLinhVuc || c.maLinhVuc === selectedLinhVuc;
     return matchSearch && matchLinhVuc;
   });
 
@@ -124,6 +67,10 @@ export default function EmployeeList() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // if (loading) {
+  //   return <div>Đang tải dữ liệu...</div>;
+  // }
 
   return (
     <div className="h-full pt-2">
@@ -204,9 +151,9 @@ export default function EmployeeList() {
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{employee.maNhanVien}</td>
                 <td className="p-2 text-center">{employee.tenNhanVien}</td>
-                <td className="p-2 text-center">{employee.SDT}</td>
+                <td className="p-2 text-center">{employee.soDienThoai}</td>
                 <td className="p-2 text-center">{employee.email}</td>
-                <td className="p-2 text-center">{employee.linhVuc}</td>
+                <td className="p-2 text-center">{employee.maLinhVuc}</td>
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(employee)}
@@ -273,7 +220,7 @@ export default function EmployeeList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportNhanVienToExcel(displayList)}
+              onClick={() => exportNhanVienToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

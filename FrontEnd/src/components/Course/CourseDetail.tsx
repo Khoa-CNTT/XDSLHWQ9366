@@ -1,28 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Course } from "../Type/Types";
+import { KhoaHoc } from "../Type/Types";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function CourseDetail() {
   const location = useLocation();
+  const { linhVucs } = useLinhVucData();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState<KhoaHoc>(
     location.state?.course || {
-      id: "",
-      name: "",
-      noidung: "",
-      fee: "",
-      linhVuc: "",
-      sobuoi: 0,
+      maKhoaHoc: "",
+      tenKhoaHoc: "",
+      noiDung: "",
+      hocPhi: "",
+      maLinhVuc: "",
+      soBuoi: 0,
     }
-  );
-  const linhVucList = useMemo(
-    () => [
-      { id: "java", name: "Java" },
-      { id: "iot", name: "IOT" },
-      { id: "cntt", name: "Công nghệ thông tin" },
-      { id: "khmt", name: "Khoa học máy tính" },
-    ],
-    []
   );
 
   useEffect(() => {
@@ -38,7 +31,10 @@ export default function CourseDetail() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: Course) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "soBuoi" ? Number(value) : value,
+    }));
   };
 
   if (!formData) {
@@ -48,7 +44,7 @@ export default function CourseDetail() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/khoahoc/update/${formData.id}?makhoahoc=${formData.id}`,
+        `http://localhost:8080/khoahoc/update/${formData.maKhoaHoc}`,
         {
           method: "PUT",
           headers: {
@@ -63,7 +59,6 @@ export default function CourseDetail() {
       }
 
       alert("Cập nhật thông tin khoá học thành công!");
-      console.log("Dữ liệu đã cập nhật:", formData);
       navigate(-1);
     } catch (error) {
       console.error("Lỗi khi cập nhật dữ liệu:", error);
@@ -74,6 +69,7 @@ export default function CourseDetail() {
   const handleBack = () => {
     navigate(-1);
   };
+
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
@@ -99,10 +95,11 @@ export default function CourseDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maKhoaHoc"
+                value={formData.maKhoaHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
@@ -114,21 +111,20 @@ export default function CourseDetail() {
               </label>
               <div className="w-full">
                 <select
-                  name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
+                  name="maLinhVuc"
+                  value={formData.maLinhVuc}
+                  onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Lĩnh vực --</option>
-                  {linhVucList.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
+                  {linhVucs.map((item) => (
+                    <option key={item.maLinhVuc} value={item.maLinhVuc}>
+                      {item.tenLinhVuc}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
@@ -136,11 +132,10 @@ export default function CourseDetail() {
               >
                 Số buổi
               </label>
-
               <input
-                type="text"
-                name="sobuoi"
-                value={formData.sobuoi}
+                type="number"
+                name="soBuoi"
+                value={formData.soBuoi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -157,13 +152,12 @@ export default function CourseDetail() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenKhoaHoc"
+                value={formData.tenKhoaHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
@@ -171,11 +165,10 @@ export default function CourseDetail() {
               >
                 Học phí
               </label>
-
               <input
-                type="text"
-                name="fee"
-                value={formData.fee}
+                type="number"
+                name="hocPhi"
+                value={formData.hocPhi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -189,10 +182,9 @@ export default function CourseDetail() {
           >
             Nội dung
           </label>
-
           <textarea
-            name="noidung"
-            value={formData.noidung}
+            name="noiDung"
+            value={formData.noiDung}
             onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."

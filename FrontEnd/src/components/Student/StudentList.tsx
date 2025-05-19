@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Student } from "../Type/Types";
+import { HocVien } from "../Type/Types";
 import axios from "axios";
 import { exportHocVienToExcel } from "../../Service.tsx/ExportExcel/HocVienExp";
 
@@ -9,7 +9,7 @@ export default function StudentList() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [students, setstudents] = useState<Student[]>([]);
+  const [students, setstudents] = useState<HocVien[]>([]);
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(10);
   const [selectedTinhTrang, setSelectedTinhTrang] = useState<{
@@ -74,14 +74,14 @@ export default function StudentList() {
     }
   };
 
-  const handleView = (student: Student) => {
+  const handleView = (student: HocVien) => {
     navigate(`/hocvien/get-hocvien/${student.maHocVien}`, {
       state: { student },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const studentList = useMemo<Student[]>(
+  const studentList = useMemo<HocVien[]>(
     () => [
       {
         maHocVien: "HV01",
@@ -312,7 +312,7 @@ export default function StudentList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportHocVienToExcel(studentList)}
+              onClick={() => exportHocVienToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

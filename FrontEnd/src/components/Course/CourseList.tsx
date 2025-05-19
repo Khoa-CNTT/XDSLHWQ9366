@@ -1,40 +1,40 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Course, LinhVuc } from "../Type/Types";
+import { KhoaHoc, LinhVuc } from "../Type/Types";
 import { exportKhoaHocToExcel } from "../../Service.tsx/ExportExcel/KhoaHocExp";
+import { useCourseData } from "../../hooks/useCourseData";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function CourseList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [course, setCourse] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { courses } = useCourseData();
+  const { linhVucs } = useLinhVucData();
+  const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
   const navigate = useNavigate();
 
-  const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
+  // Lọc danh sách theo search và lĩnh vực
+  const filteredList = courses.filter((c) => {
+    const matchSearch =
+      c.maKhoaHoc.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenKhoaHoc.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc =
+      !linhVuc ||
+      c.maLinhVuc?.toLowerCase() === linhVuc.maLinhVuc.toLowerCase();
+    return matchSearch && matchLinhVuc;
+  });
 
-  // Fetch data from API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/khoahoc/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        const { content } = response.data;
-        setCourse(content);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu Khoá học:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourses();
-  }, [currentPage]);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
-  // Handle button
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const handleAdd = () => {
     navigate("/khoahoc/add-khoahoc");
   };
@@ -48,156 +48,21 @@ export default function CourseList() {
     try {
       await axios.delete(`http://localhost:8080/khoahoc/delete/${id}`);
       alert("Xóa Khoá học thành công!");
-      setCourse((prev) => prev.filter((course) => course.maKhoaHoc !== id));
     } catch (error) {
       console.error("Lỗi khi xóa Khoá học:", error);
       alert("Xóa Khoá học thất bại!");
     }
   };
 
-  const handleView = (course: Course) => {
+  const handleView = (course: KhoaHoc) => {
     navigate(`/khoahoc/get-khoahoc/${course.maKhoaHoc}`, {
       state: { course },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const courseList = useMemo<Course[]>(
-    () => [
-      {
-        maKhoaHoc: "HANTA1",
-        tenKhoaHoc: "HỌC CÙNG HANTA 1",
-        noidung: "Tristique libero...",
-        fee: "150000",
-        sobuoi: 2,
-        linhVuc: "iot",
-      },
-      {
-        maKhoaHoc: "HANTA2",
-        tenKhoaHoc: "HỌC CÙNG HANTA 2",
-        noidung: "Tristique libero...",
-        fee: "150000",
-        sobuoi: 2,
-        linhVuc: "khmt",
-      },
-      {
-        maKhoaHoc: "HANTA3",
-        tenKhoaHoc: "HỌC CÙNG HANTA 3",
-        noidung: "Tristique libero...",
-        fee: "150000",
-        sobuoi: 2,
-        linhVuc: "cntt",
-      },
-      {
-        maKhoaHoc: "HANTA4",
-        tenKhoaHoc: "HỌC CÙNG HANTA 4",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "200000",
-        sobuoi: 3,
-        linhVuc: "java",
-      },
-      {
-        maKhoaHoc: "HANTA5",
-        tenKhoaHoc: "HỌC CÙNG HANTA 5",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "250000",
-        sobuoi: 4,
-        linhVuc: "iot",
-      },
-      {
-        maKhoaHoc: "HANTA6",
-        tenKhoaHoc: "HỌC CÙNG HANTA 6",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "300000",
-        sobuoi: 5,
-        linhVuc: "khmt",
-      },
-      {
-        maKhoaHoc: "HANTA7",
-        tenKhoaHoc: "HỌC CÙNG HANTA 7",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "350000",
-        sobuoi: 6,
-        linhVuc: "cntt",
-      },
-      {
-        maKhoaHoc: "HANTA8",
-        tenKhoaHoc: "HỌC CÙNG HANTA 8",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "400000",
-        sobuoi: 7,
-        linhVuc: "java",
-      },
-      {
-        maKhoaHoc: "HANTA9",
-        tenKhoaHoc: "HỌC CÙNG HANTA 9",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "450000",
-        sobuoi: 8,
-        linhVuc: "iot",
-      },
-      {
-        maKhoaHoc: "HANTA10",
-        tenKhoaHoc: "HỌC CÙNG HANTA 10",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "500000",
-        sobuoi: 9,
-        linhVuc: "khmt",
-      },
-      {
-        maKhoaHoc: "HANTA11",
-        tenKhoaHoc: "HỌC CÙNG HANTA 11",
-        noidung: "Lorem ipsum dolor sit amet...",
-        fee: "550000",
-        sobuoi: 10,
-        linhVuc: "cntt",
-      },
-    ],
-    []
-  );
-  const linhVucList = useMemo<LinhVuc[]>(
-    () => [
-      {
-        maLinhVuc: "java",
-        tenLinhVuc: "Java",
-      },
-      {
-        maLinhVuc: "iot",
-        tenLinhVuc: "IOT",
-      },
-      {
-        maLinhVuc: "cntt",
-        tenLinhVuc: "Công nghệ thông tin",
-      },
-      {
-        maLinhVuc: "khmt",
-        tenLinhVuc: "Khoa học máy tính",
-      },
-    ],
-    []
-  );
-
-  const displayList = course.length > 0 ? course : courseList;
-
-  //  10 items per page
-  const filteredList = displayList.filter((c) => {
-    const matchSearch =
-      c.maKhoaHoc.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenKhoaHoc.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.linhVuc === linhVuc.maLinhVuc;
-    return matchSearch && matchLinhVuc;
-  });
-
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   return (
-    <div className="h-full pt-2">
+    <div className="h-full  bg-gradient-to-l from-gray-600 to-orange-200 pt-2">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold mx-4">Danh mục Khoá học</h2>
         <div className=" gap-4 inline-flex">
@@ -231,7 +96,7 @@ export default function CourseList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {linhVucList.map((item) => (
+                  {linhVucs.map((item) => (
                     <button
                       key={item.maLinhVuc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -286,18 +151,15 @@ export default function CourseList() {
                 </td>
                 <td className="p-2 text-center">{course.maKhoaHoc}</td>
                 <td className="p-2 text-center">{course.tenKhoaHoc}</td>
-
-                <td className="p-2 text-center">{course.fee}</td>
-                <td className="p-2 text-center">{course.sobuoi}</td>
-
+                <td className="p-2 text-center">{course.hocPhi}</td>
+                <td className="p-2 text-center">{course.soBuoi}</td>
                 <td className="p-2 text-center">
-                  {linhVucList.find(
+                  {linhVucs.find(
                     (lv) =>
                       lv.maLinhVuc.toLowerCase() ===
-                      course.linhVuc?.toLowerCase()
-                  )?.tenLinhVuc || course.linhVuc}
+                      course.maLinhVuc?.toLowerCase()
+                  )?.tenLinhVuc || course.maLinhVuc}
                 </td>
-
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(course)}
@@ -364,7 +226,7 @@ export default function CourseList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportKhoaHocToExcel(displayList)}
+              onClick={() => exportKhoaHocToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

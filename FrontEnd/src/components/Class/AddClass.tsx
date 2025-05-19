@@ -112,10 +112,9 @@ export default function AddClass() {
               </label>
               <input
                 type="text"
-                name="maLopHoc"
-                value={formData.maLopHoc}
-                onChange={handleChange}
+                placeholder="Mã tự động cập nhật"
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">

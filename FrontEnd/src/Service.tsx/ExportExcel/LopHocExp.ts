@@ -1,8 +1,8 @@
 import * as XLSX from "xlsx";
-import { Class } from "../../components/Type/Types";
+import { LopHoc } from "../../components/Type/Types";
 const isFilePickerSupported = "showSaveFilePicker" in window;
 
-export async function exportLopHocToExcel(classes: Class[]) {
+export async function exportLopHocToExcel(classes: LopHoc[]) {
   const rows = classes.map((item) => ({
     "Mã Lớp Học": item.maLopHoc,
     "Tên Lớp Học": item.tenLopHoc,

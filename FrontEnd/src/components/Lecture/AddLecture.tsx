@@ -61,7 +61,7 @@ function AddLecture() {
     const { tenGiangVien, ngaySinh, email, soCMND, soDienThoai, diaChi } =
       formData;
 
-    if (!tenGiangVien || !ngaySinh || !email) {
+    if (!tenGiangVien || !ngaySinh || !email || !soCMND || !soDienThoai) {
       alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
       return;
     }
@@ -152,7 +152,7 @@ function AddLecture() {
 
         <div className="grid grid-cols-2 gap-2 py-2">
           <div className="col-start">
-            {/* <div className="flex p-1 w-full justify-center border items-center">
+            <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="w-1/2 text-gray-700 text-sm font-bold"
                 htmlFor="addLecture"
@@ -161,11 +161,11 @@ function AddLecture() {
               </label>
               <input
                 type="text"
-                name="maGiangVien"
-
+                placeholder="Mã tự động cập nhật"
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
               />
-            </div> */}
+            </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"

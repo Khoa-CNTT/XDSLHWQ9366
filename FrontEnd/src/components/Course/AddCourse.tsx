@@ -1,17 +1,17 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Course } from "../Type/Types";
+import { KhoaHoc } from "../Type/Types";
 
 export default function AddCourse() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<Course>({
-    id: "",
-    name: "",
-    noidung: "",
-    fee: "",
-    linhVuc: "",
-    sobuoi: 0,
+  const [formData, setFormData] = useState<KhoaHoc>({
+    maKhoaHoc: "",
+    tenKhoaHoc: "",
+    noiDung: "",
+    hocPhi: 0,
+    maLinhVuc: "",
+    soBuoi: 0,
   });
 
   const saveToBackend = async () => {
@@ -42,20 +42,17 @@ export default function AddCourse() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "soBuoi" ? Number(value) : value,
+    }));
   };
 
   const handleChangeData = async () => {
-    const { id, name, linhVuc, sobuoi } = formData;
+    const { maKhoaHoc, tenKhoaHoc, maLinhVuc, soBuoi } = formData;
 
-    if (!id || !name || !linhVuc || !sobuoi) {
+    if (!maKhoaHoc || !tenKhoaHoc || !maLinhVuc || !soBuoi) {
       alert("Vui lòng nhập đầy đủ các trường bắt buộc!");
-      return;
-    }
-
-    const nameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!nameRegex.test(name)) {
-      alert("name không hợp lệ!");
       return;
     }
     await saveToBackend();
@@ -63,20 +60,21 @@ export default function AddCourse() {
 
   const handleClear = () => {
     setFormData({
-      id: "",
-      name: "",
-      noidung: "",
-      fee: "",
-      linhVuc: "",
-      sobuoi: 0,
+      maKhoaHoc: "",
+      tenKhoaHoc: "",
+      noiDung: "",
+      hocPhi: 0,
+      maLinhVuc: "",
+      soBuoi: 0,
     });
   };
+
   const linhVucList = useMemo(
     () => [
-      { id: "java", name: "Java" },
-      { id: "iot", name: "IOT" },
-      { id: "cntt", name: "Công nghệ thông tin" },
-      { id: "khmt", name: "Khoa học máy tính" },
+      { maLinhVuc: "java", tenLinhVuc: "Java" },
+      { maLinhVuc: "iot", tenLinhVuc: "IOT" },
+      { maLinhVuc: "cntt", tenLinhVuc: "Công nghệ thông tin" },
+      { maLinhVuc: "khmt", tenLinhVuc: "Khoa học máy tính" },
     ],
     []
   );
@@ -84,6 +82,7 @@ export default function AddCourse() {
   const handleBack = () => {
     navigate(-1);
   };
+
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
@@ -109,10 +108,9 @@ export default function AddCourse() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
+                placeholder="Mã tự động cập nhật"
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled
               />
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
@@ -124,21 +122,20 @@ export default function AddCourse() {
               </label>
               <div className="w-full">
                 <select
-                  name="linhVuc"
-                  value={formData.linhVuc} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
+                  name="maLinhVuc"
+                  value={formData.maLinhVuc}
+                  onChange={handleChange}
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Lĩnh vực --</option>
                   {linhVucList.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
+                    <option key={item.maLinhVuc} value={item.maLinhVuc}>
+                      {item.tenLinhVuc}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
@@ -146,11 +143,10 @@ export default function AddCourse() {
               >
                 Số buổi
               </label>
-
               <input
-                type="text"
-                name="sobuoi"
-                value={formData.sobuoi}
+                type="number"
+                name="soBuoi"
+                value={formData.soBuoi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -167,13 +163,12 @@ export default function AddCourse() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenKhoaHoc"
+                value={formData.tenKhoaHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
@@ -181,11 +176,10 @@ export default function AddCourse() {
               >
                 Học phí
               </label>
-
               <input
                 type="text"
-                name="fee"
-                value={formData.fee}
+                name="hocPhi"
+                value={formData.hocPhi}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -199,10 +193,9 @@ export default function AddCourse() {
           >
             Nội dung
           </label>
-
           <textarea
-            name="noidung"
-            value={formData.noidung}
+            name="noiDung"
+            value={formData.noiDung}
             onChange={handleChange}
             rows={4}
             placeholder="Nhập nội dung..."

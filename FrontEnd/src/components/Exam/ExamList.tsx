@@ -268,7 +268,7 @@ export default function ExamList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportLichThiToExcel(displayList)}
+              onClick={() => exportLichThiToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

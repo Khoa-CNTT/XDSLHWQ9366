@@ -1,15 +1,15 @@
 import * as XLSX from "xlsx";
-import { Course } from "../../components/Type/Types";
+import { KhoaHoc } from "../../components/Type/Types";
 const isFilePickerSupported = "showSaveFilePicker" in window;
 
-export async function exportKhoaHocToExcel(khoahocs: Course[]) {
+export async function exportKhoaHocToExcel(khoahocs: KhoaHoc[]) {
   const rows = khoahocs.map((item) => ({
     "Mã Khoá Học": item.maKhoaHoc,
     "Tên Khoá Học": item.tenKhoaHoc,
-    "Nội Dung": item.noidung,
-    "Học Phí": item.fee,
-    "Lĩnh Vực": item.linhVuc,
-    "Số Buổi": item.sobuoi,
+    "Nội Dung": item.noiDung,
+    "Học Phí": item.hocPhi,
+    "Lĩnh Vực": item.maLinhVuc,
+    "Số Buổi": item.soBuoi,
   }));
 
   const worksheet = XLSX.utils.aoa_to_sheet([]);

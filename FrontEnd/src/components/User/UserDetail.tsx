@@ -1,62 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-type User = {
-  id: string;
-  user: string;
-  password: string;
-  role: string;
-  name: string;
-  ghiChu: string;
-};
+import { TaiKhoan } from "../Type/Types";
 
 export default function UserDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(
     location.state?.user || {
-      id: "",
-      name: "",
-      user: "",
-      password: "",
-      role: "",
+      maTaiKhoan: "",
+      tenDangNhap: "",
+      matKhau: "",
+      quyen: "",
+      tenNguoiDung: "",
       ghiChu: "",
+      trangThai: "",
     }
   );
-  const roleList = useMemo(
-    () => [
-      {
-        id: "GV",
-        name: "Giảng viên",
-      },
-      {
-        id: "NV",
-        name: "Nhân viên",
-      },
-      {
-        id: "HV",
-        name: "Học viên",
-      },
-      {
-        id: "KT",
-        name: "Kế toán",
-      },
-    ],
-    []
-  );
+
   useEffect(() => {
     if (!formData) {
       console.warn("Không có dữ liệu tài khoản được truyền!");
     }
   }, [formData]);
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev: User) => ({ ...prev, [name]: value }));
+    setFormData((prev: TaiKhoan) => ({ ...prev, [name]: value }));
   };
 
   if (!formData) {
@@ -66,7 +38,7 @@ export default function UserDetail() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/taikhoan/update/${formData.id}?mataikhoan=${formData.id}`,
+        `http://localhost:8080/taikhoan/update/${formData.mataikhoan}?mataikhoan=${formData.mataikhoan}`,
         {
           method: "PUT",
           headers: {
@@ -117,8 +89,8 @@ export default function UserDetail() {
               </label>
               <input
                 type="text"
-                name="id"
-                value={formData.id}
+                name="maTaiKhoan"
+                value={formData.maTaiKhoan}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -133,10 +105,10 @@ export default function UserDetail() {
               </label>
 
               <input
-                type="text"
-                name="password"
+                type="password"
+                name="matKhau"
                 autoComplete="off"
-                value={formData.password}
+                value={formData.matKhau}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -150,8 +122,8 @@ export default function UserDetail() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="tenNguoiDung"
+                value={formData.tenNguoiDung}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -168,8 +140,8 @@ export default function UserDetail() {
               </label>
               <input
                 type="text"
-                name="user"
-                value={formData.user}
+                name="tenDangNhap"
+                value={formData.tenDangNhap}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -182,40 +154,18 @@ export default function UserDetail() {
                 Quyền đăng nhập
               </label>
               <div className="w-full">
-                <select
-                  name="role"
-                  value={formData.role} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Quyền đăng nhập --</option>
-                  {roleList.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  name="quyen"
+                  value={formData.quyen}
+                  onChange={handleChange}
+                  className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
           </div>
         </div>
-        <div className="flex p-1 w-full justify-center border">
-          <label
-            className="block w-1/5 text-gray-700 text-sm font-bold "
-            htmlFor="courseName"
-          >
-            Ghi chú
-          </label>
 
-          <textarea
-            name="ghiChu"
-            value={formData.ghiChu}
-            onChange={handleChange}
-            rows={4}
-            placeholder="Nhập nội dung..."
-            className="form-textera multiline block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
         <div className="flex justify-center p-4 gap-4">
           <button
             type="button"

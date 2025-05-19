@@ -1,50 +1,22 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { exportUsersToExcel } from "../../Service.tsx/ExportExcel/ExportUser";
-type User = {
-  id: string;
-  user: string;
-  password: string;
-  role: string;
-  name: string;
-  ghiChu: string;
-};
-interface role {
-  id: string;
-  name: string;
-}
+import { useTaiKhoanData } from "../../hooks/useTaiKhoanData";
+import { useChucVuData } from "../../hooks/useChucVuData";
+import { ChucVu, TaiKhoan } from "../Type/Types";
+
 export default function UserList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [Users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
+  const itemsPerPage = 10;
+  const [selectedRole, setSelectedRole] = useState<ChucVu | null>(null);
   const navigate = useNavigate();
 
-  const [role, setrole] = useState<role | null>(null);
-
-  // Fetch data from API
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/taikhoan/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        const { content, totalPages } = response.data;
-        setUsers(content);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu Tài khoản:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, [currentPage]);
+  const { taiKhoans, loading: loadingUser } = useTaiKhoanData();
+  const { chucVus, loading: loadingRole } = useChucVuData();
 
   // Handle button
   const handleAdd = () => {
@@ -59,109 +31,38 @@ export default function UserList() {
     try {
       await axios.delete(`http://localhost:8080/taikhoan/delete/${id}`);
       alert("Xóa Tài khoản thành công!");
-      // Cập nhật lại danh sách Tài khoản sau khi xóa
-      setUsers((prev) => prev.filter((User) => User.id !== id));
     } catch (error) {
       console.error("Lỗi khi xóa Tài khoản:", error);
       alert("Xóa Tài khoản thất bại!");
     }
   };
 
-  const handleView = (user: User) => {
-    navigate(`/taikhoan/get-taikhoan/${user.id}`, {
+  const handleView = (user: TaiKhoan) => {
+    navigate(`/taikhoan/get-taikhoan/${user.maTaiKhoan}`, {
       state: { user },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const userList = useMemo<User[]>(
-    () => [
-      {
-        id: "GV01",
-        name: "Lê Đức Thảo",
-        user: "ducthao2112",
-        password: "123456",
-        role: "GV",
-        ghiChu: "",
-      },
-      {
-        id: "GV02",
-        name: "Trương Thị Ngọc Ánh",
-        user: "ngocanh2112",
-        password: "123456",
-        role: "GV",
-        ghiChu: "",
-      },
-      {
-        id: "GV03",
-        name: "Nguyễn Thanh Anh",
-        user: "thanhanh2112",
-        password: "123456",
-        role: "GV",
-        ghiChu: "",
-      },
-      {
-        id: "KT01",
-        name: "Đoàn Văn Huy",
-        user: "doanhuy2112",
-        password: "123456",
-        role: "KT",
-        ghiChu: "",
-      },
-      {
-        id: "HV05",
-        name: "Nguyễn Hữu Thành",
-        user: "huuthanh2112",
-        password: "123456",
-        role: "HV",
-        ghiChu: "",
-      },
-      {
-        id: "NV06",
-        name: "Lê Văn A",
-        user: "levana2112",
-        password: "123456",
-        role: "NV",
-        ghiChu: "",
-      },
-    ],
-    []
-  );
-  const roleList = useMemo(
-    () => [
-      {
-        id: "GV",
-        name: "Giảng viên",
-      },
-      {
-        id: "NV",
-        name: "Nhân viên",
-      },
-      {
-        id: "HV",
-        name: "Học viên",
-      },
-      {
-        id: "KT",
-        name: "Kế toán",
-      },
-    ],
-    []
-  );
   //  10 items per page
-  const itemsPerPage = 10;
-  const filteredList = userList.filter((c) => {
+  const filteredList = taiKhoans.filter((c) => {
     const matchSearch =
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.id.toLowerCase().includes(search.toLowerCase());
-    const matchrole = !role || c.role === role.id;
-    return matchSearch && matchrole;
+      c.tenDangNhap.toLowerCase().includes(search.toLowerCase()) ||
+      c.maTaiKhoan.toLowerCase().includes(search.toLowerCase());
+    const matchRole = !selectedRole || c.quyen === selectedRole.maChucVu;
+    return matchSearch && matchRole;
   });
+
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // if (loadingUser || loadingRole) {
+  //   return <div>Đang tải dữ liệu...</div>;
+  // }
 
   return (
     <div className="h-full pt-2">
@@ -181,8 +82,8 @@ export default function UserList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 min-w-[200px]  focus:outline-none "
             >
-              {role ? role.name : "Tất cả tài khoản"}
-              {!role && (
+              {selectedRole ? selectedRole.tenChucVu : "Tất cả tài khoản"}
+              {!chucVus && (
                 <svg
                   className="w-4 h-4 ml-2 inline"
                   xmlns="http://www.w3.org/2000/svg"
@@ -198,21 +99,21 @@ export default function UserList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {roleList.map((item) => (
+                  {chucVus.map((item) => (
                     <button
-                      key={item.id}
+                      key={item.maChucVu}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setrole(item);
+                        setSelectedRole(item);
                         setIsOpenMenu(false);
                       }}
                     >
-                      {item.name}
+                      {item.tenChucVu}
                     </button>
                   ))}
                   <button
                     onClick={() => {
-                      setrole(null);
+                      setSelectedRole(null);
                       setIsOpenMenu(false);
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
@@ -248,18 +149,18 @@ export default function UserList() {
           <tbody>
             {/* {Users.map((User, index) => ( */}
             {paginatedList.map((User, index) => (
-              <tr key={User.id} className="border-b">
+              <tr key={User.maTaiKhoan} className="border-b">
                 <td className="p-2 text-center">
                   {(currentPage - 1) * itemsPerPage + index + 1}
                 </td>
-                <td className="p-2 text-center">{User.id}</td>
-                <td className="p-2 text-center">{User.user}</td>
-                {/* <td className="p-2 text-center">{User.password}</td> */}
-                <td className="p-2 text-center">{User.name}</td>
+                <td className="p-2 text-center">{User.maTaiKhoan}</td>
+                <td className="p-2 text-center">{User.tenDangNhap}</td>
+                <td className="p-2 text-center">{User.tenNguoiDung}</td>
                 <td className="p-2 text-center">
-                  {roleList.find(
-                    (lv) => lv.id.toLowerCase() === User.role?.toLowerCase()
-                  )?.name || User.role}
+                  {chucVus.find(
+                    (lv) =>
+                      lv.maChucVu.toLowerCase() === User.quyen?.toLowerCase()
+                  )?.tenChucVu || User.quyen}
                 </td>
 
                 <td className="p-2 text-center">
@@ -284,7 +185,7 @@ export default function UserList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(User.id)}
+                    onClick={() => handleDelete(User.maTaiKhoan)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -328,7 +229,7 @@ export default function UserList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportUsersToExcel(userList)}
+              onClick={() => exportUsersToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

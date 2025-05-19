@@ -1,44 +1,21 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinhVuc } from "../Type/Types";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function FieldList() {
   const [search, setSearch] = useState("");
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const { linhVucs, loading } = useLinhVucData();
   const [totalPages, setTotalPages] = useState(1);
-  const [linhvucs, setlinhvuc] = useState<LinhVuc[]>([]);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // Fetch data from API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/linhvuc/linhvucs"
-        );
-        console.log("API Response:", response.data);
-
-        const linhvucList = response.data.data;
-        // Kiểm tra dữ liệu trả về từ API
-        setlinhvuc(linhvucList);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [currentPage]);
 
   useEffect(() => {
-    console.log("Danh sách lĩnh vực:", linhvucs); // Kiểm tra dữ liệu trong state
-  }, [linhvucs]);
+    setTotalPages(Math.ceil(linhVucs.length / itemsPerPage));
+  }, [linhVucs, itemsPerPage]);
+
   // Handle button
   const handleAdd = () => {
     navigate("/linhvuc/add-linhvuc");
@@ -53,8 +30,6 @@ export default function FieldList() {
     try {
       await axios.delete(`http://localhost:8080/linhvuc/delete/${id}`);
       alert("Xóa lĩnh vực thành công!");
-      // Cập nhật lại danh sách lĩnh vực sau khi xóa
-      setlinhvuc((prev) => prev.filter((linhvuc) => linhvuc.maLinhVuc !== id));
     } catch (error) {
       console.error("Lỗi khi xóa lĩnh vực:", error);
       alert("Xóa lĩnh vực thất bại!");
@@ -66,47 +41,24 @@ export default function FieldList() {
       state: { linhvuc },
     });
   };
-  const linhVucList = useMemo(
-    () => [
-      {
-        id: "LV01",
-        name: "Java",
-      },
-      {
-        id: "LV02",
-        name: "IOT",
-      },
-      {
-        id: "LV03",
-        name: "Công nghệ thông tin",
-      },
-      {
-        id: "LV04",
-        name: "Khoa học máy tính",
-      },
-    ],
-    []
-  );
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  //  10 items per page
-  const [linhVuc, setLinhVuc] = useState<string | null>(null);
-  const itemsPerPage = 10;
-  const filteredList = (linhVucList || []).filter((c) => {
+  // Lọc và phân trang
+  const filteredList = linhVucs.filter((c) => {
     const matchSearch =
-      c.id.toLowerCase().includes(search.toLowerCase()) ||
-      c.name.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || c.id === linhVuc;
-    return matchSearch && matchLinhVuc;
+      c.maLinhVuc.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenLinhVuc.toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
   });
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }
+
   return (
     <div className="h-full mt-2">
       <div className="flex justify-between items-center mb-4">
@@ -119,7 +71,6 @@ export default function FieldList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
           <button
             className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
             onClick={handleAdd}
@@ -129,7 +80,6 @@ export default function FieldList() {
         </div>
       </div>
       <div className="bg-white  shadow-md h-auto">
-        {/* {error && <div className="text-red-500 text-center my-2">{error}</div>} */}
         <table className="w-full border-collapse border rounded-md ">
           <thead>
             <tr className="bg-gray-200">
@@ -148,14 +98,13 @@ export default function FieldList() {
               </tr>
             ) : (
               paginatedList.map((linhvuc, index) => (
-                <tr key={linhvuc.id} className="border-b">
+                <tr key={linhvuc.maLinhVuc} className="border-b">
                   <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{linhvuc.id}</td>
-                  <td className="p-2 text-center">{linhvuc.name}</td>
-
+                  <td className="p-2 text-center">{linhvuc.maLinhVuc}</td>
+                  <td className="p-2 text-center">{linhvuc.tenLinhVuc}</td>
                   <td className="p-2 text-center">
                     <button
-                      // onClick={() => handleView(linhvuc)}
+                      onClick={() => handleView(linhvuc)}
                       className=" mx-2 border p-2 rounded-md items-center align-middle"
                     >
                       <svg
@@ -175,7 +124,7 @@ export default function FieldList() {
                     </button>
                     <button
                       className="border p-2 rounded-md items-center align-middle"
-                      // onClick={() => handleDelete(linhvuc.maLinhVuc)}
+                      onClick={() => handleDelete(linhvuc.maLinhVuc)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

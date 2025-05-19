@@ -1,4 +1,4 @@
-export interface Lecturer  {
+export interface GiangVien  {
   maGiangVien: string;
   tenGiangVien: string;
   ngaySinh: string;
@@ -19,31 +19,31 @@ export interface Lecturer  {
     tenLinhVuc: string;
   };
 
-export interface Course  {
+export interface KhoaHoc  {
   maKhoaHoc: string;
   tenKhoaHoc: string;
-  noidung: string;
-  fee: string;
-  linhVuc: string;
-  sobuoi: number;
+  noiDung: string;
+  hocPhi: number;
+  maLinhVuc: string;
+  soBuoi: number;
 };
 
-export interface Employee {
+export interface NhanVien {
   maNhanVien: string;
   tenNhanVien: string;
-  dob: string;
-  gioiTinh: string;
-  CCCD: string;
-  SDT: string;
+  ngaySinh: string;
+  gioiTinh: boolean;
+  soCMND: string;
+  soDienThoai: string;
   email: string;
-  address: string;
+  diaChi: string;
   coQuan: string;
   tinhTrang: string;
-  linhVuc: string;
+  maLinhVuc: string;
   ghiChu: string;
 };
 
-export interface Student  {
+export interface HocVien  {
   maHocVien: string;
   tenHocVien: string;
   ngaySinh: string;
@@ -53,14 +53,14 @@ export interface Student  {
   email: string;
   diaChi: string;
   coQuanCongTac: string;
-  tinhTrangHocTap: string; //  Đang học, Nghỉ học, Đã tốt nghiệp
+  tinhTrangHocTap: string;
   nguoiNhapThongTin: string;
   ghiChu: string;
   urlHinhDaiDien: string | null;
   ngayCapNhatGanNhat: string;
   };
 
-  export interface Class {
+  export interface LopHoc {
     maLopHoc: string;
     tenLopHoc: string;
     lichHoc: string; // VD: "Thứ 2, 4, 6 - 18:00 đến 20:00"
@@ -69,14 +69,14 @@ export interface Student  {
     ngayKetThuc: string;
     thuLao: number;
     daThanhToan: string;
-    khoaHoc: SimpleCourse[]; // Chỉ chứa id và name
-    phongHoc: SimpleRoom[]; // Chỉ chứa id và name
-    giangVien: SimpleLecturer[]; // Chỉ chứa id và name
-    nhanVien: SimpleEmployee[]; // Chỉ chứa id và name
+    maKhoaHoc: string;
+    maPhongHoc: string;
+    maGiangVien: string;
+    maNhanVien: string;
     ghiChu: string;
   }
 
-export interface Room  {
+export interface PhongHoc  {
   maPhongHoc: string;
   tenPhongHoc: string;
   soChoNgoi: number;
@@ -153,13 +153,14 @@ export interface Room  {
           trangThai: string;
           ngayDang: string;
           };
-
-interface Window {
-  showSaveFilePicker?: () => Promise<any>;
+          
+export interface TaiKhoan {
+  maTaiKhoan: string;
+  tenDangNhap: string;
+  tenNguoiDung:string;
+  matKhau: string;
+  quyen: string;
+  trangThai: string;
 }
-  export type SimpleCourse = Pick<Course, "maKhoaHoc" | "tenKhoaHoc">;
-  export type SimpleRoom = Pick<Room, "maPhongHoc" | "tenPhongHoc">;
-  export type SimpleLecturer = Pick<Lecturer, "maGiangVien" | "tenGiangVien">;
-  export type SimpleEmployee = Pick<Employee, "maNhanVien" | "tenNhanVien">;
-  
+
   
