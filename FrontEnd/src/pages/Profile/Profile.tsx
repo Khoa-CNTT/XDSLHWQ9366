@@ -101,34 +101,41 @@ const Profile = () => {
   useEffect(() => {
     const fetchHocVien = async () => {
       if (!isAuthenticated || !token) {
-        setShowNotification({
-          type: "error",
-          message: "Vui lòng đăng nhập để xem thông tin học viên!",
-        });
         setIsLoading(false);
         return;
       }
 
       setIsLoading(true);
       try {
-        const response = await axios.get<ApiResponse<HocVien>>(
-          "http://localhost:8080/hocvien/getById/HV001",
+        const response = await axios.get<ApiResponse<HocVien[]>>(
+          "http://localhost:8080/hocvien/getAll",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        if (response.data.status === 200 && response.data.data) {
-          const data = response.data.data;
-          setHocVien(data);
-          setFormData({
-            ngaySinh: data.ngaySinh,
-            soCMND: data.soCMND,
-            soDienThoai: data.soDienThoai,
-            email: data.email,
-            diaChi: data.diaChi,
-            ghiChu: data.ghiChu,
-            uriHinhDaiDien: data.uriHinhDaiDien,
-          });
+        if (response.data.status === 200 && Array.isArray(response.data.data)) {
+          const maTaiKhoan = localStorage.getItem("maTaiKhoan");
+          const data = response.data.data.find(
+            (hv) => hv.maTaiKhoan === maTaiKhoan
+          );
+          if (data) {
+            setHocVien(data);
+            setFormData({
+              ngaySinh: data.ngaySinh,
+              soCMND: data.soCMND,
+              soDienThoai: data.soDienThoai,
+              email: data.email,
+              diaChi: data.diaChi,
+              ghiChu: data.ghiChu,
+              uriHinhDaiDien: data.uriHinhDaiDien,
+            });
+          } else {
+            setHocVien(null);
+            setShowNotification({
+              type: "error",
+              message: "Không tìm thấy thông tin học viên phù hợp!",
+            });
+          }
         } else {
           throw new Error(
             response.data.message || "Không thể lấy thông tin học viên"
@@ -188,12 +195,20 @@ const Profile = () => {
       return;
     }
 
+    if (!hocVien) {
+      setShowNotification({
+        type: "error",
+        message: "Không tìm thấy thông tin học viên!",
+      });
+      return;
+    }
+
     const formDataUpload = new FormData();
     formDataUpload.append("file", file);
 
     try {
       const response = await axios.post<UploadAvatarResponse>(
-        "http://localhost:8080/hocvien/upload-avatar/HV001",
+        `http://localhost:8080/hocvien/upload-avatar/${hocVien.maHocVien}`,
         formDataUpload,
         {
           headers: {
@@ -252,7 +267,7 @@ const Profile = () => {
       };
 
       const response = await axios.put<ApiResponse<HocVien>>(
-        "http://localhost:8080/hocvien/update/HV001",
+        `http://localhost:8080/hocvien/update/${hocVien?.maHocVien}`,
         updatedHocVien,
         {
           headers: {
@@ -337,7 +352,7 @@ const Profile = () => {
               >
                 {hocVien.uriHinhDaiDien ? (
                   <img
-                    src={hocVien.uriHinhDaiDien}
+                    src={`http://localhost:8080/hocvien/get-avatar/${hocVien.maHocVien}`}
                     alt="Avatar"
                     className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md"
                   />
@@ -585,7 +600,7 @@ const Profile = () => {
                   <div className="flex items-center gap-4">
                     {formData.uriHinhDaiDien ? (
                       <img
-                        src={formData.uriHinhDaiDien}
+                        src={`http://localhost:8080/hocvien/get-avatar/${hocVien.maHocVien}`}
                         alt="Avatar"
                         className="w-16 h-16 rounded-full object-cover border-2 border-neutral-200"
                       />
