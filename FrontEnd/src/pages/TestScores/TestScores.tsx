@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import testScoreItem from "../../constants/testScoreData";
+import axios from "axios";
+
+interface TestScore {
+  id: string;
+  tenchungchi: string;
+  diem: number;
+  xeploai: string;
+  maTaiKhoan: string;
+}
 
 const TestScores = () => {
-  const [filtered] = useState(testScoreItem);
+  const [scores, setScores] = useState<TestScore[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
+  const maTaiKhoan = localStorage.getItem("maTaiKhoan");
+
+  // Breadcrumb path
   const path = location.pathname
     .split("/")
     .filter((segment) => segment !== "")
@@ -12,6 +25,34 @@ const TestScores = () => {
       name: segment.charAt(0).toUpperCase() + segment.slice(1),
       path: "/" + arr.slice(0, idx + 1).join("/"),
     }));
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Giả sử backend có endpoint này, nếu không hãy thay đổi cho phù hợp
+        const response = await axios.get(
+          "http://localhost:8080/thisinh/getAll"
+        );
+        if (response.data.status === 200 && Array.isArray(response.data.data)) {
+          // Lọc theo maTaiKhoan nếu có
+          const filtered = response.data.data.filter(
+            (item: TestScore) =>
+              item.maTaiKhoan && item.maTaiKhoan === maTaiKhoan
+          );
+          setScores(filtered);
+        } else {
+          setError("Không thể lấy dữ liệu từ máy chủ.");
+        }
+      } catch {
+        setError("Lỗi khi kết nối tới máy chủ.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchScores();
+  }, [maTaiKhoan]);
 
   return (
     <div className="min-h-screen bg-white text-black pt-24">
@@ -35,42 +76,67 @@ const TestScores = () => {
         </div>
 
         {/* Test Scores Table */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-gray-100 text-left border-y">
-                <th className="p-2">No.</th>
-                <th className="p-2">Certificate Name</th>
-                <th className="p-2">Exam Date</th>
-                <th className="p-2">Result</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length > 0 ? (
-                filtered.map((course, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="p-2">{course.id}</td>
-                    <td className="p-2">{course.tenchungchi}</td>
-                    <td className="p-2">{course.ngaythi}</td>
-                    <td className="p-2">
-                      <Link
-                        to={`/test-scores/${course.id}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        View Personal Score
-                      </Link>
-                    </td>
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12 text-red-600 font-medium">
+              {error}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+                  <tr>
+                    <th className="py-4 px-6 font-semibold">No.</th>
+                    <th className="py-4 px-6 font-semibold">
+                      Certificate Name
+                    </th>
+                    <th className="py-4 px-6 font-semibold">Score</th>
+                    <th className="py-4 px-6 font-semibold">Classification</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="p-2 text-center text-gray-500">
-                    No matching certificate found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                </thead>
+                <tbody className="text-gray-700">
+                  {scores.length > 0 ? (
+                    scores.map((score, index) => (
+                      <tr
+                        key={score.id}
+                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="py-4 px-6">{index + 1}</td>
+                        <td className="py-4 px-6">{score.tenchungchi}</td>
+                        <td className="py-4 px-6">{score.diem}</td>
+                        <td className="py-4 px-6">
+                          <span
+                            className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                              score.xeploai === "Giỏi"
+                                ? "bg-green-100 text-green-800"
+                                : score.xeploai === "Khá"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {score.xeploai}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="py-12 text-center text-gray-500"
+                      >
+                        No matching certificate found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
