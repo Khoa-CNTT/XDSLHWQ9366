@@ -1,20 +1,24 @@
 import { useCallback, useRef, useState } from "react";
 import { useLinhVucData } from "../../hooks/useLinhVucData";
-import { useLecturerData } from "../../hooks/useLecturerData";
+import { useLecturerData } from "../../hooks/useGiangVienData";
 import { GiangVien, LinhVuc } from "../Type/Types";
 import { useNavigate } from "react-router-dom";
 import { exportGiangVienToExcel } from "../../Service.tsx/ExportExcel/LectureExp";
 import axios from "axios";
 
 export default function LectureList() {
-  const { linhVucs, loading: linhVucLoading } = useLinhVucData(); // Sử dụng hook lĩnh vực
-  const { lecturers, loading: lecturerLoading } = useLecturerData(); // Sử dụng hook giảng viên
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
+
+  const { linhVucs } = useLinhVucData(); // Sử dụng hook lĩnh vực
+  const { giangviens, totalPages, refetch } = useLecturerData(
+    currentPage,
+    itemsPerPage
+  );
   const navigate = useNavigate();
 
   const handleDelete = async (id: string) => {
@@ -26,6 +30,7 @@ export default function LectureList() {
     try {
       await axios.delete(`http://localhost:8080/giangvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
       alert("Xóa giảng viên thất bại!");
@@ -38,15 +43,14 @@ export default function LectureList() {
     });
   };
   // Lọc danh sách giảng viên theo tìm kiếm và lĩnh vực
-  const filteredList = lecturers.filter((lecturer) => {
+  const filteredList = giangviens.filter((giangvien) => {
     const matchSearch =
-      lecturer.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
-      lecturer.maGiangVien.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !linhVuc || lecturer.maLinhVuc === linhVuc.maLinhVuc;
+      giangvien.tenGiangVien.toLowerCase().includes(search.toLowerCase()) ||
+      giangvien.maGiangVien.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || giangvien.maLinhVuc === linhVuc.maLinhVuc;
     return matchSearch && matchLinhVuc;
   });
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage

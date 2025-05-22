@@ -57,8 +57,8 @@ export default function EmployeeList() {
 
   const filteredList = displayList.filter((c) => {
     const matchSearch =
-      c.maNhanVien.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenNhanVien.toLowerCase().includes(search.toLowerCase());
+      c.maNhanVien?.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenNhanVien?.toLowerCase().includes(search.toLowerCase());
     const matchLinhVuc = !selectedLinhVuc || c.maLinhVuc === selectedLinhVuc;
     return matchSearch && matchLinhVuc;
   });

@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { KhoaHoc, LinhVuc } from "../Type/Types";
 import { exportKhoaHocToExcel } from "../../Service.tsx/ExportExcel/KhoaHocExp";
-import { useCourseData } from "../../hooks/useCourseData";
+import { useCourseData } from "../../hooks/useKhoaHocData";
 import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function CourseList() {

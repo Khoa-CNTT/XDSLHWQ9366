@@ -1,40 +1,19 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LienHe } from "../Type/Types";
 import { toast } from "react-toastify"; // 👈 Thêm dòng này
 import { exportLienHeToExcel } from "../../Service.tsx/ExportExcel/ContactExp";
+import { useLienHeData } from "../../hooks/useLienHeData";
 
 export default function Contacts() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [lienhes, setlienhe] = useState<LienHe[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { lienHes, refetch } = useLienHeData();
   const navigate = useNavigate();
 
   const itemsPerPage = 10;
-
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/lienhe/lienhes"
-        );
-        const lienheList = response.data.data || [];
-        setlienhe(lienheList);
-        setTotalPages(Math.ceil(lienheList.length / itemsPerPage));
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
-        toast.error("❌ Không thể tải danh sách liên hệ!");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourses();
-  }, [currentPage]);
 
   const handleAdd = () => {
     navigate("/lienhe/add-lienhe");
@@ -49,7 +28,7 @@ export default function Contacts() {
     try {
       await axios.delete(`http://localhost:8080/lienhe/delete/${id}`);
       toast.success("🗑️ Xóa liên hệ thành công!");
-      setlienhe((prev) => prev.filter((lienhe) => lienhe.maKhach !== id));
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa liên hệ:", error);
       toast.error("❌ Xóa liên hệ thất bại!");
@@ -60,44 +39,11 @@ export default function Contacts() {
     navigate(`/lienhe/get-lienhe/${lienhe.maKhach}`, { state: { lienhe } });
   };
 
-  const demoList = useMemo<LienHe[]>(
-    () => [
-      {
-        maKhach: "KH001",
-        hoTen: "Lê Văn A",
-        soDienThoai: "0385665243",
-        email: "abc123@gmail.com",
-        yKien: "1",
-        ngayLienHe: "2025-01-01",
-      },
-      {
-        maKhach: "KH002",
-        hoTen: "Lê Văn B",
-        soDienThoai: "0385665243",
-        email: "zxc456@gmail.com",
-        yKien: "2",
-        ngayLienHe: "2025-01-02",
-      },
-      {
-        maKhach: "KH003",
-        hoTen: "Lê Văn C",
-        soDienThoai: "0385665243",
-        email: "xyz789@gmail.com",
-        yKien: "1",
-        ngayLienHe: "2025-01-03",
-      },
-    ],
-    []
-  );
-
-  // Loại bỏ các giá trị trùng lặp
-
   //  10 items per page
-  const filteredList = (demoList || []).filter((c: LienHe) => {
+  const filteredList = (lienHes || []).filter((c: LienHe) => {
     const matchSearch =
       c.maKhach.toLowerCase().includes(search.toLowerCase()) ||
       c.hoTen.toLowerCase().includes(search.toLowerCase());
-
     return matchSearch;
   });
   useEffect(() => {
@@ -231,7 +177,7 @@ export default function Contacts() {
               Trang sau
             </button>
             <button
-              onClick={() => exportLienHeToExcel(demoList)}
+              onClick={() => exportLienHeToExcel(paginatedList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

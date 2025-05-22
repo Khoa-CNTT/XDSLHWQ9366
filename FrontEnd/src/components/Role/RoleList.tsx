@@ -7,8 +7,11 @@ import { useChucVuData } from "../../hooks/useChucVuData";
 export default function RoleList() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const { chucVus, loading } = useChucVuData();
+  const [itemsPerPage] = useState(10);
+  const { chucVus, totalPages, refetch } = useChucVuData(
+    currentPage,
+    itemsPerPage
+  );
   const navigate = useNavigate();
 
   const filteredList = chucVus.filter((c) => {
@@ -17,8 +20,6 @@ export default function RoleList() {
       c.tenChucVu.toLowerCase().includes(search.toLowerCase());
     return matchSearch;
   });
-
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
@@ -34,6 +35,7 @@ export default function RoleList() {
     try {
       await axios.delete(`http://localhost:8080/chucvu/delete/${id}`);
       alert("Xóa lĩnh vực thành công!");
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa lĩnh vực:", error);
       alert("Xóa lĩnh vực thất bại!");

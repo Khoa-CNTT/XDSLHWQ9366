@@ -1,36 +1,22 @@
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Room } from "../Type/Types";
+import { PhongHoc } from "../Type/Types";
 import { exportPhongHocToExcel } from "../../Service.tsx/ExportExcel/PhongHocExp";
+import { usePhongHocData } from "../../hooks/usePhongHocData";
 
 export default function RoomList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [phongHocs, setPhongHoc] = useState<Room[]>([]);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const itemsPerPage = 10;
+  const { phongHocs, totalPages, refetch } = usePhongHocData(
+    currentPage,
+    itemsPerPage
+  );
 
-  // Fetch data from API
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/phonghoc/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        const { content } = response.data;
-        setPhongHoc(content);
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu phòng học:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCourses();
-  }, [currentPage]);
+  const navigate = useNavigate();
 
   // Handle button
   const handleAdd = () => {
@@ -42,75 +28,38 @@ export default function RoomList() {
       "Bạn có chắc chắn muốn xóa phòng học này?"
     );
     if (!confirmDelete) return;
-
     try {
       await axios.delete(`http://localhost:8080/phonghoc/delete/${id}`);
       alert("Xóa phòng học thành công!");
-      // Cập nhật lại danh sách phòng học sau khi xóa
-      setPhongHoc((prev) =>
-        prev.filter((phongHoc) => phongHoc.maPhongHoc !== id)
-      );
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa phòng học:", error);
       alert("Xóa phòng học thất bại!");
     }
   };
 
-  const handleView = (phongHoc: Room) => {
+  const handleView = (phongHoc: PhongHoc) => {
     navigate(`/phonghoc/get-phonghoc/${phongHoc.maPhongHoc}`, {
       state: { phongHoc },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const roomList = useMemo(
-    () => [
-      {
-        maPhongHoc: "R01",
-        tenPhongHoc: "phòng học 1",
-        soChoNgoi: 20,
-        ghiChu: "Đang hoạt động",
-      },
-      {
-        maPhongHoc: "R02",
-        tenPhongHoc: "phòng học 2",
-        soChoNgoi: 20,
-        ghiChu: "Đang sửa chữa",
-      },
-      {
-        maPhongHoc: "R03",
-        tenPhongHoc: "phòng học 3",
-        soChoNgoi: 20,
-        ghiChu: "Đang hoạt động",
-      },
-      {
-        maPhongHoc: "R04",
-        tenPhongHoc: "phòng học 4",
-        soChoNgoi: 20,
-        ghiChu: "Đang hoạt động",
-      },
-    ],
-    []
-  );
-
   // Loại bỏ các giá trị trùng lặp
   const uniqueNotes = useMemo(() => {
-    const notes = roomList.map((item) => item.ghiChu);
+    const notes = phongHocs.map((item: PhongHoc) => item.ghiChu);
     return Array.from(new Set(notes));
-  }, [roomList]);
+  }, [phongHocs]);
 
   //  10 items per page
   const [ghiChu, setghiChu] = useState<string | null>(null);
-  const displayList = phongHocs.length > 0 ? phongHocs : roomList;
-  const itemsPerPage = 10;
-  const filteredList = displayList.filter((c) => {
+  const filteredList = phongHocs.filter((c) => {
     const matchSearch =
       c.tenPhongHoc.toLowerCase().includes(search.toLowerCase()) ||
       c.maPhongHoc.toLowerCase().includes(search.toLowerCase());
     const matchLinhVuc = !ghiChu || c.ghiChu === ghiChu;
     return matchSearch && matchLinhVuc;
   });
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage

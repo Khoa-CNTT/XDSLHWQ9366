@@ -30,8 +30,9 @@ export function useNhanVienData() {
     const fetchNhanViens = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8080/nhanvien/all");
+        const response = await axios.get("http://localhost:8080/nhanvien/nhanviens");
         setNhanViens(response.data?.data || []);
+        console.log("NhanVien data:", response.data?.data);
       } catch {
         setNhanViens([]);
       } finally {

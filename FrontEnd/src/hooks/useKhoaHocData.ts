@@ -110,8 +110,8 @@ export function useCourseData(itemsPerPage = 10, currentPage = 1) {
         const response = await axios.get(
           `http://localhost:8080/khoahoc/pagination?page=${currentPage}&size=${itemsPerPage}`
         );
-        const { content } = response.data;
-        setCourses(content || []);
+        setCourses(response?.data?.data?.data || []);
+
       } catch (error) {
         setCourses([]);
         console.log(error);

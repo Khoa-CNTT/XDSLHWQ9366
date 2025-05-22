@@ -1,57 +1,30 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { ChucVu } from "../components/Type/Types";
 
-export function useChucVuData() {
+export function useChucVuData(currentPage: number, itemsPerPage: number) {
   const [chucVus, setChucVus] = useState<ChucVu[]>([]);
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const sampleChucVus = useMemo<ChucVu[]>(
-    () => [
-      {
-        maChucVu: "AD001",
-        tenChucVu: "Admin",
-        trangThai: "Đang hoạt động",
-      },
-      {
-        maChucVu: "GV001",
-        tenChucVu: "Giảng Viên",
-        trangThai: "Đang hoạt động",
-      },
-      {
-        maChucVu: "NV001",
-        tenChucVu: "Nhân Viên",
-        trangThai: "Đang hoạt động",
-      },
-      {
-        maChucVu: "HV001",
-        tenChucVu: "Học Viên",
-        trangThai: "Đang hoạt động",
-      },
-      {
-        maChucVu: "KT001",
-        tenChucVu: "Kế Toán",
-        trangThai: "Đang hoạt động",
-      },
-    ],
-    []
-  );
 
+
+    const fetchChucVus = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:8080/chucvu/pagination??page=${currentPage}&size=${itemsPerPage}`
+      );
+      setChucVus(response.data.data.data || []);
+      setTotalPages(response.data.data.totalPages || 1);
+    } catch {
+      setChucVus([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, itemsPerPage]);
   useEffect(() => {
-    const fetchChucVus = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("http://localhost:8080/chucvu/all");
-        setChucVus(response.data?.data || []);
-      } catch {
-        setChucVus([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchChucVus();
-  }, []);
-
-  const displayChucVus = chucVus.length > 0 ? chucVus : sampleChucVus;
-  return { chucVus: displayChucVus, loading };
+  }, [fetchChucVus]);
+  return { chucVus, loading, totalPages, refetch:fetchChucVus };
 }

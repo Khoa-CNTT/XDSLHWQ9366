@@ -47,7 +47,7 @@ export default function CTLHList() {
 
     try {
       await axios.delete(`http://localhost:8080/ctlh/delete/${id}`);
-      alert("Xóa lớp học thành công!");
+      alert("Xóa chi tiết lớp học thành công!");
       await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa lớp học:", error);

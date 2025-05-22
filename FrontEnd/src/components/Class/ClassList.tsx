@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LopHoc } from "../Type/Types";
 import { exportLopHocToExcel } from "../../Service.tsx/ExportExcel/LopHocExp";
-import { useLopHocData } from "../../hooks/useClassData";
+import { useLopHocData } from "../../hooks/useLopHocData";
 
 export default function ClassList() {
   const [search, setSearch] = useState("");
@@ -12,9 +12,11 @@ export default function ClassList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [tinhTrang, settinhTrang] = useState<string | null>(null);
   const itemsPerPage = 10;
-  const { lopHocs, loading } = useLopHocData();
+  const { lopHocs, totalPages, refetch } = useLopHocData(
+    currentPage,
+    itemsPerPage
+  );
   const navigate = useNavigate();
-  const totalPages = Math.ceil(lopHocs.length / itemsPerPage);
 
   const filteredList = lopHocs.filter((c) => {
     const matchSearch =
@@ -43,6 +45,8 @@ export default function ClassList() {
     try {
       await axios.delete(`http://localhost:8080/lophoc/delete/${id}`);
       alert("Xóa lớp học thành công!");
+
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa lớp học:", error);
       alert("Xóa lớp học thất bại!");
