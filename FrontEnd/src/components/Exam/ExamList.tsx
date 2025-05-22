@@ -1,43 +1,24 @@
 import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LichThi } from "../Type/Types";
 import { exportLichThiToExcel } from "../../Service.tsx/ExportExcel/LichThiExp";
+import { useLichThiData } from "../../hooks/useLichThiData";
+import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function ExamList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lichthis, setlichthi] = useState<LichThi[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [itemsPerPage] = useState(10);
+  const itemsPerPage = 10;
+  const [linhVuc, setLinhVuc] = useState<string | null>(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchclass = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/lichthi/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        if (response.status === 200) {
-          const { data: paginationData } = response.data;
-          if (paginationData) {
-            // Lấy danh sách lịch thi từ paginationData.data
-            const classList = paginationData.data;
-            setlichthi(classList || []);
-          }
-        } else {
-          console.error("API trả về lỗi:", response.status);
-        }
-      } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchclass();
-  }, [currentPage, itemsPerPage]);
+
+  // Lấy dữ liệu từ hook
+  const { lichThis, loading } = useLichThiData();
+  const { linhVucs, loading: loadingLinhVuc } = useLinhVucData();
+
   // Handle button
   const handleAdd = () => {
     navigate("/lichthi/add-lichthi");
@@ -51,8 +32,6 @@ export default function ExamList() {
     try {
       await axios.delete(`http://localhost:8080/lichthi/delete/${id}`);
       alert("Xóa lịch thi thành công!");
-      // Cập nhật lại danh sách lịch thi sau khi xóa
-      setlichthi((prev) => prev.filter((c) => c.maLichThi !== id));
     } catch (error) {
       console.error("Lỗi khi xóa lịch thi:", error);
       alert("Xóa lịch thi thất bại!");
@@ -66,47 +45,15 @@ export default function ExamList() {
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
-  const examList = useMemo<LichThi[]>(
-    () => [
-      {
-        maLichThi: "LT01",
-        tenChungChi: "Chứng chỉ tin học",
-        maLinhVuc: "tin-hoc",
-        ngayThi: "2023-10-01",
-        thongTinChiTiet: "Thi khảo sát",
-        lePhiThi: 500000,
-      },
-      {
-        maLichThi: "LT02",
-        tenChungChi: "Chứng chỉ AI",
-        maLinhVuc: "ai",
-        ngayThi: "2023-10-01",
-        thongTinChiTiet: "Thi khảo sát đầu vào",
-        lePhiThi: 600000,
-      },
-      {
-        maLichThi: "LT03",
-        tenChungChi: "Chứng chỉ IoT",
-        maLinhVuc: "iot",
-        ngayThi: "2023-10-01",
-        thongTinChiTiet: "Thi khảo sát đầu ra",
-        lePhiThi: 700000,
-      },
-    ],
-    []
-  );
-  //  10 items per page
-  const [linhVuc, setLinhVuc] = useState<string | null>(null);
-  const displayList = lichthis.length > 0 ? lichthis : examList;
-  const filteredList = (displayList || []).filter((c) => {
+  const filteredList = lichThis.filter((c) => {
     const matchSearch =
       c.tenChungChi.toLowerCase().includes(search.toLowerCase()) ||
       c.maLichThi.toLowerCase().includes(search.toLowerCase());
-    const matchThanhToan = !linhVuc || c.maLinhVuc === linhVuc;
-    return matchSearch && matchThanhToan;
+    const matchLinhVuc = !linhVuc || c.maLinhVuc === linhVuc;
+    return matchSearch && matchLinhVuc;
   });
   const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-  const paginatedList = (filteredList || []).slice(
+  const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -147,9 +94,9 @@ export default function ExamList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {examList.map((item) => (
+                  {linhVucs.map((item) => (
                     <button
-                      key={item.maLichThi}
+                      key={item.maLinhVuc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
                         setLinhVuc(item.maLinhVuc);
@@ -199,7 +146,10 @@ export default function ExamList() {
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{lichThi.maLichThi}</td>
                 <td className="p-2 text-center">{lichThi.tenChungChi}</td>
-                <td className="p-2 text-center">{lichThi.maLinhVuc}</td>
+                <td className="p-2 text-center">
+                  {linhVucs.find((lv) => lv.maLinhVuc === lichThi.maLinhVuc)
+                    ?.tenLinhVuc || lichThi.maLinhVuc}
+                </td>
                 <td className="p-2 text-center">{lichThi.ngayThi}</td>
                 <td className="p-2 text-center">{lichThi.lePhiThi}</td>
                 <td className="p-2 text-center">

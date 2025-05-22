@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinhVuc } from "../Type/Types";
 import { useLinhVucData } from "../../hooks/useLinhVucData";
+import { toast } from "react-toastify";
 
 export default function FieldList() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const { linhVucs, loading } = useLinhVucData();
+  const { linhVucs, loading, refetch } = useLinhVucData();
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
 
@@ -28,11 +29,26 @@ export default function FieldList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8080/linhvuc/delete/${id}`);
-      alert("Xóa lĩnh vực thành công!");
+      const response = await axios.delete(
+        `http://localhost:8080/linhvuc/delete/${id}`
+      );
+
+      if (response.status === 200 || response.status === 204) {
+        toast.success("Thành công!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        await refetch();
+      } else {
+        throw new Error("Xóa không thành công");
+      }
     } catch (error) {
       console.error("Lỗi khi xóa lĩnh vực:", error);
-      alert("Xóa lĩnh vực thất bại!");
+      toast.error("Lỗi khi xóa", {
+        position: "top-center",
+        theme: "colored",
+      });
     }
   };
 

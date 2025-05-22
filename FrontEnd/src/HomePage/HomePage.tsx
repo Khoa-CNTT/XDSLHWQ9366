@@ -3,8 +3,8 @@ import Blob from "../assets/blob.svg";
 import HeroPng from "../assets/hero.png";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/Account/AuthContext";
 import { useState } from "react";
+import { useAuth } from "../components/Account/useAuth";
 
 export const FadeUp = (delay: number) => {
   return {
@@ -28,17 +28,23 @@ export const FadeUp = (delay: number) => {
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, role } = useAuth();
   const [showMsg, setShowMsg] = useState(false);
+
   const handleGetStarted = () => {
     if (isLoggedIn) {
-      localStorage.setItem("sidebar-selected-key", "QLThongKe");
-      navigate("/dashboard");
+      if (role?.toLowerCase() === "admin") {
+        localStorage.setItem("sidebar-selected-key", "QLThongKe");
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } else {
       setShowMsg(true);
       setTimeout(() => setShowMsg(false), 2000);
     }
   };
+
   return (
     <div className="text-xxl">
       {" "}

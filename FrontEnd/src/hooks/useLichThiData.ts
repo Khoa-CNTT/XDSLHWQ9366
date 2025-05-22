@@ -11,7 +11,7 @@ export function useLichThiData() {
       {
         maLichThi: "LT001",
         maLinhVuc: "LV01",
-        tenChungChi: "Chứng chỉ Java",
+        tenChungChi: "test",
         ngayThi: "2024-07-01",
         thongTinChiTiet: "Phòng 101, 8h sáng",
         lePhiThi: 500000,
@@ -24,7 +24,7 @@ export function useLichThiData() {
     const fetchLichThis = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8080/lichthi/all");
+        const response = await axios.get("http://localhost:8080/lichthi/getAll");
         setLichThis(response.data?.data || []);
       } catch {
         setLichThis([]);

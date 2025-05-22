@@ -162,5 +162,19 @@ export interface TaiKhoan {
   quyen: string;
   trangThai: string;
 }
+          
+export interface ChiTietLopHoc {
+  maCtlh: string;
+  maHocVien: string;
+  maLopHoc:string;
+  hocPhi: string;
+  mienGiamHocPhi: string;
+  soTienThu: string;
+diem: string;
+ngayCapChungChi: string;
+xepLoai: string;
+diemDanh: string;
+ghiChu: string;
+}
 
   

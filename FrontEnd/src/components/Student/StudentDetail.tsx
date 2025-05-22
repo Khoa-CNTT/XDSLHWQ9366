@@ -5,7 +5,7 @@ import { HocVien } from "../Type/Types";
 export default function StudentDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState<HocVien>(
     location.state?.student || {
       maHocVien: "",
       tenHocVien: "",
@@ -54,7 +54,7 @@ export default function StudentDetail() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/hocvien/update/${formData.id}?mahocvien=${formData.id}`,
+        `http://localhost:8080/hocvien/update/${formData.maHocVien}?mahocvien=${formData.maHocVien}`,
         {
           method: "PUT",
           headers: {
@@ -109,7 +109,7 @@ export default function StudentDetail() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className=""
                 >

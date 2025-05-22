@@ -1,12 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/Account/AuthContext";
 import TrueFocus from "./TrueFocus";
+import { useAuth } from "../components/Account/useAuth";
 
 function Header() {
-  const { isLoggedIn, user, role, logout } = useAuth();
+  const { isLoggedIn, role, logout, displayName } = useAuth();
   const navigate = useNavigate();
-  console.log("User:", user);
-  console.log("Role:", role);
 
   const handleLogout = () => {
     logout();
@@ -37,8 +35,8 @@ function Header() {
             <>
               <div className="flex px-2 py-1 bg-yellow-50 items-center gap-2 rounded-xl border">
                 <div className="flex flex-col items-start ">
-                  <p className="font-semibold">Hello {user}</p>
-                  <p className="text-sm text-gray-600">{role}</p>
+                  <p className="font-semibold">Xin chào: "{displayName}"</p>
+                  <p className="text-sm text-gray-600">Chức vụ: {role}</p>
                 </div>
               </div>
               <button

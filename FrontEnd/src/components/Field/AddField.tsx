@@ -21,6 +21,7 @@ export default function AddField() {
       alert("Thêm lĩnh vực thành công!");
       handleClear();
       console.log("Lưu thông tin lĩnh vực:", formData);
+      handleBack();
     } catch (err) {
       if (err instanceof Error) {
         alert("Lỗi kết nối backend: " + err.message);

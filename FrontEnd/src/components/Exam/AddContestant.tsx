@@ -17,31 +17,25 @@ export default function AddContestant() {
     dienDangKy: "",
     maLichThi: "",
     maPhongThi: "",
-    diem: "",
+    diem: "0",
     xepLoai: "",
     ngayCapChungChi: "",
     ghiChu: "",
     urlHinhDaiDien: null,
   });
-  const dienDangKy = useMemo(
-    () => [
-      { id: "online", name: "Online" },
-      { id: "offline", name: "Offline" },
-    ],
-    []
-  );
+
   const saveToBackend = async () => {
     try {
-      const res = await fetch("http://localhost:8080/giangvien/add", {
+      const res = await fetch("http://localhost:8080/thisinh/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Lỗi khi gửi dữ liệu");
       else {
-        alert("Thêm giảng viên thành công!");
+        alert("Thêm Thí sinh thành công!");
         handleClear();
-        console.log("Lưu thông tin giảng viên:", formData);
+        console.log("Lưu thông tin Thí sinh:", formData);
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -192,11 +186,8 @@ export default function AddContestant() {
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">-- Diện Đăng ký --</option>
-                  {dienDangKy.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
+                  <option value="ONLINE">Online</option>{" "}
+                  <option value="TRUCTIEP">Trực tiếp</option>
                 </select>
               </div>
             </div>

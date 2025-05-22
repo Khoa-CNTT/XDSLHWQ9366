@@ -1,49 +1,55 @@
-import axios from "axios";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThiSinh } from "../Type/Types";
 import { exportThiSinhToExcel } from "../../Service.tsx/ExportExcel/ThiSinhExp";
+import { useThiSinhData } from "../../hooks/useThiSinhData";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function Contestants() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [thisinhs, setthisinh] = useState<ThiSinh[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [itemsPerPage] = useState(10);
+  const itemsPerPage = 10;
+  const [dienDangKy, setDienDangKy] = useState<string | null>(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchclass = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/thisinh/pagination?page=${currentPage}&size=${itemsPerPage}`
-        );
-        if (response.status === 200) {
-          const { data: paginationData } = response.data;
-          if (paginationData) {
-            // Lấy danh sách thí sinh từ paginationData.data
-            const classList = paginationData.data;
-            setthisinh(classList || []);
-            setTotalPages(paginationData.totalPages || 1);
-          }
-        } else {
-          console.error("API trả về lỗi:", response.status);
-        }
-      } catch (error) {
-        console.error("Lỗi khi gọi API:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchclass();
-  }, [currentPage, itemsPerPage]);
+
+  // Lấy dữ liệu từ hook
+  const { thiSinhs, loading, refetch } = useThiSinhData(
+    currentPage,
+    itemsPerPage
+  );
+
+  // Lọc diện đăng ký duy nhất
+  const uniqueNotes = useMemo(() => {
+    const notes = thiSinhs.map((item) => item.dienDangKy);
+    return Array.from(new Set(notes));
+  }, [thiSinhs]);
+
+  // Lọc danh sách theo search và diện đăng ký
+  const filteredList = thiSinhs.filter((c) => {
+    const matchSearch =
+      c.tenThiSinhDuThi.toLowerCase().includes(search.toLowerCase()) ||
+      c.maLichThi.toLowerCase().includes(search.toLowerCase()) ||
+      c.maPhongThi.toLowerCase().includes(search.toLowerCase()) ||
+      c.maThiSinhDuThi.toLowerCase().includes(search.toLowerCase());
+    const matchDienDangKy = !dienDangKy || c.dienDangKy === dienDangKy;
+    return matchSearch && matchDienDangKy;
+  });
+
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   // Handle button
   const handleAdd = () => {
     navigate("/thisinh/add-thisinh");
   };
+
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa thí sinh này?"
@@ -51,105 +57,35 @@ export default function Contestants() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8080/thisinh/delete/${id}`);
-      alert("Xóa thí sinh thành công!");
-      // Cập nhật lại danh sách thí sinh sau khi xóa
-      setthisinh((prev) => prev.filter((c) => c.maThiSinhDuThi !== id));
+      const response = await axios.delete(
+        `http://localhost:8080/thisinh/delete/` + id
+      );
+
+      if (response.status === 200 || response.status === 204) {
+        toast.success("Thành công!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+
+        await refetch();
+      } else {
+        throw new Error("Xóa không thành công");
+      }
     } catch (error) {
       console.error("Lỗi khi xóa thí sinh:", error);
-      alert("Xóa thí sinh thất bại!");
+      toast.error("Lỗi khi xóa", {
+        position: "top-center",
+        theme: "colored",
+      });
     }
   };
-
   const handleView = (thisinh: ThiSinh) => {
     navigate(`/thisinh/get-thisinh/${thisinh.maThiSinhDuThi}`, {
       state: { thisinh },
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-  const thiSinhList = useMemo<ThiSinh[]>(
-    () => [
-      {
-        maThiSinhDuThi: "TS01",
-        tenThiSinhDuThi: "Nguyễn Văn A",
-        ngaySinh: "2000-01-01",
-        gioiTinh: "true",
-        soCMND: "123456789",
-        soDienThoai: "0123456789",
-        email: "123123",
-        diaChi: "123123",
-        dienDangKy: "Online",
-        maLichThi: "LT01",
-        maPhongThi: "P01",
-        diem: "9",
-        xepLoai: "P01",
-        ngayCapChungChi: "2023-10-01",
-        ghiChu: "123123123123",
-        urlHinhDaiDien: "https://example.com/image.jpg",
-      },
-      {
-        maThiSinhDuThi: "TS02",
-        tenThiSinhDuThi: "Nguyễn Văn B",
-        ngaySinh: "2000-01-01",
-        gioiTinh: "true",
-        soCMND: "123456789",
-        soDienThoai: "0123456789",
-        email: "123123",
-        diaChi: "123123",
-        dienDangKy: "Offline",
-        maLichThi: "LT02",
-        maPhongThi: "P01",
-        diem: "9",
-        xepLoai: "P01",
-        ngayCapChungChi: "2023-10-01",
-        ghiChu: "123123123123",
-        urlHinhDaiDien: "https://example.com/image.jpg",
-      },
-      {
-        maThiSinhDuThi: "TS03",
-        tenThiSinhDuThi: "Nguyễn Văn C",
-        ngaySinh: "2000-01-01",
-        gioiTinh: "true",
-        soCMND: "123456789",
-        soDienThoai: "0123456789",
-        email: "123123",
-        diaChi: "123123",
-        dienDangKy: "online",
-        maLichThi: "LT03",
-        maPhongThi: "P02",
-        diem: "8",
-        xepLoai: "P01",
-        ngayCapChungChi: "2023-10-01",
-        ghiChu: "123123123123",
-        urlHinhDaiDien: "https://example.com/image.jpg",
-      },
-    ],
-    []
-  );
 
-  // Loại bỏ các giá trị trùng lặp
-  const uniqueNotes = useMemo(() => {
-    const notes = thiSinhList.map((item) => item.dienDangKy);
-    return Array.from(new Set(notes));
-  }, [thiSinhList]);
-
-  //  10 items per page
-  const [dienDangKy, setDienDangKy] = useState<string | null>(null);
-
-  const filteredList = (thiSinhList || []).filter((c) => {
-    const matchSearch =
-      c.tenThiSinhDuThi.toLowerCase().includes(search.toLowerCase()) ||
-      c.maLichThi.toLowerCase().includes(search.toLowerCase()) ||
-      c.maPhongThi.toLowerCase().includes(search.toLowerCase()) ||
-      c.maThiSinhDuThi.toLowerCase().includes(search.toLowerCase());
-    const matchThanhToan = !dienDangKy || c.dienDangKy === dienDangKy;
-    return matchSearch && matchThanhToan;
-  });
-
-  const paginatedList = (filteredList || []).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }

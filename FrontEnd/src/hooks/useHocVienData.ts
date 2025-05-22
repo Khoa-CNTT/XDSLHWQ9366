@@ -32,8 +32,8 @@ export function useHocVienData() {
     const fetchHocViens = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8080/hocvien/all");
-        setHocViens(response.data?.data || []);
+        const response = await axios.get("http://localhost:8080/hocvien/pagination?page=&size=");
+        setHocViens(response.data?.data?.data || []);
       } catch {
         setHocViens([]);
       } finally {

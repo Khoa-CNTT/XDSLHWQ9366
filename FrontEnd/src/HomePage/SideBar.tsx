@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "../components/Account/AuthContext";
 import SidebarButton from "./SidebarButton";
 import { SideBarItem } from "./SidebarItem";
 import { useEffect, useState } from "react";
+import { useAuth } from "../components/Account/useAuth";
 
 export default function Sidebar() {
   const { isLoggedIn, role } = useAuth();

@@ -1,83 +1,74 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { HocVien } from "../Type/Types";
-import { exportHocVienToExcel } from "../../Service.tsx/ExportExcel/HocVienExp";
-import { useHocVienData } from "../../hooks/useHocVienData";
 import axios from "axios";
+import { useCallback, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChiTietLopHoc } from "../Type/Types";
+import { useChiTietLopHocData } from "../../hooks/useChiTietLopHocData";
+import { exportCTLHToExcel } from "../../Service.tsx/ExportExcel/CTLHExp";
 
-export default function StudentList() {
+export default function CTLHList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [lophoc, setLopHoc] = useState<string | null>(null);
   const itemsPerPage = 10;
-  const [selectedTinhTrang, setSelectedTinhTrang] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-  const navigate = useNavigate();
 
   // Sử dụng hook để lấy dữ liệu
-  const { hocViens, loading } = useHocVienData();
-
-  const tinhTrang = useMemo(
-    () => [
-      { id: "danghoc", name: "Đang học" },
-      { id: "nghihoc", name: "Nghỉ học" },
-      { id: "datotnghiep", name: "Đã tốt nghiệp" },
-    ],
-    []
+  const { ctlhList, totalPages, refetch } = useChiTietLopHocData(
+    currentPage,
+    itemsPerPage
   );
+  const navigate = useNavigate();
 
-  // Lọc danh sách theo search và tình trạng
-  const filteredList = hocViens.filter((c) => {
+  // Lọc dữ liệu theo search và tình trạng
+  const filteredList = ctlhList.filter((c: ChiTietLopHoc) => {
     const matchSearch =
-      c.tenHocVien.toLowerCase().includes(search.toLowerCase()) ||
+      c.maLopHoc.toLowerCase().includes(search.toLowerCase()) ||
       c.maHocVien.toLowerCase().includes(search.toLowerCase());
-    const matchTinhTrang =
-      !selectedTinhTrang || c.tinhTrangHocTap === selectedTinhTrang.id;
-    return matchSearch && matchTinhTrang;
+    const matchLopHoc = !lophoc || c.maLopHoc === lophoc;
+    return matchSearch && matchLopHoc;
   });
-
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
+
   // Handle button
   const handleAdd = () => {
-    navigate("/hocvien/add-hocvien");
+    navigate("/ctlophoc/add");
   };
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa giảng viên này?"
+      "Bạn có chắc chắn muốn xóa lớp học này?"
     );
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:8080/hocvien/delete/${id}`);
-      alert("Xóa giảng viên thành công!");
+      await axios.delete(`http://localhost:8080/ctlh/delete/${id}`);
+      alert("Xóa lớp học thành công!");
+      await refetch();
     } catch (error) {
-      console.error("Lỗi khi xóa giảng viên:", error);
-      alert("Xóa giảng viên thất bại!");
+      console.error("Lỗi khi xóa lớp học:", error);
+      alert("Xóa lớp học thất bại!");
     }
   };
 
-  const handleView = (student: HocVien) => {
-    navigate(`/hocvien/get-hocvien/${student.maHocVien}`, {
-      state: { student },
+  const handleView = (chitiet: ChiTietLopHoc) => {
+    navigate(`/ctlophoc/get-ctlophoc/${chitiet.maCtlh}`, {
+      state: { chitiet },
     });
   };
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }
+
   return (
     <div className="h-full mt-2">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold mx-4">Danh sách Học Viên</h2>
+        <h2 className="text-xl font-bold mx-4">Chi tiết lớp học</h2>
         <div className=" gap-4 inline-flex">
           <input
             type="text"
@@ -90,9 +81,9 @@ export default function StudentList() {
             {/* Button */}
             <button
               onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none"
+              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
-              {selectedTinhTrang ? selectedTinhTrang.name : "Tất cả học viên"}
+              Tất cả danh mục
               <svg
                 className="w-4 h-4 ml-12 -mr-1 inline"
                 xmlns="http://www.w3.org/2000/svg"
@@ -107,26 +98,26 @@ export default function StudentList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {tinhTrang.map((tinhTrang) => (
+                  {ctlhList.map((item) => (
                     <button
-                      key={tinhTrang.id}
+                      key={item.maLopHoc}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setSelectedTinhTrang(tinhTrang);
+                        setLopHoc(item.maLopHoc);
                         setIsOpenMenu(false);
                       }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      {tinhTrang.name}
+                      {item.maLopHoc}
                     </button>
                   ))}
                   <button
                     onClick={() => {
-                      setSelectedTinhTrang(null);
+                      setLopHoc(null);
                       setIsOpenMenu(false);
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
                   >
-                    Tất cả học viên
+                    Huỷ
                   </button>
                 </div>
               </div>
@@ -146,29 +137,28 @@ export default function StudentList() {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Học viên</th>
-              <th className="p-2 border">Tên Học viên</th>
-              <th className="p-2 border">Số điện thoại</th>
-              <th className="p-2 border">Email</th>
-              <th className="p-2 border">Tình trạng</th>
+              <th>Mã lớp học</th>
+              <th className="p-2 border">Tên Lớp Học</th>
+              <th className="p-2 border">Lịch Học</th>
+              <th className="p-2 border">Ngày Bắt Đầu</th>
+              <th className="p-2 border">Ngày Kết Thúc</th>
+              <th className="p-2 border">Tình Trạng</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((student, index) => (
-              <tr key={student.maHocVien} className="border-b">
+            {paginatedList.map((chitiet, index) => (
+              <tr key={chitiet.maCtlh} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{student.maHocVien}</td>
-                <td className="p-2 text-center">{student.tenHocVien}</td>
+                <td className="p-2 text-center">{chitiet.maCtlh}</td>
+                <td className="p-2 text-center">{chitiet.maHocVien}</td>
 
-                <td className="p-2 text-center">{student.soDienThoai}</td>
-                <td className="p-2 text-center">{student.email}</td>
-                <td className="p-2 text-center">
-                  {tinhTrang.find((tt) => tt.id === student.tinhTrangHocTap)
-                    ?.name || "Không xác định"}
-                </td>
+                <td className="p-2">{chitiet.maLopHoc}</td>
+                <td className="p-2 text-center">{chitiet.hocPhi}</td>
+                <td className="p-2 text-center">{chitiet.mienGiamHocPhi}</td>
+                <td className="p-2 text-center">{chitiet.soTienThu}</td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={() => handleView(student)}
+                    onClick={() => handleView(chitiet)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
@@ -188,7 +178,7 @@ export default function StudentList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(student.maHocVien)}
+                    onClick={() => handleDelete(chitiet.maCtlh)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +222,7 @@ export default function StudentList() {
               Trang sau
             </button>
             <button
-              onClick={() => exportHocVienToExcel(filteredList)}
+              onClick={() => exportCTLHToExcel(filteredList)}
               className=" bg-green-500 text-white text-md py-2 px-4 rounded hover:bg-green-600"
             >
               Export Excel

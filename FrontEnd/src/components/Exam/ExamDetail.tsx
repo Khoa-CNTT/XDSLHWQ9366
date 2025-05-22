@@ -5,7 +5,7 @@ import { LichThi } from "../Type/Types";
 export default function ExamDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState<LichThi>(
     location.state?.lichthi || {
       maLichThi: "",
       tenChungChi: "",
@@ -18,7 +18,7 @@ export default function ExamDetail() {
 
   useEffect(() => {
     if (!formData) {
-      console.warn("Không có dữ liệu lớp học được truyền!");
+      console.warn("Không có dữ liệu lịch thi được truyền!");
     }
   }, [formData]);
 
@@ -32,13 +32,13 @@ export default function ExamDetail() {
   };
 
   if (!formData) {
-    return <div>Không có dữ liệu lớp học.</div>;
+    return <div>Không có dữ liệu lịch thi.</div>;
   }
 
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/lophoc/update/${formData.id}?malophoc=${formData.id}`,
+        `http://localhost:8080/lophoc/update/${formData.maLichThi}?maLichThi=${formData.maLichThi}`,
         {
           method: "PUT",
           headers: {
@@ -52,12 +52,12 @@ export default function ExamDetail() {
         throw new Error("Cập nhật dữ liệu thất bại!");
       }
 
-      alert("Cập nhật thông tin lớp học thành công!");
+      alert("Cập nhật thông tin lịch thi thành công!");
       console.log("Dữ liệu đã cập nhật:", formData);
       navigate(-1); // Quay lại trang trước
     } catch (error) {
       console.error("Lỗi khi cập nhật dữ liệu:", error);
-      alert("Đã xảy ra lỗi khi cập nhật thông tin lớp học!");
+      alert("Đã xảy ra lỗi khi cập nhật thông tin lịch thi!");
     }
   };
 

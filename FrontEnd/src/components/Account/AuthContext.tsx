@@ -1,51 +1,33 @@
-import React, { createContext, useContext, useState } from "react";
-
-interface AuthContextType {
-  isLoggedIn: boolean;
-  user: string | null;
-  role: string | null;
-  login: (token: string, user: string, role: string) => void;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import React, { useState } from "react";
+import { AuthContext } from "./AuthContextInstance";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [user, setUser] = useState(localStorage.getItem("user"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
-  const login = (token: string, user: string, role: string) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", user);
-    localStorage.setItem("role", role);
+  const login = (user: string, role: string, displayName: string) => {
     setIsLoggedIn(true);
     setUser(user);
     setRole(role);
+    setDisplayName(displayName);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
     setIsLoggedIn(false);
     setUser(null);
     setRole(null);
+    setDisplayName(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, role, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, user, role, displayName, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

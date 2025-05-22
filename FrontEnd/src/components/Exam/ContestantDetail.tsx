@@ -5,7 +5,7 @@ import { ThiSinh } from "../Type/Types";
 export default function ContestantDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
+  const [formData, setFormData] = useState<ThiSinh>(
     location.state?.thisinh || {
       maThiSinhDuThi: "",
       tenThiSinhDuThi: "",
@@ -27,8 +27,8 @@ export default function ContestantDetail() {
   );
   const dienDangKy = useMemo(
     () => [
-      { id: "online", name: "Online" },
-      { id: "offline", name: "Offline" },
+      { id: "ONLINE", name: "ONLINE" },
+      { id: "TRUCTIEP", name: "TRUCTIEP" },
     ],
     []
   );
@@ -55,7 +55,7 @@ export default function ContestantDetail() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/hocvien/update/${formData.id}?mahocvien=${formData.id}`,
+        `http://localhost:8080/thisinh/update/${formData.maThiSinhDuThi}?mahocvien=${formData.maThiSinhDuThi}`,
         {
           method: "PUT",
           headers: {
@@ -71,16 +71,13 @@ export default function ContestantDetail() {
 
       alert("Cập nhật thông tin học viên thành công!");
       console.log("Dữ liệu đã cập nhật:", formData);
-      navigate(-1); // Quay lại trang trước
+      navigate(-1);
     } catch (error) {
       console.error("Lỗi khi cập nhật dữ liệu:", error);
       alert("Đã xảy ra lỗi khi cập nhật thông tin học viên!");
     }
   };
 
-  const handleBack = () => {
-    navigate(-1);
-  };
   return (
     <div>
       <div className="w-full mx-auto  p-8 bg-white rounded-lg shadow-md">
@@ -89,7 +86,9 @@ export default function ContestantDetail() {
             Quản lý Thí sinh
           </h2>
           <button
-            onClick={handleBack}
+            onClick={() => {
+              navigate(-1);
+            }}
             className="p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Quay lại
@@ -172,7 +171,6 @@ export default function ContestantDetail() {
                   onChange={handleChange} // Xử lý sự kiện thay đổi
                   className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="">-- Diện Đăng ký --</option>
                   {dienDangKy.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.name}

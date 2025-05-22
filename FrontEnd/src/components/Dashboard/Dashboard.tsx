@@ -1,6 +1,6 @@
 import DashboardChart from "./Chart";
 import UserRolePieChart from "./PieChart";
-import UserMonthlyChart from "./BarChart";
+import ThuChiChart from "./BarChart";
 
 export default function Dashboard() {
   return (
@@ -9,7 +9,7 @@ export default function Dashboard() {
       <DashboardChart />
       <div className="flex gap-4">
         <UserRolePieChart />
-        <UserMonthlyChart />
+        <ThuChiChart />
       </div>
     </div>
   );
