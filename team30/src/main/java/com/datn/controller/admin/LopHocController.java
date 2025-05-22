@@ -4,6 +4,7 @@ import com.datn.dto.request.LopHocAddDTO;
 import com.datn.dto.request.LopHocUpdateDTO;
 import com.datn.dto.response.ApiResponse;
 import com.datn.dto.response.PaginationResponse;
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.LopHoc;
 import com.datn.service.LopHocService;
 import jakarta.validation.Valid;
@@ -80,6 +81,15 @@ public class LopHocController {
                 (HttpStatus.OK.value(), "Danh sách các lớp học", lopHocs);
 
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<LopHoc>>> getAll() {
+        try {
+            List<LopHoc> lopHocList = lopHocService.getAllLopHoc();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách lớp học thành công", lopHocList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
     }
 
 }

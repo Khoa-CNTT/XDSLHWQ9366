@@ -1,5 +1,6 @@
 package com.datn.repository.impl;
 
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.LopHoc;
 import com.datn.exception.lophoc.DuplicateLopHocException;
 import com.datn.exception.lophoc.LopHocNotFoundException;
@@ -104,6 +105,10 @@ public class LopHocRepoImpl implements LopHocRepo {
                 ("SELECT COUNT(LH) FROM LopHoc AS LH", Long.class);
 
         return typedQuery.getSingleResult();
+    }
+    @Override
+    public List<LopHoc> getAllLopHoc() {
+        return entityManager.createQuery("SELECT l FROM LopHoc l", getEntityClass()).getResultList();
     }
 
     private Class<LopHoc> getEntityClass() {

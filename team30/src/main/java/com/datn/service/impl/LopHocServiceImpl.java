@@ -3,10 +3,7 @@ package com.datn.service.impl;
 import com.datn.dto.request.LopHocAddDTO;
 import com.datn.dto.request.LopHocUpdateDTO;
 import com.datn.dto.response.PaginationResponse;
-import com.datn.entity.GiangVien;
-import com.datn.entity.KhoaHoc;
-import com.datn.entity.LopHoc;
-import com.datn.entity.PhongHoc;
+import com.datn.entity.*;
 import com.datn.exception.giangvien.GiangVienNotFoundException;
 import com.datn.exception.khoahoc.KhoaHocNotFoundException;
 import com.datn.exception.lophoc.InvalidLopHocException;
@@ -162,4 +159,8 @@ public class LopHocServiceImpl implements LopHocService {
         return this.lopHocRepo.findByTenLopHoc(tenLopHoc);
     }
 
+    @Override
+    public List<LopHoc> getAllLopHoc() {
+        return lopHocRepo.getAllLopHoc();
+    }
 }

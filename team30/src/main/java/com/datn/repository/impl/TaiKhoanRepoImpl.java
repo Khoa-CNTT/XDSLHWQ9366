@@ -3,6 +3,7 @@ package com.datn.repository.impl;/*
  * @author Huy
  */
 
+import com.datn.entity.LopHoc;
 import com.datn.entity.TaiKhoan;
 import com.datn.repository.TaiKhoanRepo;
 import jakarta.persistence.EntityManager;
@@ -47,5 +48,9 @@ public class TaiKhoanRepoImpl implements TaiKhoanRepo {
     public Optional<TaiKhoan> findByIdTaiKhoan(String id) {
         TaiKhoan taiKhoan = entityManager.find(TaiKhoan.class, id);
         return Optional.ofNullable(taiKhoan);
+    }
+    @Override
+    public List<TaiKhoan> getAllTaiKhoan() {
+        return entityManager.createQuery("SELECT l FROM TaiKhoan l").getResultList();
     }
 }

@@ -3,6 +3,7 @@ package com.datn.repository;/*
  * @author Huy
  */
 
+import com.datn.entity.LopHoc;
 import com.datn.entity.TaiKhoan;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface TaiKhoanRepo {
     void deleteById(String id);
 
     Optional<TaiKhoan> findByIdTaiKhoan(String id);
+
+    List<TaiKhoan> getAllTaiKhoan();
 }

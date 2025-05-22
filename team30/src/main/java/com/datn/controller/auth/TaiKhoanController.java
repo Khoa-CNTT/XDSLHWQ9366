@@ -2,6 +2,7 @@ package com.datn.controller.auth;/*
  * @project team30
  * @author Huy
  */
+import com.datn.entity.LopHoc;
 import org.springframework.http.HttpStatus;
 import com.datn.dto.request.TaiKhoanDTO;
 import com.datn.dto.response.ApiResponse;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -132,4 +134,15 @@ public class TaiKhoanController {
                 new ApiResponse<>(HttpStatus.OK.value(), "Xóa tài khoản thành công", null)
         );
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<ApiResponse<List<TaiKhoan>>> getAll() {
+        try {
+            List<TaiKhoan> taiKhoanList = taiKhoanService.getAllTaiKhoan();
+            return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Lấy danh sách tài khoản thành công", taiKhoanList));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Lỗi: " + e.getMessage(), null));
+        }
+    }
+
 }

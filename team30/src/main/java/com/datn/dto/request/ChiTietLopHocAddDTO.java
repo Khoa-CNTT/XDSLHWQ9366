@@ -21,23 +21,23 @@ public class ChiTietLopHocAddDTO {
     @DecimalMin(value = "0.0", message = "Miễn giảm học phí phải lớn hơn hoặc bằng 0")
     private double mienGiamHocPhi;
 
-    @NotNull(message = "Trạng thái đã thu học phí không được để trống")
+//    @NotNull(message = "Trạng thái đã thu học phí không được để trống")
     private boolean daThuHocPhi;
 
     @DecimalMin(value = "0.0", message = "Số tiền thu phải lớn hơn hoặc bằng 0")
     private double soTienThu;
 
-    @DecimalMin(value = "0.0", message = "Điểm phải lớn hơn hoặc bằng 0")
-    @DecimalMax(value = "10.0", message = "Điểm phải nhỏ hơn hoặc bằng 10")
+//    @DecimalMin(value = "0.0", message = "Điểm phải lớn hơn hoặc bằng 0")
+//    @DecimalMax(value = "10.0", message = "Điểm phải nhỏ hơn hoặc bằng 10")
     private double diem;
 
-    @NotNull(message = "Ngày cấp chứng chỉ không được để trống")
+//    @NotNull(message = "Ngày cấp chứng chỉ không được để trống")
     private LocalDate ngayCapChungChi;
 
-    @Size(max = 255, message = "Xếp loại không được vượt quá 255 ký tự")
+//    @Size(max = 255, message = "Xếp loại không được vượt quá 255 ký tự")
     private String xepLoai;
 
-    @Size(max = 255, message = "Điểm danh không được vượt quá 255 ký tự")
+//    @Size(max = 255, message = "Điểm danh không được vượt quá 255 ký tự")
     private String diemDanh;
 
     @Size(max = 255, message = "Ghi chú không được vượt quá 255 ký tự")

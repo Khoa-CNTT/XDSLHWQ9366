@@ -4,6 +4,7 @@ package com.datn.service;/*
  */
 
 import com.datn.dto.request.TaiKhoanDTO;
+import com.datn.entity.LopHoc;
 import com.datn.entity.TaiKhoan;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface TaiKhoanService {
     void deleteById(String maTaiKhoan);
 
     Optional<TaiKhoan> findById(String id);
+
+    List<TaiKhoan> getAllTaiKhoan();
 }

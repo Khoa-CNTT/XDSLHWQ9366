@@ -1,5 +1,6 @@
 package com.datn.repository;
 
+import com.datn.entity.ChiTietLopHoc;
 import com.datn.entity.LopHoc;
 
 import java.util.List;
@@ -23,5 +24,6 @@ public interface LopHocRepo {
     void delete(String maLopHoc);
 
     Long countTotalLopHocs();
+    List<LopHoc> getAllLopHoc();
 
 }

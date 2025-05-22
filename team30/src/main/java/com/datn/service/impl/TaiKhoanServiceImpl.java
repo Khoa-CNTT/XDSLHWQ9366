@@ -5,6 +5,7 @@ package com.datn.service.impl;/*
 
 import com.datn.dto.request.TaiKhoanDTO;
 import com.datn.entity.HocVien;
+import com.datn.entity.LopHoc;
 import com.datn.entity.NhanVien;
 import com.datn.entity.TaiKhoan;
 import com.datn.repository.NhanVienRepo;
@@ -121,5 +122,10 @@ public class TaiKhoanServiceImpl implements TaiKhoanService {
     @Override
     public Optional<TaiKhoan> findById(String id) {
         return taiKhoanRepository.findByIdTaiKhoan(id);
+    }
+
+    @Override
+    public List<TaiKhoan> getAllTaiKhoan() {
+        return taiKhoanRepository.getAllTaiKhoan();
     }
 }
