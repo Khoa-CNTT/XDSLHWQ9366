@@ -35,29 +35,4 @@ public class ThanhToanController {
         );
     }
 
-    @GetMapping("/{maGiaoDich}")
-    public ResponseEntity<ApiResponse<ThanhToan>> getThanhToanByMaGiaoDich(@PathVariable String maGiaoDich) {
-        ThanhToan thanhToan = thanhToanService.getThanhToanByMaGiaoDich(maGiaoDich);
-        if (thanhToan != null) {
-            return ResponseEntity.ok(
-                    new ApiResponse<>(HttpStatus.OK.value(), "Lấy thanh toán thành công", thanhToan)
-            );
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không tìm thấy giao dịch", null)
-        );
-    }
-
-    @PutMapping("/{maGiaoDich}")
-    public ResponseEntity<ApiResponse<ThanhToan>> updateTrangThaiThanhToan(@PathVariable String maGiaoDich, @RequestBody TrangThaiThanhToan trangThai) {
-        ThanhToan updated = thanhToanService.updateTrangThaiThanhToan(maGiaoDich, trangThai);
-        if (updated != null) {
-            return ResponseEntity.ok(
-                    new ApiResponse<>(HttpStatus.OK.value(), "Cập nhật trạng thái thành công", updated)
-            );
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không tìm thấy giao dịch", null)
-        );
-    }
 }

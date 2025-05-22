@@ -14,7 +14,7 @@ public interface ThanhToanRepo {
 
     ThanhToan createThanhToan(ThanhToanDTO thanhToan);
 
-    ThanhToan getThanhToanByMaGiaoDich(String maGiaoDich);
+    ThanhToan findByMaGiaoDich(String maGiaoDich);
 
-    ThanhToan updateTrangThaiThanhToan(String maGiaoDich, TrangThaiThanhToan trangThai);
+    ThanhToan save(ThanhToan thanhToan);
 }

@@ -13,8 +13,5 @@ import java.util.List;
 public interface ThanhToanService {
     List<ThanhToan> getAllThanhToans();
 
-    ThanhToan getThanhToanByMaGiaoDich(String maGiaoDich);
-    ThanhToan updateTrangThaiThanhToan(String maGiaoDich, @RequestBody TrangThaiThanhToan trangThai);
-
     ThanhToan createThanhToan(ThanhToanDTO thanhToan);
 }

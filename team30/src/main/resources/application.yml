@@ -16,3 +16,14 @@ spring:
         format_sql: true
         use_sql_comments: true
 
+payment:
+  vnPay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: TA1NW75G
+    secretKey: FCSR6TSRXUHO7FUAQ7UCTZV8DW7YCZW6
+    returnUrl: http://localhost:8080/api/vnpay/return
+    version: 2.1.0
+    command: pay
+    orderType: other
+
+

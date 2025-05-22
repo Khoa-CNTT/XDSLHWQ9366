@@ -29,7 +29,7 @@ public class NhanVien {
     private LocalDate ngaySinh;
 
     @Column(name = "GIOITINH")
-    private boolean gioiTinh;
+    private Boolean gioiTinh;
 
     @Column(name = "SOCMND", length = 255)
     private String soCMND;

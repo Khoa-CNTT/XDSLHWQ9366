@@ -22,7 +22,7 @@ public class HocVien {
     private LocalDate ngaySinh;
 
     @Column(name = "GIOITINH", columnDefinition = "BOOLEAN")
-    private boolean gioiTinh;
+    private Boolean gioiTinh;
 
     @Column(name = "SOCMND", columnDefinition = "VARCHAR(255)")
     private String soCMND;
