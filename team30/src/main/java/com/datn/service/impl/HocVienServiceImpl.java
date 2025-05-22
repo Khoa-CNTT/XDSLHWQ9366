@@ -45,7 +45,7 @@ public class HocVienServiceImpl implements HocVienService {
         hocVien.setNguoiNhapThongTin(hocVienAddDTO.getNguoiNhapThongTin());
         hocVien.setGhiChu(hocVienAddDTO.getGhiChu());
 
-        TaiKhoan taiKhoan = this.taiKhoanRepo.findByIdTaiKhoan(hocVienAddDTO.getMaTaiKhoan()).get();
+        TaiKhoan taiKhoan = this.taiKhoanRepo.findById(hocVienAddDTO.getMaTaiKhoan());
         hocVien.setTaiKhoan(taiKhoan);
 
         return this.hocVienRepo.add(hocVien);

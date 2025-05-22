@@ -17,4 +17,6 @@ public interface TaiKhoanRepo {
 
     Optional<TaiKhoan> findByIdTaiKhoan(String id);
 
+    TaiKhoan findById(String maTaiKhoan);
+
 }

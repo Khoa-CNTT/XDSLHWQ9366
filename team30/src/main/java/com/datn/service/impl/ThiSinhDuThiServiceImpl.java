@@ -46,6 +46,7 @@ public class ThiSinhDuThiServiceImpl implements ThiSinhDuThiService {
         entity.setDienDangKy(dto.getDienDangKy());
         entity.setLichThi(this.lichThiRepo.getLichThiById(dto.getMaLichThi()));
         entity.setPhongThi(this.phongHocRepo.findById(dto.getMaPhongThi()));
+        System.out.println(this.phongHocRepo.findById(dto.getMaPhongThi()));
         entity.setDiem(dto.getDiem());
         entity.setXepLoai(dto.getXepLoai());
         entity.setNgayCapChungChi(dto.getNgayCapChungChi());
