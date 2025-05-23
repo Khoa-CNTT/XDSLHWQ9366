@@ -13,7 +13,7 @@ const [lopHocs, setLopHocs] = useState<LopHoc[]>([]);
       const response = await axios.get(`http://localhost:8080/lophoc/pagination?page=${currentPage}&size=${itemsPerPage}`
       );
       setLopHocs(response.data.data.data || []);
-      setTotalPages(response.data.data.totalPages || 1);
+      setTotalPages(response.data.data.data.totalPages || 1);
     } catch {
       setLopHocs([]);
       setTotalPages(1);

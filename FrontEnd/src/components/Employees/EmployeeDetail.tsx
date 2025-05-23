@@ -1,13 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { NhanVien } from "../Type/Types";
-import LinhVucSelect from "../Common/LinhVucSelect";
-import { useLinhVucData } from "../../hooks/useLinhVucData";
 
 export default function EmployeeDetail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { linhVucs } = useLinhVucData();
 
   const [formData, setFormData] = useState(
     location.state?.employee || {
@@ -21,7 +18,7 @@ export default function EmployeeDetail() {
       diaChi: "",
       coQuan: "",
       tinhTrang: "",
-      maLinhVuc: "",
+      chucVu: "",
       ghiChu: "",
     }
   );
@@ -65,12 +62,12 @@ export default function EmployeeDetail() {
                 className="w-1/2 text-gray-700 text-sm font-bold"
                 htmlFor="employeeDetail"
               >
-                Mã Nhân viên
+                Tên nhân viên
               </label>
               <input
                 type="text"
-                name="maNhanVien"
-                value={formData.maNhanVien}
+                name="tenNhanVien"
+                value={formData.tenNhanVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -121,55 +118,25 @@ export default function EmployeeDetail() {
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className="block w-1/2 text-gray-700 text-sm font-bold "
                 htmlFor="employeeDetail"
               >
-                Cơ quan công tác
+                Chức vụ
               </label>
               <input
                 type="text"
-                name="courseName"
-                value={formData.coQuan}
+                name="tenChucVu"
+                value={formData.chucVu.tenChucVu}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="block w-1/2 text-gray-700 text-sm font-bold "
-                htmlFor="employeeDetail"
-              >
-                Lĩnh vực
-              </label>
-              <div className="w-full">
-                <LinhVucSelect
-                  value={formData.maLinhVuc}
-                  onChange={handleChange}
-                  linhVucs={linhVucs}
-                  name="maLinhVuc"
-                />
-              </div>
-            </div>
           </div>
           {/* Cột 2 */}
           <div className="col-end">
-            <div className="flex p-1 w-full justify-center border items-center">
-              <label
-                className="w-1/2 text-gray-700 text-sm font-bold"
-                htmlFor="employeeDetail"
-              >
-                Tên nhân viên
-              </label>
-              <input
-                type="text"
-                name="tenNhanVien"
-                value={formData.tenNhanVien}
-                onChange={handleChange}
-                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label
                 className=" w-1/2 text-gray-700 text-sm font-bold"
@@ -228,12 +195,12 @@ export default function EmployeeDetail() {
                 className="block w-1/2 text-gray-700 text-sm font-bold "
                 htmlFor="employeeDetail"
               >
-                Tình trạng công tác
+                Người nhập thông tin
               </label>
               <input
                 type="text"
-                name="tinhTrang"
-                value={formData.tinhTrang}
+                name="nguoiNhapThongTin"
+                value={formData.nguoiNhapThongTin}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

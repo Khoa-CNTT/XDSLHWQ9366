@@ -160,7 +160,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenKhoaHoc"
-                value={formData.maKhoaHoc}
+                value={formData.khoaHoc?.tenKhoaHoc || ""}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -175,7 +175,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenGiangVien"
-                value={formData.maGiangVien}
+                value={formData.giangVien?.tenGiangVien || ""}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -261,7 +261,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenPhongHoc"
-                value={formData.maPhongHoc}
+                value={formData.phongHoc?.tenPhongHoc || ""}
                 onChange={handleChange}
                 className="form-input block pl-1 w-full bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -276,7 +276,7 @@ export default function ClassDetail() {
               <input
                 type="text"
                 name="tenNhanVien"
-                value={formData.maNhanVien}
+                value={formData.nhanVien?.tenNhanVien || ""}
                 onChange={handleChange}
                 className="form-input block w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

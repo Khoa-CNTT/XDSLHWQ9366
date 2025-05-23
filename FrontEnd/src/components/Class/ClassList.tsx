@@ -144,7 +144,6 @@ export default function ClassList() {
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{lopHoc.maLopHoc}</td>
                 <td className="p-2 text-center">{lopHoc.tenLopHoc}</td>
-
                 <td className="p-2">{lopHoc.lichHoc}</td>
                 <td className="p-2 text-center">{lopHoc.ngayBatDau}</td>
                 <td className="p-2 text-center">{lopHoc.ngayKetThuc}</td>

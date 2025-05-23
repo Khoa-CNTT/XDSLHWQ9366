@@ -9,7 +9,7 @@ export default function EmployeeList() {
   const [search, setSearch] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const [selectedLinhVuc, setSelectedLinhVuc] = useState<string | null>(null);
+  const [selectedChucVu, setSelectedChucVu] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
@@ -19,9 +19,9 @@ export default function EmployeeList() {
   );
   const navigate = useNavigate();
 
-  const uniqueLinhVuc = useMemo(() => {
-    const linhVucList = nhanViens.map((e) => e.maLinhVuc);
-    return Array.from(new Set(linhVucList));
+  const uniqueChucVu = useMemo(() => {
+    const chucVuList = nhanViens.map((e) => e.chucVu);
+    return Array.from(new Set(chucVuList));
   }, [nhanViens]);
 
   //  10 items per page
@@ -31,8 +31,9 @@ export default function EmployeeList() {
     const matchSearch =
       c.maNhanVien?.toLowerCase().includes(search.toLowerCase()) ||
       c.tenNhanVien?.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !selectedLinhVuc || c.maLinhVuc === selectedLinhVuc;
-    return matchSearch && matchLinhVuc;
+    const matchChucVu =
+      !selectedChucVu || c.chucVu.tenChucVu === selectedChucVu;
+    return matchSearch && matchChucVu;
   });
 
   const paginatedList = filteredList.slice(
@@ -41,8 +42,8 @@ export default function EmployeeList() {
   );
 
   // Handle button
-  const handleSelectLinhVuc = (linhVuc: string | null) => {
-    setSelectedLinhVuc(linhVuc);
+  const handleSelectChucVu = (chucVu: string | null) => {
+    setSelectedChucVu(chucVu);
     setIsOpenMenu(false);
   };
 
@@ -94,7 +95,8 @@ export default function EmployeeList() {
               onClick={toggleMenu}
               className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
             >
-              Tất cả danh mục
+              {selectedChucVu ?? "Tất cả chức vụ"}
+
               <svg
                 className="w-4 h-4 ml-12 -mr-1 inline"
                 xmlns="http://www.w3.org/2000/svg"
@@ -109,18 +111,18 @@ export default function EmployeeList() {
             {isOpenMenu && (
               <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
                 <div className="py-1">
-                  {uniqueLinhVuc.map((linhVuc, index) => (
+                  {uniqueChucVu.map((chucVu, index) => (
                     <button
                       key={index}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => handleSelectLinhVuc(linhVuc)}
+                      onClick={() => handleSelectChucVu(chucVu.tenChucVu)}
                     >
-                      {linhVuc}
+                      {chucVu.tenChucVu}
                     </button>
                   ))}
                   <button
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
-                    onClick={() => handleSelectLinhVuc(null)}
+                    onClick={() => handleSelectChucVu(null)}
                   >
                     Tất cả lĩnh vực
                   </button>
@@ -142,7 +144,6 @@ export default function EmployeeList() {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã Nhân viên</th>
               <th className="p-2 border">Tên Nhân viên</th>
               <th className="p-2 border">Số điện thoại</th>
               <th className="p-2 border">Email</th>
@@ -151,15 +152,12 @@ export default function EmployeeList() {
           </thead>
           <tbody>
             {paginatedList.map((nhanvien, index) => (
-              <tr key={nhanvien.maNhanVien} className="border-b">
+              <tr key={nhanvien.soCMND} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{nhanvien.maNhanVien}</td>
                 <td className="p-2 text-center">{nhanvien.tenNhanVien}</td>
                 <td className="p-2 text-center">{nhanvien.soDienThoai}</td>
                 <td className="p-2 text-center">{nhanvien.email}</td>
-                <td className="p-2 text-center">
-                  {nhanvien.linhVuc.tenLinhVuc}
-                </td>
+                <td className="p-2 text-center">{nhanvien.chucVu.tenChucVu}</td>
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(nhanvien)}
