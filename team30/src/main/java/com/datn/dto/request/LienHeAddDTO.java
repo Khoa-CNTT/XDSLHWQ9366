@@ -1,23 +1,18 @@
 package com.datn.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class LienHeAddDTO {
-
-    private String maKhach;
+public class LienHeAddDTO implements Serializable {
     private String hoTen;
     private String email;
     private String soDienThoai;
+
+    @JsonProperty("yKien")
     private String yKien;
     private LocalDate ngayLienHe;
-
-    public String getMaKhach() {
-        return maKhach;
-    }
-
-    public void setMaKhach(String maKhach) {
-        this.maKhach = maKhach;
-    }
 
     public String getHoTen() {
         return hoTen;

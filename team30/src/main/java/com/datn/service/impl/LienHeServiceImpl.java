@@ -44,7 +44,7 @@ public class LienHeServiceImpl implements LienHeService {
         lienHe.setHoTen(lienHeAddDTO.getHoTen());
         lienHe.setEmail(lienHeAddDTO.getEmail());
         lienHe.setSoDienThoai(lienHeAddDTO.getSoDienThoai());
-        lienHe.setyKien(lienHeAddDTO.getYKien());
+        lienHe.setYKien(lienHeAddDTO.getYKien());
         lienHe.setNgayLienHe(lienHeAddDTO.getNgayLienHe());
         return lienHeRepo.save(lienHe);
     }
@@ -57,7 +57,7 @@ public class LienHeServiceImpl implements LienHeService {
             lienHe.setHoTen(lienHeUpdateDTO.getHoTen());
             lienHe.setEmail(lienHeUpdateDTO.getEmail());
             lienHe.setSoDienThoai(lienHeUpdateDTO.getSoDienThoai());
-            lienHe.setyKien(lienHeUpdateDTO.getYKien());
+            lienHe.setYKien(lienHeUpdateDTO.getYKien());
             lienHe.setNgayLienHe(lienHeUpdateDTO.getNgayLienHe());
             return lienHeRepo.save(lienHe);
         }

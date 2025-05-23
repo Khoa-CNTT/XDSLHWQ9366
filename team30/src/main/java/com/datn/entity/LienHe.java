@@ -1,5 +1,6 @@
 package com.datn.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -60,11 +61,11 @@ public class LienHe {
         this.soDienThoai = soDienThoai;
     }
 
-    public String getyKien() {
+    public String getYKien() {
         return yKien;
     }
 
-    public void setyKien(String yKien) {
+    public void setYKien(String yKien) {
         this.yKien = yKien;
     }
 
