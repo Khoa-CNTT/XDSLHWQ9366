@@ -7,7 +7,6 @@ import java.util.*;
 @Service
 public class ChatService {
 
-    // Lưu trữ thông tin khóa học
     private static class Course {
         String code;
         String name;
@@ -114,7 +113,6 @@ public class ChatService {
                     Arrays.asList("firewall", "ids", "security"))
     );
 
-    // Các lĩnh vực và từ khóa tương ứng
     private final Map<String, List<String>> domains = new HashMap<>();
     {
         domains.put("Web Development", Arrays.asList("web", "html", "css", "javascript", "js", "react", "reactjs"));
@@ -128,31 +126,33 @@ public class ChatService {
     public String generateReply(String message) {
         message = message.toLowerCase().trim();
 
-        // Kiểm tra câu hỏi về giá
+        // Giá
         if (message.contains("giá") || message.contains("chi phí") || message.contains("bao nhiêu tiền")) {
             for (Course course : courses) {
                 for (String keyword : course.keywords) {
                     if (message.contains(keyword)) {
-                        return String.format("Khóa học %s (%s) có giá %,d VND.", course.name, course.code, course.price);
+                        return String.format("Khóa học %s (%s) có giá %,d VND.\nChi tiết: http://localhost:8080/khoahoc/getById/%s",
+                                course.name, course.code, course.price, course.code);
                     }
                 }
             }
             return "Vui lòng chỉ rõ khóa học bạn muốn biết giá, ví dụ: 'Giá khóa học HTML là bao nhiêu?'";
         }
 
-        // Kiểm tra câu hỏi về thời lượng
+        // Thời lượng
         if (message.contains("thời lượng") || message.contains("bao lâu") || message.contains("mấy buổi")) {
             for (Course course : courses) {
                 for (String keyword : course.keywords) {
                     if (message.contains(keyword)) {
-                        return String.format("Khóa học %s (%s) kéo dài %d buổi.", course.name, course.code, course.duration);
+                        return String.format("Khóa học %s (%s) kéo dài %d buổi.\nChi tiết: http://localhost:8080/khoahoc/getById/%s",
+                                course.name, course.code, course.duration, course.code);
                     }
                 }
             }
             return "Vui lòng chỉ rõ khóa học bạn muốn biết thời lượng, ví dụ: 'Thời lượng khóa học ReactJS là bao lâu?'";
         }
 
-        // Kiểm tra câu hỏi so sánh
+        // So sánh
         if (message.contains("so sánh") || message.contains("khác nhau") || message.contains("khác biệt")) {
             List<Course> matchedCourses = new ArrayList<>();
             for (Course course : courses) {
@@ -166,15 +166,15 @@ public class ChatService {
             if (matchedCourses.size() >= 2) {
                 StringBuilder response = new StringBuilder("So sánh các khóa học:\n");
                 for (Course course : matchedCourses) {
-                    response.append(String.format("- %s (%s): %s %s Giá: %,d VND, Thời lượng: %d buổi.\n",
-                            course.name, course.code, course.description, course.details, course.price, course.duration));
+                    response.append(String.format("- %s (%s): %s %s Giá: %,d VND, Thời lượng: %d buổi.\nChi tiết: http://localhost:8080/khoahoc/getById/%s\n\n",
+                            course.name, course.code, course.description, course.details, course.price, course.duration, course.code));
                 }
                 return response.toString();
             }
             return "Vui lòng chỉ rõ các khóa học bạn muốn so sánh, ví dụ: 'So sánh HTML và ReactJS'.";
         }
 
-        // Kiểm tra câu hỏi theo lĩnh vực
+        // Theo lĩnh vực
         if (message.contains("lĩnh vực") || message.contains("học gì") || message.contains("bắt đầu")) {
             for (Map.Entry<String, List<String>> domain : domains.entrySet()) {
                 for (String keyword : domain.getValue()) {
@@ -182,7 +182,8 @@ public class ChatService {
                         StringBuilder response = new StringBuilder(String.format("Trong lĩnh vực %s, bạn có thể học các khóa sau:\n", domain.getKey()));
                         for (Course course : courses) {
                             if (course.keywords.stream().anyMatch(k -> domain.getValue().contains(k))) {
-                                response.append(String.format("- %s (%s): %s\n", course.name, course.code, course.description));
+                                response.append(String.format("- %s (%s): %s\nChi tiết: http://localhost:8080/khoahoc/getById/%s\n",
+                                        course.name, course.code, course.description, course.code));
                             }
                         }
                         return response.toString();
@@ -192,28 +193,28 @@ public class ChatService {
             return "Bạn muốn học lĩnh vực nào? Ví dụ: Web, Backend, Mobile, Database, DevOps, hoặc Security.";
         }
 
-        // Kiểm tra câu hỏi về khóa học cụ thể
+        // Thông tin khóa học
         for (Course course : courses) {
             for (String keyword : course.keywords) {
                 if (message.contains(keyword)) {
-                    return String.format("Khóa học %s (%s): %s %s Giá: %,d VND, Thời lượng: %d buổi.",
-                            course.name, course.code, course.description, course.details, course.price, course.duration);
+                    return String.format("Khóa học %s (%s): %s %s Giá: %,d VND, Thời lượng: %d buổi.\nChi tiết: http://localhost:8080/khoahoc/getById/%s",
+                            course.name, course.code, course.description, course.details, course.price, course.duration, course.code);
                 }
             }
         }
 
-        // Câu trả lời mặc định
+        // Mặc định
         return """
                 Xin chào! Mình chưa rõ bạn đang quan tâm đến lĩnh vực nào.
                 Bạn có thể hỏi về các chủ đề sau:
-                
+
                 - Web Development: HTML, CSS, JavaScript, ReactJS
                 - Backend Development: Spring Boot
                 - Mobile Development: Flutter, Android, iOS, React Native
                 - Database: SQL, MySQL, PostgreSQL, SQL Server
                 - DevOps: Git, Jenkins, Docker, Kubernetes, Prometheus, Grafana, Linux
                 - Networking & Security: Mạng máy tính, An toàn mạng, Ethical Hacking, Firewall
-                
+
                 Ví dụ: "Tôi muốn học về lập trình iOS với Swift" hoặc "Giá khóa học SQL là bao nhiêu?"
                 """;
     }
