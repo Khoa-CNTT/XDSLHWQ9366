@@ -1,53 +1,20 @@
-package com.datn.entity;/*
+package com.datn.dto.request;/*
  * @project team30
  * @author Huy
  */
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "PHIEUTHUS")
-public class PhieuThu {
-    @Id
-    @Column(name = "MAPHIEUTHU", length = 255)
-    private String maPhieuThu;
+public class PhieuThuUpdateDTO {
 
-    @Lob
-    @Column(name = "NOIDUNG", columnDefinition = "TEXT")
     private String noiDung;
-
-    @Column(name = "SOTIEN")
     private BigDecimal soTien;
-
-    @Column(name = "NGAYTHU")
     private LocalDate ngayThu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MAKETOANVIEN")
-    private NhanVienKeToan nhanVienKeToan;
-
-    @Column(name = "NGUOINOP", length = 255)
+    private String maKeToanVien;
     private String nguoiNop;
-
-    @Column(name = "DIACHI", length = 255)
     private String diaChi;
-
-    @Lob
-    @Column(name = "GHICHU", columnDefinition = "TEXT")
     private String ghiChu;
-
-    public String getMaPhieuThu() {
-        return maPhieuThu;
-    }
-
-    public void setMaPhieuThu(String maPhieuThu) {
-        this.maPhieuThu = maPhieuThu;
-    }
 
     public String getNoiDung() {
         return noiDung;
@@ -73,12 +40,12 @@ public class PhieuThu {
         this.ngayThu = ngayThu;
     }
 
-    public NhanVienKeToan getNhanVienKeToan() {
-        return nhanVienKeToan;
+    public String getMaKeToanVien() {
+        return maKeToanVien;
     }
 
-    public void setNhanVienKeToan(NhanVienKeToan nhanVienKeToan) {
-        this.nhanVienKeToan = nhanVienKeToan;
+    public void setMaKeToanVien(String maKeToanVien) {
+        this.maKeToanVien = maKeToanVien;
     }
 
     public String getNguoiNop() {

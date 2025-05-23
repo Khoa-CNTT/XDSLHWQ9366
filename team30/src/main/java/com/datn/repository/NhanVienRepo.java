@@ -4,6 +4,7 @@ package com.datn.repository;/*
  */
 
 import com.datn.entity.NhanVien;
+import com.datn.entity.NhanVienKeToan;
 import com.datn.repository.impl.NhanVienRepoImpl;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface NhanVienRepo {
     List<NhanVien> findAll(int pageNumber, int pageSize);
 
     NhanVien findById(String maNhanVien);
+
+    NhanVienKeToan findByIdKT(String maNhanVien);
 
     List<NhanVien> findByTenNhanVien(String tenNhanVien);
 

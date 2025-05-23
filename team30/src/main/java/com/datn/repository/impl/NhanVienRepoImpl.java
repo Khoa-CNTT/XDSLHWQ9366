@@ -4,6 +4,7 @@ package com.datn.repository.impl;/*
  */
 
 import com.datn.entity.NhanVien;
+import com.datn.entity.NhanVienKeToan;
 import com.datn.exception.nhanvien.DuplicateNhanVienException;
 import com.datn.exception.nhanvien.NhanVienNotFoundException;
 import com.datn.repository.NhanVienRepo;
@@ -74,6 +75,17 @@ public class NhanVienRepoImpl implements NhanVienRepo {
 
         query.setParameter("maNhanVien", maNhanVien);
         List<NhanVien> results = query.getResultList();
+
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public NhanVienKeToan findByIdKT(String maNhanVien) {
+        TypedQuery<NhanVienKeToan> query = this.entityManager
+                .createQuery("FROM NhanVienKeToan AS NV WHERE NV.maNhanVien = :maNhanVien", NhanVienKeToan.class);
+
+        query.setParameter("maNhanVien", maNhanVien);
+        List<NhanVienKeToan> results = query.getResultList();
 
         return results.isEmpty() ? null : results.get(0);
     }

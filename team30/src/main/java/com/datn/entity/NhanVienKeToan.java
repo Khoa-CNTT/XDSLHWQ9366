@@ -9,10 +9,18 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "NHANVIENKETOANS")
-@Getter
-@Setter
+
 public class NhanVienKeToan {
+
     @Id
+    @Column(name = "MANHANVIEN", length = 255)
     private String maNhanVien;
 
+    public String getMaNhanVien() {
+        return maNhanVien;
+    }
+
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
+    }
 }
