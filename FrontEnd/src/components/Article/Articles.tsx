@@ -3,37 +3,34 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaiViet } from "../Type/Types";
 import { toast } from "react-toastify"; // 👈 Thêm dòng này
+import { useBaiVietData } from "../../hooks/useBaiVietData";
 
 export default function Articles() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [baiviets, setbaiviet] = useState<BaiViet[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { baiViets, loading } = useBaiVietData(); // Sử dụng hook
   const navigate = useNavigate();
-
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/baiviet/baiviets"
-        );
-        const baivietList = response.data.data || [];
-        setbaiviet(baivietList);
-        setTotalPages(Math.ceil(baivietList.length / itemsPerPage));
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu lĩnh vực:", error);
-        toast.error("❌ Không thể tải danh sách liên hệ!");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Lọc dữ liệu theo search
+  const filteredList = (baiViets || []).filter((c: BaiViet) => {
+    const matchSearch =
+      c.maBaiViet.toLowerCase().includes(search.toLowerCase()) ||
+      c.trangThai.toLowerCase().includes(search.toLowerCase()) ||
+      c.tieuDe.toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
+  });
 
-    fetchCourses();
-  }, [currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+    setTotalPages(Math.ceil(filteredList.length / itemsPerPage));
+  }, [search, filteredList.length]);
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleAdd = () => {
     navigate("/baiviet/add-baiviet");
@@ -48,7 +45,6 @@ export default function Articles() {
     try {
       await axios.delete(`http://localhost:8080/baiviet/delete/${id}`);
       toast.success("🗑️ Xóa liên hệ thành công!");
-      setbaiviet((prev) => prev.filter((baiviet) => baiviet.maBaiViet !== id));
     } catch (error) {
       console.error("Lỗi khi xóa liên hệ:", error);
       toast.error("❌ Xóa liên hệ thất bại!");
@@ -60,14 +56,6 @@ export default function Articles() {
       state: { baiviet },
     });
   };
-
-  // const handleExportExcel = () => {
-  //   const worksheet = XLSX.utils.json_to_sheet(articleList);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachHocVien");
-
-  //   XLSX.writeFile(workbook, "danh_sach_hoc_vien.xlsx");
-  // };
 
   const demoList = useMemo<BaiViet[]>(
     () => [
@@ -95,25 +83,7 @@ export default function Articles() {
     ],
     []
   );
-  // Loại bỏ các giá trị trùng lặp
 
-  //  10 items per page
-  const filteredList = (demoList || []).filter((c: BaiViet) => {
-    const matchSearch =
-      c.maBaiViet.toLowerCase().includes(search.toLowerCase()) ||
-      c.trangThai.toLowerCase().includes(search.toLowerCase()) ||
-      c.tieuDe.toLowerCase().includes(search.toLowerCase());
-
-    return matchSearch;
-  });
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search]);
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
   // }

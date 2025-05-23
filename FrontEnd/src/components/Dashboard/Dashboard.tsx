@@ -1,6 +1,6 @@
 import DashboardChart from "./Chart";
-import UserRolePieChart from "./PieChart";
 import ThuChiChart from "./BarChart";
+import StudentMonthPieChart from "./PieChart";
 
 export default function Dashboard() {
   return (
@@ -8,7 +8,12 @@ export default function Dashboard() {
       <h1 className="text-2xl font-bold">Bảng thống kê</h1>
       <DashboardChart />
       <div className="flex gap-4">
-        <UserRolePieChart />
+        <StudentMonthPieChart
+          maKhoaHoc="KH001"
+          currentPage={1}
+          itemsPerPage={100}
+        />
+
         <ThuChiChart />
       </div>
     </div>

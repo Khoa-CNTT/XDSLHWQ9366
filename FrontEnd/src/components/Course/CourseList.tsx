@@ -11,29 +11,24 @@ export default function CourseList() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { courses } = useCourseData();
+  const [itemsPerPage] = useState(10);
   const { linhVucs } = useLinhVucData();
   const [linhVuc, setLinhVuc] = useState<LinhVuc | null>(null);
   const navigate = useNavigate();
 
-  // Lọc danh sách theo search và lĩnh vực
-  const filteredList = courses.filter((c) => {
+  const { courses, totalPages, refetch } = useCourseData(
+    currentPage,
+    itemsPerPage
+  );
+
+  // Lọc danh sách giảng viên theo tìm kiếm và lĩnh vực
+  const filteredList = courses.filter((khoahoc) => {
     const matchSearch =
-      c.maKhoaHoc.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenKhoaHoc.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc =
-      !linhVuc ||
-      c.maLinhVuc?.toLowerCase() === linhVuc.maLinhVuc.toLowerCase();
+      khoahoc.maKhoaHoc.toLowerCase().includes(search.toLowerCase()) ||
+      khoahoc.tenKhoaHoc.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !linhVuc || khoahoc.maLinhVuc === linhVuc.maLinhVuc;
     return matchSearch && matchLinhVuc;
   });
-
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   const handleAdd = () => {
     navigate("/khoahoc/add-khoahoc");
@@ -44,10 +39,10 @@ export default function CourseList() {
       "Bạn có chắc chắn muốn xóa Khoá học này?"
     );
     if (!confirmDelete) return;
-
     try {
       await axios.delete(`http://localhost:8080/khoahoc/delete/${id}`);
       alert("Xóa Khoá học thành công!");
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa Khoá học:", error);
       alert("Xóa Khoá học thất bại!");
@@ -144,7 +139,7 @@ export default function CourseList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((course, index) => (
+            {filteredList.map((course, index) => (
               <tr key={course.maKhoaHoc} className="border-b">
                 <td className="p-2 text-center">
                   {(currentPage - 1) * itemsPerPage + index + 1}

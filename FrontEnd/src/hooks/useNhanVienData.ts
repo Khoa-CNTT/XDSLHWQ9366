@@ -1,47 +1,36 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState,  useCallback } from "react";
 import axios from "axios";
 import { NhanVien } from "../components/Type/Types";
 
-export function useNhanVienData() {
-  const [nhanViens, setNhanViens] = useState<NhanVien[]>([]);
+export function useNhanVienData(currentPage: number, itemsPerPage: number) {
+  const [totalPages, setTotalPages] = useState(1);
+
+ const [nhanViens, setNhanViens] = useState<NhanVien[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const sampleNhanViens = useMemo<NhanVien[]>(
-    () => [
-      {
-        maNhanVien: "NV001",
-        tenNhanVien: "Nguyễn Văn A",
-        ngaySinh: "1990-01-01",
-        gioiTinh: true,
-        soCMND: "123456789",
-        soDienThoai: "0901234567",
-        email: "a@example.com",
-        diaChi: "Hà Nội",
-        coQuan: "Công ty ABC",
-        tinhTrang: "Đang làm",
-        maLinhVuc: "LV01",
-        ghiChu: "Nhân viên hành chính",
-      },
-    ],
-    []
-  );
+
+  const fetchNhanViens = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/nhanvien/pagination?page=${currentPage}&size=${itemsPerPage}`
+      );
+      setNhanViens(response.data.data || []);
+      
+      setTotalPages(response.data.data.totalPages || 1);
+    } catch {
+      setNhanViens([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
-    const fetchNhanViens = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("http://localhost:8080/nhanvien/nhanviens");
-        setNhanViens(response.data?.data || []);
-        console.log("NhanVien data:", response.data?.data);
-      } catch {
-        setNhanViens([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchNhanViens();
-  }, []);
+  }, [fetchNhanViens]);
 
-  const displayNhanViens = nhanViens.length > 0 ? nhanViens : sampleNhanViens;
-  return { nhanViens: displayNhanViens, loading };
+  return { nhanViens, loading, totalPages, refetch: fetchNhanViens };
+ 
+
 }

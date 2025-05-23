@@ -11,12 +11,12 @@ export default function Contestants() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage] = useState(10);
   const [dienDangKy, setDienDangKy] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Lấy dữ liệu từ hook
-  const { thiSinhs, loading, refetch } = useThiSinhData(
+  const { thiSinhs, totalPages, refetch } = useThiSinhData(
     currentPage,
     itemsPerPage
   );
@@ -37,13 +37,6 @@ export default function Contestants() {
     const matchDienDangKy = !dienDangKy || c.dienDangKy === dienDangKy;
     return matchSearch && matchDienDangKy;
   });
-
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   // Handle button
   const handleAdd = () => {
@@ -170,7 +163,7 @@ export default function Contestants() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((thisinh, index) => (
+            {filteredList.map((thisinh, index) => (
               <tr key={thisinh.maThiSinhDuThi} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{thisinh.maThiSinhDuThi}</td>

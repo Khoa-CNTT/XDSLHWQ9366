@@ -11,13 +11,34 @@ export default function EmployeeList() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [selectedLinhVuc, setSelectedLinhVuc] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { nhanViens, loading } = useNhanVienData();
+  const [itemsPerPage] = useState(10);
+
+  const { nhanViens, totalPages, refetch } = useNhanVienData(
+    currentPage,
+    itemsPerPage
+  );
   const navigate = useNavigate();
 
   const uniqueLinhVuc = useMemo(() => {
     const linhVucList = nhanViens.map((e) => e.maLinhVuc);
     return Array.from(new Set(linhVucList));
   }, [nhanViens]);
+
+  //  10 items per page
+  const displayList = nhanViens;
+
+  const filteredList = displayList.filter((c) => {
+    const matchSearch =
+      c.maNhanVien?.toLowerCase().includes(search.toLowerCase()) ||
+      c.tenNhanVien?.toLowerCase().includes(search.toLowerCase());
+    const matchLinhVuc = !selectedLinhVuc || c.maLinhVuc === selectedLinhVuc;
+    return matchSearch && matchLinhVuc;
+  });
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Handle button
   const handleSelectLinhVuc = (linhVuc: string | null) => {
@@ -37,6 +58,7 @@ export default function EmployeeList() {
     try {
       await axios.delete(`http://localhost:8080/nhanvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
       alert("Xóa giảng viên thất bại!");
@@ -49,24 +71,6 @@ export default function EmployeeList() {
     });
   };
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-
-  //  10 items per page
-  const itemsPerPage = 10;
-  const displayList = nhanViens;
-  const totalPages = Math.ceil(displayList.length / itemsPerPage);
-
-  const filteredList = displayList.filter((c) => {
-    const matchSearch =
-      c.maNhanVien?.toLowerCase().includes(search.toLowerCase()) ||
-      c.tenNhanVien?.toLowerCase().includes(search.toLowerCase());
-    const matchLinhVuc = !selectedLinhVuc || c.maLinhVuc === selectedLinhVuc;
-    return matchSearch && matchLinhVuc;
-  });
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
@@ -146,17 +150,19 @@ export default function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((employee, index) => (
-              <tr key={employee.maNhanVien} className="border-b">
+            {paginatedList.map((nhanvien, index) => (
+              <tr key={nhanvien.maNhanVien} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{employee.maNhanVien}</td>
-                <td className="p-2 text-center">{employee.tenNhanVien}</td>
-                <td className="p-2 text-center">{employee.soDienThoai}</td>
-                <td className="p-2 text-center">{employee.email}</td>
-                <td className="p-2 text-center">{employee.maLinhVuc}</td>
+                <td className="p-2 text-center">{nhanvien.maNhanVien}</td>
+                <td className="p-2 text-center">{nhanvien.tenNhanVien}</td>
+                <td className="p-2 text-center">{nhanvien.soDienThoai}</td>
+                <td className="p-2 text-center">{nhanvien.email}</td>
+                <td className="p-2 text-center">
+                  {nhanvien.linhVuc.tenLinhVuc}
+                </td>
                 <td className="p-2 text-center">
                   <button
-                    onClick={() => handleView(employee)}
+                    onClick={() => handleView(nhanvien)}
                     className=" mx-2 border p-2 rounded-md items-center align-middle"
                   >
                     <svg
@@ -176,7 +182,7 @@ export default function EmployeeList() {
                   </button>
                   <button
                     className="border p-2 rounded-md items-center align-middle"
-                    onClick={() => handleDelete(employee.maNhanVien)}
+                    onClick={() => handleDelete(nhanvien.maNhanVien)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

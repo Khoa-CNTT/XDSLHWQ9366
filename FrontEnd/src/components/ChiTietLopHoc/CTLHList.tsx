@@ -21,11 +21,11 @@ export default function CTLHList() {
   const navigate = useNavigate();
 
   // Lọc dữ liệu theo search và tình trạng
-  const filteredList = ctlhList.filter((c: ChiTietLopHoc) => {
+  const filteredList = ctlhList.filter((c) => {
     const matchSearch =
-      c.maLopHoc.toLowerCase().includes(search.toLowerCase()) ||
-      c.maHocVien.toLowerCase().includes(search.toLowerCase());
-    const matchLopHoc = !lophoc || c.maLopHoc === lophoc;
+      c.lopHoc.tenLopHoc?.toLowerCase().includes(search.toLowerCase()) ||
+      c.hocVien?.tenHocVien?.toLowerCase().includes(search.toLowerCase());
+    const matchLopHoc = !lophoc || c.lopHoc.tenLopHoc === lophoc;
     return matchSearch && matchLopHoc;
   });
 
@@ -100,14 +100,14 @@ export default function CTLHList() {
                 <div className="py-1">
                   {ctlhList.map((item) => (
                     <button
-                      key={item.maLopHoc}
+                      key={item.lopHoc.maLopHoc}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        setLopHoc(item.maLopHoc);
+                        setLopHoc(item.lopHoc.maLopHoc);
                         setIsOpenMenu(false);
                       }}
                     >
-                      {item.maLopHoc}
+                      {item.lopHoc.maLopHoc}
                     </button>
                   ))}
                   <button
@@ -137,7 +137,7 @@ export default function CTLHList() {
           <thead>
             <tr className="bg-gray-200">
               <th className="p-2 border">STT</th>
-              <th>Mã lớp học</th>
+              <th>Tên học viên</th>
               <th className="p-2 border">Tên Lớp Học</th>
               <th className="p-2 border">Lịch Học</th>
               <th className="p-2 border">Ngày Bắt Đầu</th>
@@ -149,10 +149,11 @@ export default function CTLHList() {
             {paginatedList.map((chitiet, index) => (
               <tr key={chitiet.maCtlh} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
-                <td className="p-2 text-center">{chitiet.maCtlh}</td>
-                <td className="p-2 text-center">{chitiet.maHocVien}</td>
+                <td className="p-2 text-center">
+                  {chitiet.hocVien?.maHocVien}
+                </td>
 
-                <td className="p-2">{chitiet.maLopHoc}</td>
+                <td className="p-2">{chitiet.lopHoc.tenLopHoc}</td>
                 <td className="p-2 text-center">{chitiet.hocPhi}</td>
                 <td className="p-2 text-center">{chitiet.mienGiamHocPhi}</td>
                 <td className="p-2 text-center">{chitiet.soTienThu}</td>

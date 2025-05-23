@@ -17,6 +17,7 @@ export function useChiTietLopHocData(currentPage: number, itemsPerPage: number) 
         `http://localhost:8080/ctlh/pagination?page=${currentPage}&size=${itemsPerPage}`
       );
       setCtlhList(response.data.data.data || []);
+      
       setTotalPages(response.data.data.totalPages || 1);
     } catch {
       setCtlhList([]);

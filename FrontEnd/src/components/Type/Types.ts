@@ -37,10 +37,10 @@ export interface NhanVien {
   soDienThoai: string;
   email: string;
   diaChi: string;
-  coQuan: string;
-  tinhTrang: string;
-  maLinhVuc: string;
+  chucVu: string;
+  nguoiNhapThongTin: string;
   ghiChu: string;
+  uriHinhDaiDien: string;
 };
 
 export interface HocVien  {
@@ -58,6 +58,7 @@ export interface HocVien  {
   ghiChu: string;
   urlHinhDaiDien: string | null;
   ngayCapNhatGanNhat: string;
+  maTaiKhoan: string;
   };
 
   export interface LopHoc {
@@ -165,16 +166,17 @@ export interface TaiKhoan {
           
 export interface ChiTietLopHoc {
   maCtlh: string;
-  maHocVien: string;
-  maLopHoc:string;
-  hocPhi: string;
-  mienGiamHocPhi: string;
-  soTienThu: string;
-diem: string;
-ngayCapChungChi: string;
-xepLoai: string;
-diemDanh: string;
-ghiChu: string;
+  hocVien: HocVien;
+  lopHoc: LopHoc;
+  hocPhi: number;
+  mienGiamHocPhi: number;
+  daThuHocPhi: boolean;
+  soTienThu: number;
+  diem: number;
+  ngayCapChungChi: string | null;
+  xepLoai: string | null;
+  diemDanh: string | null;
+  ghiChu: string | null;
 }
 
   

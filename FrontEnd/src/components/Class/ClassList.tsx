@@ -26,10 +26,6 @@ export default function ClassList() {
     return matchSearch && matchThanhToan;
   });
 
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   // Handle button
@@ -45,7 +41,6 @@ export default function ClassList() {
     try {
       await axios.delete(`http://localhost:8080/lophoc/delete/${id}`);
       alert("Xóa lớp học thành công!");
-
       await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa lớp học:", error);
@@ -144,7 +139,7 @@ export default function ClassList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((lopHoc, index) => (
+            {filteredList.map((lopHoc, index) => (
               <tr key={lopHoc.maLopHoc} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{lopHoc.maLopHoc}</td>

@@ -16,8 +16,8 @@ export default function ExamList() {
   const navigate = useNavigate();
 
   // Lấy dữ liệu từ hook
-  const { lichThis, loading } = useLichThiData();
-  const { linhVucs, loading: loadingLinhVuc } = useLinhVucData();
+  const { lichThis, loading, refetch } = useLichThiData();
+  const { linhVucs } = useLinhVucData();
 
   // Handle button
   const handleAdd = () => {
@@ -32,6 +32,7 @@ export default function ExamList() {
     try {
       await axios.delete(`http://localhost:8080/lichthi/delete/${id}`);
       alert("Xóa lịch thi thành công!");
+      await refetch();
     } catch (error) {
       console.error("Lỗi khi xóa lịch thi:", error);
       alert("Xóa lịch thi thất bại!");

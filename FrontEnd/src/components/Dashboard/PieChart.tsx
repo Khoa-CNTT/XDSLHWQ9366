@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   PieChart,
   Pie,
@@ -8,62 +7,80 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { format, parseISO } from "date-fns";
+import { useChiTietLopHocData } from "../../hooks/useChiTietLopHocData";
 
-const COLORS = ["#020617", "#ff8f00", "#00897b", "#d81b60", "#1e88e5"];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#AA47BC",
+  "#29B6F6",
+];
 
-export default function UserRolePieChart() {
-  const [data, setData] = useState([]);
+interface Props {
+  maKhoaHoc: string;
+  currentPage: number;
+  itemsPerPage: number;
+}
 
-  const demoList = useMemo(
-    () => [
-      {
-        role: "Admin",
-        count: 2,
-      },
-      {
-        role: "Lecture",
-        count: 10,
-      },
-      {
-        role: "Finance",
-        count: 4,
-      },
-      {
-        role: "Student",
-        count: 40,
-      },
-    ],
-    []
-  );
-  const chartData = data.length > 0 ? data : demoList;
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/stats/users/roles")
-      .then((res) => setData(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+export default function StudentMonthPieChart({
+  maKhoaHoc,
+  currentPage,
+  itemsPerPage,
+}: Props) {
+  const { ctlhList, loading } = useChiTietLopHocData(currentPage, itemsPerPage);
+
+  const chartData = useMemo(() => {
+    if (!ctlhList || ctlhList.length === 0)
+      return [
+        { month: "01/2025", count: 5 },
+        { month: "02/2025", count: 8 },
+        { month: "03/2025", count: 4 },
+      ];
+
+    const filtered = ctlhList.filter((ct) => ct.lopHoc.maKhoaHoc === maKhoaHoc);
+
+    const monthMap: Record<string, number> = {};
+    filtered.forEach((ct) => {
+      const date = parseISO(ct.lopHoc.ngayBatDau);
+      const month = format(date, "MM/yyyy");
+      monthMap[month] = (monthMap[month] || 0) + 1;
+    });
+
+    return Object.entries(monthMap).map(([month, count]) => ({
+      month,
+      count,
+    }));
+  }, [ctlhList, maKhoaHoc]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
-      <h2 className="text-xl font-bold mb-4">Tỉ lệ vai trò người dùng</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="count"
-            nameKey="role"
-            cx="50%"
-            cy="50%"
-            outerRadius={120}
-          >
-            {chartData.map((_, i) => (
-              <Cell key={i} fill={COLORS[i % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
+      <h2 className="text-xl font-bold mb-4">Số học viên theo tháng</h2>
+      {loading ? (
+        <p>Đang tải dữ liệu...</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="count"
+              nameKey="month"
+              cx="50%"
+              cy="50%"
+              outerRadius={120}
+              label={({ name }) => name}
+            >
+              {chartData.map((_, i) => (
+                <Cell key={i} fill={COLORS[i % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }

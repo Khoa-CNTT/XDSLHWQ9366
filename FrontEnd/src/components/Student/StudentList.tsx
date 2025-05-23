@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HocVien } from "../Type/Types";
 import { exportHocVienToExcel } from "../../Service.tsx/ExportExcel/HocVienExp";
@@ -7,26 +7,15 @@ import axios from "axios";
 
 export default function StudentList() {
   const [search, setSearch] = useState("");
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const [selectedTinhTrang, setSelectedTinhTrang] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+
   const navigate = useNavigate();
 
   // Sử dụng hook để lấy dữ liệu
-  const { hocViens, loading } = useHocVienData();
-
-  const tinhTrang = useMemo(
-    () => [
-      { id: "danghoc", name: "Đang học" },
-      { id: "nghihoc", name: "Nghỉ học" },
-      { id: "datotnghiep", name: "Đã tốt nghiệp" },
-    ],
-    []
+  const { hocViens, loading, totalPages, refetch } = useHocVienData(
+    currentPage,
+    itemsPerPage
   );
 
   // Lọc danh sách theo search và tình trạng
@@ -34,17 +23,9 @@ export default function StudentList() {
     const matchSearch =
       c.tenHocVien.toLowerCase().includes(search.toLowerCase()) ||
       c.maHocVien.toLowerCase().includes(search.toLowerCase());
-    const matchTinhTrang =
-      !selectedTinhTrang || c.tinhTrangHocTap === selectedTinhTrang.id;
-    return matchSearch && matchTinhTrang;
+    return matchSearch;
   });
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   // Handle button
   const handleAdd = () => {
     navigate("/hocvien/add-hocvien");
@@ -58,6 +39,7 @@ export default function StudentList() {
     try {
       await axios.delete(`http://localhost:8080/hocvien/delete/${id}`);
       alert("Xóa giảng viên thành công!");
+      refetch();
     } catch (error) {
       console.error("Lỗi khi xóa giảng viên:", error);
       alert("Xóa giảng viên thất bại!");
@@ -69,7 +51,6 @@ export default function StudentList() {
       state: { student },
     });
   };
-  const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   // if (loading) {
   //   return <div>Đang tải dữ liệu...</div>;
@@ -86,52 +67,6 @@ export default function StudentList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="relative" ref={menuRef}>
-            {/* Button */}
-            <button
-              onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none"
-            >
-              {selectedTinhTrang ? selectedTinhTrang.name : "Tất cả học viên"}
-              <svg
-                className="w-4 h-4 ml-12 -mr-1 inline"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path fillRule="evenodd" d="M10 12l-5-5h10l-5 5z" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpenMenu && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  {tinhTrang.map((tinhTrang) => (
-                    <button
-                      key={tinhTrang.id}
-                      onClick={() => {
-                        setSelectedTinhTrang(tinhTrang);
-                        setIsOpenMenu(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {tinhTrang.name}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => {
-                      setSelectedTinhTrang(null);
-                      setIsOpenMenu(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
-                  >
-                    Tất cả học viên
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
 
           <button
             onClick={handleAdd}
@@ -154,7 +89,7 @@ export default function StudentList() {
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((student, index) => (
+            {filteredList.map((student, index) => (
               <tr key={student.maHocVien} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">{student.maHocVien}</td>
@@ -162,10 +97,7 @@ export default function StudentList() {
 
                 <td className="p-2 text-center">{student.soDienThoai}</td>
                 <td className="p-2 text-center">{student.email}</td>
-                <td className="p-2 text-center">
-                  {tinhTrang.find((tt) => tt.id === student.tinhTrangHocTap)
-                    ?.name || "Không xác định"}
-                </td>
+                <td className="p-2 text-center">{student.tinhTrangHocTap} </td>
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(student)}
