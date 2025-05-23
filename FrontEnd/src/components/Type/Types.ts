@@ -71,7 +71,7 @@ export interface LopHoc {
   daThanhToan: string;
   khoaHoc: KhoaHoc;
   phongHoc: PhongHoc;
-  giangVien : GiangVien;
+  giangVien: GiangVien;
   nhanVien: NhanVien;
   ghiChu: string;
 }
@@ -142,7 +142,7 @@ export interface LienHe {
   hoTen: string;
   soDienThoai: string;
   email: string;
-  yKien: string;
+  ykien: string;
   ngayLienHe: string;
 }
 
@@ -153,10 +153,11 @@ export interface BaiViet {
   noiDungTomTat: string;
   noiDung: string;
   luongTruyCap: string;
-  trangThai: string;
+  trangThai: boolean;
   ngayDang: string;
   menu: string;
   nhanVienId: string;
+  lanCapNhatCuoiCung: string;
 }
 
 export interface TaiKhoan {

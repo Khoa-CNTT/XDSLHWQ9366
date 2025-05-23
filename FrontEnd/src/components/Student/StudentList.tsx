@@ -21,8 +21,8 @@ export default function StudentList() {
   // Lọc danh sách theo search và tình trạng
   const filteredList = hocViens.filter((c) => {
     const matchSearch =
-      c.tenHocVien.toLowerCase().includes(search.toLowerCase()) ||
-      c.maHocVien.toLowerCase().includes(search.toLowerCase());
+      c.tenHocVien?.toLowerCase().includes(search.toLowerCase()) ||
+      c.maHocVien?.toLowerCase().includes(search.toLowerCase());
     return matchSearch;
   });
 

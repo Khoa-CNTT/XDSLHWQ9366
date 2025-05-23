@@ -163,7 +163,7 @@ export default function AddArticle() {
             <input
               type="text"
               name="trangThai"
-              value={formData.trangThai}
+              value={formData.trangThai ? "true" : "false"}
               onChange={handleChange}
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />

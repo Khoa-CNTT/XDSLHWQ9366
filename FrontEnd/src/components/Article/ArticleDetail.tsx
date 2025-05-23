@@ -10,39 +10,53 @@ export default function ArticleDetail() {
     location.state?.baiviet || {
       maBaiViet: "",
       tieuDe: "",
-      luongTruyCap: "",
-      trangThai: "",
+      uriHinhAnhMinhHoa: "",
+      noiDungTomTat: "",
+      noiDung: "",
       ngayDang: "",
+      nhanVienId: "",
+      menu: "",
+      trangThai: false,
+      lanCapNhatCuoiCung: "",
     }
   );
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox"
+          ? (e.target as HTMLInputElement).checked
+          : type === "select-one" && name === "trangThai"
+          ? value === "true"
+          : value,
+    }));
   };
 
   const handleSave = async () => {
-    if (!formData.hoTen || !formData.soDienThoai || !formData.email) {
-      toast.warning("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email.");
-      return;
-    }
-
     try {
+      const payload = {
+        ...formData,
+        lanCapNhatCuoiCung:
+          formData.lanCapNhatCuoiCung || new Date().toISOString().slice(0, 10),
+      };
       const res = await fetch(
-        `http://localhost:8080/baiviet/update/${formData.maKhach}`,
+        `http://localhost:8080/baiviet/update/${formData.maBaiViet}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Cập nhật thất bại");
+      const result = await res.json();
+
+      if (!res.ok || result.status !== 200) {
+        throw new Error(result.message || "Cập nhật thất bại");
       }
 
       toast.success("✅ Cập nhật thành công!");
@@ -52,7 +66,6 @@ export default function ArticleDetail() {
       toast.error("❌ Cập nhật thất bại!");
     }
   };
-
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
       "Bạn có chắc chắn muốn xóa liên hệ này?"
@@ -118,6 +131,40 @@ export default function ArticleDetail() {
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
             </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Ảnh minh họa
+              </label>
+              <input
+                type="text"
+                name="uriHinhAnhMinhHoa"
+                value={formData.uriHinhAnhMinhHoa}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Nội dung tóm tắt
+              </label>
+              <textarea
+                name="noiDungTomTat"
+                value={formData.noiDungTomTat}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Nội dung
+              </label>
+              <textarea
+                name="noiDung"
+                value={formData.noiDung}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
           </div>
 
           <div className="col-end">
@@ -135,12 +182,36 @@ export default function ArticleDetail() {
             </div>
             <div className="flex p-1 w-full justify-center border items-center">
               <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Menu
+              </label>
+              <input
+                type="text"
+                name="menu"
+                value={formData.menu}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Nhân viên ID
+              </label>
+              <input
+                type="text"
+                name="nhanVienId"
+                value={formData.nhanVienId}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
                 Trạng thái
               </label>
               <input
                 type="text"
                 name="trangThai"
-                value={formData.trangThai}
+                value={formData.trangThai ? "true" : "false"}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
@@ -153,6 +224,18 @@ export default function ArticleDetail() {
                 type="date"
                 name="ngayDang"
                 value={formData.ngayDang}
+                onChange={handleChange}
+                className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+              />
+            </div>
+            <div className="flex p-1 w-full justify-center border items-center">
+              <label className="w-1/2 text-gray-700 text-sm font-bold">
+                Lần cập nhật cuối
+              </label>
+              <input
+                type="date"
+                name="lanCapNhatCuoiCung"
+                value={formData.lanCapNhatCuoiCung || ""}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
               />
