@@ -1,26 +1,28 @@
 package com.datn.dto.request;
 
-/*
- * @project team30
- * @author Huy
- */
-
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class PhieuThuAddDTO {
-
+public class PhieuChiUpdateDTO {
+    @NotNull
     private String noiDung;
+
+    @NotNull
     private BigDecimal soTien;
-    private LocalDate ngayThu;
+
+    @NotNull
+    private LocalDate ngayChi;
+
+    private String nguoiNhan;
+    private String diaChi;
+    private String ghiChu;
 
     @NotNull
     private String maKeToanVien;
-    private String nguoiNop;
-    private String diaChi;
-    private String ghiChu;
 
     public String getNoiDung() {
         return noiDung;
@@ -38,28 +40,20 @@ public class PhieuThuAddDTO {
         this.soTien = soTien;
     }
 
-    public LocalDate getNgayThu() {
-        return ngayThu;
+    public LocalDate getNgayChi() {
+        return ngayChi;
     }
 
-    public void setNgayThu(LocalDate ngayThu) {
-        this.ngayThu = ngayThu;
+    public void setNgayChi(LocalDate ngayChi) {
+        this.ngayChi = ngayChi;
     }
 
-    public String getMaKeToanVien() {
-        return maKeToanVien;
+    public String getNguoiNhan() {
+        return nguoiNhan;
     }
 
-    public void setMaKeToanVien(String maKeToanVien) {
-        this.maKeToanVien = maKeToanVien;
-    }
-
-    public String getNguoiNop() {
-        return nguoiNop;
-    }
-
-    public void setNguoiNop(String nguoiNop) {
-        this.nguoiNop = nguoiNop;
+    public void setNguoiNhan(String nguoiNhan) {
+        this.nguoiNhan = nguoiNhan;
     }
 
     public String getDiaChi() {
@@ -76,5 +70,13 @@ public class PhieuThuAddDTO {
 
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    public String getMaKeToanVien() {
+        return maKeToanVien;
+    }
+
+    public void setMaKeToanVien(String maKeToanVien) {
+        this.maKeToanVien = maKeToanVien;
     }
 }

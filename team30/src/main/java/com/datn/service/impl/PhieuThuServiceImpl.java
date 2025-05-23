@@ -4,6 +4,7 @@ import com.datn.dto.request.PhieuThuAddDTO;
 import com.datn.dto.request.PhieuThuUpdateDTO;
 import com.datn.entity.NhanVien;
 import com.datn.entity.NhanVienKeToan;
+import com.datn.entity.PhieuChi;
 import com.datn.entity.PhieuThu;
 import com.datn.repository.NhanVienRepo;
 import com.datn.repository.PhieuThuRepo;
@@ -76,6 +77,8 @@ public class PhieuThuServiceImpl implements PhieuThuService {
     @Override
     @Transactional
     public void deletePhieuThu(String id) {
+        PhieuThu pt = phieuThuRepo.findById(id);
+        if (pt == null) throw new RuntimeException("Không tìm thấy phiếu chi để xóa");
         phieuThuRepo.deleteById(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.datn.repository.impl;
 
+import com.datn.entity.PhieuChi;
 import com.datn.entity.PhieuThu;
 import com.datn.repository.PhieuThuRepo;
 import jakarta.persistence.EntityManager;
@@ -36,9 +37,10 @@ public class PhieuThuRepoImpl implements PhieuThuRepo {
 
     @Override
     public void deleteById(String id) {
-        PhieuThu pt = findById(id);
+        PhieuThu pt = entityManager.find(PhieuThu.class, id);
         if (pt != null) {
             entityManager.remove(pt);
+            entityManager.flush();
         }
     }
 }

@@ -3,6 +3,8 @@ package com.datn.dto.request;/*
  * @author Huy
  */
 
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -11,6 +13,8 @@ public class PhieuThuUpdateDTO {
     private String noiDung;
     private BigDecimal soTien;
     private LocalDate ngayThu;
+
+    @NotNull
     private String maKeToanVien;
     private String nguoiNop;
     private String diaChi;
