@@ -11,9 +11,13 @@ export default function AddArticle() {
       location.state?.baiviet || {
         maBaiViet: "",
         tieuDe: "",
-        luongTruyCap: "",
-        trangThai: "",
+        uriHinhAnhMinhHoa: "",
+        noiDungTomTat: "",
+        noiDung: "",
         ngayDang: "",
+        nhanVienId: "",
+        menu: "",
+        trangThai: false,
       }
   );
 
@@ -32,29 +36,27 @@ export default function AddArticle() {
     setFormData((prev: BaiViet) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
+  const handleAdd = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/baiviet/update/${formData.maBaiViet}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("http://localhost:8080/baiviet/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      if (!response.ok) {
-        throw new Error("Cập nhật bài viết thất bại!");
+      const result = await response.json();
+
+      if (!response.ok || result.status !== 200) {
+        throw new Error(result.message || "Thêm bài viết thất bại!");
       }
 
-      alert("Cập nhật bài viết thành công!");
-      console.log("Dữ liệu đã cập nhật:", formData);
+      alert("Tạo bài viết thành công!");
       navigate(-1);
     } catch (error) {
-      console.error("Lỗi khi cập nhật bài viết:", error);
-      alert("Đã xảy ra lỗi khi cập nhật bài viết!");
+      console.error("Lỗi khi thêm bài viết:", error);
+      alert("Đã xảy ra lỗi khi thêm bài viết!");
     }
   };
 
@@ -106,16 +108,50 @@ export default function AddArticle() {
             />
           </div>
         </div>
+        <div className="flex p-1 w-full justify-center border items-center">
+          <label className="w-1/2 text-gray-700 text-sm font-bold">
+            Ảnh minh họa
+          </label>
+          <input
+            type="text"
+            name="uriHinhAnhMinhHoa"
+            value={formData.uriHinhAnhMinhHoa}
+            onChange={handleChange}
+            className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+          />
+        </div>
+        <div className="flex p-1 w-full justify-center border items-center">
+          <label className="w-1/2 text-gray-700 text-sm font-bold">
+            Nội dung tóm tắt
+          </label>
+          <textarea
+            name="noiDungTomTat"
+            value={formData.noiDungTomTat}
+            onChange={handleChange}
+            className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+          />
+        </div>
+        <div className="flex p-1 w-full justify-center border items-center">
+          <label className="w-1/2 text-gray-700 text-sm font-bold">
+            Nội dung
+          </label>
+          <textarea
+            name="noiDung"
+            value={formData.noiDung}
+            onChange={handleChange}
+            className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+          />
+        </div>
 
         <div className="col-end">
           <div className="flex p-1 w-full justify-center border items-center">
             <label className="w-1/2 text-gray-700 text-sm font-bold">
-              Lượng truy cập
+              Nhân viên ID
             </label>
             <input
               type="text"
-              name="luongTruyCap"
-              value={formData.luongTruyCap}
+              name="nhanVienId"
+              value={formData.nhanVienId}
               onChange={handleChange}
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />
@@ -128,6 +164,18 @@ export default function AddArticle() {
               type="text"
               name="trangThai"
               value={formData.trangThai}
+              onChange={handleChange}
+              className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
+            />
+          </div>
+          <div className="flex p-1 w-full justify-center border items-center">
+            <label className="w-1/2 text-gray-700 text-sm font-bold">
+              Menu
+            </label>
+            <input
+              type="text"
+              name="menu"
+              value={formData.menu}
               onChange={handleChange}
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />
@@ -149,7 +197,7 @@ export default function AddArticle() {
       <div className="flex justify-center p-4 gap-4">
         <button
           type="button"
-          onClick={handleSave}
+          onClick={handleAdd}
           className="w-32 p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
           Lưu

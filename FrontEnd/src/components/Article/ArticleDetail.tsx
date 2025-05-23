@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BaiViet } from "../Type/Types";
-import { toast } from "react-toastify"; // 👈 Thêm dòng này
+import { toast } from "react-toastify";
 
 export default function ArticleDetail() {
   const location = useLocation();
