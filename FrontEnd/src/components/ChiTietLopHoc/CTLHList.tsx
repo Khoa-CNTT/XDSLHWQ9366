@@ -29,10 +29,6 @@ export default function CTLHList() {
     return matchSearch && matchLopHoc;
   });
 
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
 
   // Handle button
@@ -55,9 +51,9 @@ export default function CTLHList() {
     }
   };
 
-  const handleView = (chitiet: ChiTietLopHoc) => {
-    navigate(`/ctlophoc/get-ctlophoc/${chitiet.maCtlh}`, {
-      state: { chitiet },
+  const handleView = (ctlh: ChiTietLopHoc) => {
+    navigate(`/ctlophoc/get-ctlophoc/${ctlh.maCtlh}`, {
+      state: { ctlh },
     });
   };
 
@@ -139,24 +135,28 @@ export default function CTLHList() {
               <th className="p-2 border">STT</th>
               <th>Tên học viên</th>
               <th className="p-2 border">Tên Lớp Học</th>
-              <th className="p-2 border">Lịch Học</th>
-              <th className="p-2 border">Ngày Bắt Đầu</th>
-              <th className="p-2 border">Ngày Kết Thúc</th>
-              <th className="p-2 border">Tình Trạng</th>
+              <th className="p-2 border">Học phí</th>
+              <th className="p-2 border">Ngày cấp chứng chỉ</th>
+              <th className="p-2 border">Xếp loại</th>
+              <th className="p-2 border">Điểm </th>
+              <th className="p-2 border">Điểm danh</th>
+              <th className="p-2 border">Thao tác</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedList.map((chitiet, index) => (
+            {filteredList.map((chitiet, index) => (
               <tr key={chitiet.maCtlh} className="border-b">
                 <td className="p-2 text-center">{index + 1}</td>
                 <td className="p-2 text-center">
-                  {chitiet.hocVien?.maHocVien}
+                  {chitiet.hocVien?.maTaiKhoan}
                 </td>
 
-                <td className="p-2">{chitiet.lopHoc.tenLopHoc}</td>
+                <td className="p-2 text-center">{chitiet.lopHoc.tenLopHoc}</td>
                 <td className="p-2 text-center">{chitiet.hocPhi}</td>
-                <td className="p-2 text-center">{chitiet.mienGiamHocPhi}</td>
-                <td className="p-2 text-center">{chitiet.soTienThu}</td>
+                <td className="p-2 text-center">{chitiet.ngayCapChungChi}</td>
+                <td className="p-2 text-center">{chitiet.xepLoai}</td>
+                <td className="p-2 text-center">{chitiet.diem}</td>
+                <td className="p-2 text-center">{chitiet.diemDanh}</td>
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(chitiet)}

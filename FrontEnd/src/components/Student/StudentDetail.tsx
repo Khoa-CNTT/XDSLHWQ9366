@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HocVien } from "../Type/Types";
 
@@ -22,14 +22,6 @@ export default function StudentDetail() {
       urlHinhDaiDien: null,
       ngayCapNhatGanNhat: "",
     }
-  );
-  const tinhTrang = useMemo(
-    () => [
-      { id: "danghoc", name: "Đang học" },
-      { id: "nghihoc", name: "Nghỉ học" },
-      { id: "datotnghiep", name: "Đã tốt nghiệp" },
-    ],
-    []
   );
 
   useEffect(() => {
@@ -213,19 +205,13 @@ export default function StudentDetail() {
                 Tình trạng học tập
               </label>
               <div className="w-full">
-                <select
+                <input
+                  type="text"
                   name="tinhTrangHocTap"
-                  value={formData.tinhTrangHocTap} // Gán giá trị từ formData
-                  onChange={handleChange} // Xử lý sự kiện thay đổi
-                  className="form-input w-2/3 pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">-- Tình trạng --</option>
-                  {tinhTrang.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                  value={formData.tinhTrangHocTap}
+                  onChange={handleChange}
+                  className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
             </div>
             <div className="flex p-1 w-full justify-center border items-center">

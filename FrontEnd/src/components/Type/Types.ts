@@ -43,6 +43,7 @@ export interface NhanVien {
 }
 
 export interface HocVien {
+  maTaiKhoan: string;
   maHocVien: string;
   tenHocVien: string;
   ngaySinh: string;
@@ -57,7 +58,7 @@ export interface HocVien {
   ghiChu: string;
   urlHinhDaiDien: string | null;
   ngayCapNhatGanNhat: string;
-  maTaiKhoan: string;
+
 }
 
 export interface LopHoc {
@@ -177,8 +178,8 @@ export interface ChiTietLopHoc {
   daThuHocPhi: boolean;
   soTienThu: number;
   diem: number;
-  ngayCapChungChi: string | null;
-  xepLoai: string | null;
-  diemDanh: string | null;
-  ghiChu: string | null;
+  ngayCapChungChi: string ;
+  xepLoai: string ;
+  diemDanh: string ;
+  ghiChu: string;
 }

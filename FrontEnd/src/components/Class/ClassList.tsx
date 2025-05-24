@@ -10,7 +10,8 @@ export default function ClassList() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [tinhTrang, settinhTrang] = useState<string | null>(null);
+  const [giangVienFilter, setGiangVienFilter] = useState<string | null>(null);
+
   const itemsPerPage = 10;
   const { lopHocs, totalPages, refetch } = useLopHocData(
     currentPage,
@@ -22,12 +23,15 @@ export default function ClassList() {
     const matchSearch =
       c.tenLopHoc.toLowerCase().includes(search.toLowerCase()) ||
       c.maLopHoc.toLowerCase().includes(search.toLowerCase());
-    const matchThanhToan = !tinhTrang || c.tinhTrang === tinhTrang;
-    return matchSearch && matchThanhToan;
+    const matchGiangVien =
+      !giangVienFilter || c.giangVien.tenGiangVien === giangVienFilter;
+    return matchSearch && matchGiangVien;
   });
 
   const toggleMenu = useCallback(() => setIsOpenMenu((prev) => !prev), []);
-
+  const giangVienOptions = Array.from(
+    new Set(lopHocs.map((l) => l.giangVien.tenGiangVien))
+  );
   // Handle button
   const handleAdd = () => {
     navigate("/lophoc/add-lophoc");
@@ -71,14 +75,13 @@ export default function ClassList() {
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className="relative" ref={menuRef}>
-            {/* Button */}
             <button
               onClick={toggleMenu}
-              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none "
+              className="inline border rounded-lg items-center px-4 py-2 text-md font-medium text-gray-500 bg-white hover:bg-gray-200 focus:outline-none"
             >
-              Tất cả danh mục
+              {giangVienFilter || "Tất cả giảng viên"}
               <svg
-                className="w-4 h-4 ml-12 -mr-1 inline"
+                className="w-4 h-4 ml-2 inline"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -87,30 +90,29 @@ export default function ClassList() {
               </svg>
             </button>
 
-            {/* Dropdown Menu */}
             {isOpenMenu && (
-              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300">
-                <div className="py-1">
-                  {lopHocs.map((item) => (
+              <div className="absolute left-0 w-full mt-1 origin-top-left bg-white divide-y divide-gray-100 rounded-md shadow-lg transition duration-300 z-10">
+                <div className="py-1 max-h-64 overflow-y-auto">
+                  {giangVienOptions.map((tenGV) => (
                     <button
-                      key={item.tinhTrang}
+                      key={tenGV}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {
-                        settinhTrang(item.tinhTrang);
+                        setGiangVienFilter(tenGV);
                         setIsOpenMenu(false);
                       }}
                     >
-                      {item.tinhTrang}
+                      {tenGV}
                     </button>
                   ))}
                   <button
                     onClick={() => {
-                      settinhTrang(null);
+                      setGiangVienFilter(null);
                       setIsOpenMenu(false);
                     }}
                     className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 font-medium"
                   >
-                    Huỷ
+                    Huỷ lọc
                   </button>
                 </div>
               </div>
@@ -135,6 +137,7 @@ export default function ClassList() {
               <th className="p-2 border">Lịch Học</th>
               <th className="p-2 border">Ngày Bắt Đầu</th>
               <th className="p-2 border">Ngày Kết Thúc</th>
+              <th className="p-2 border">Tên giảng viên</th>
               <th className="p-2 border">Tình Trạng</th>
             </tr>
           </thead>
@@ -147,6 +150,9 @@ export default function ClassList() {
                 <td className="p-2">{lopHoc.lichHoc}</td>
                 <td className="p-2 text-center">{lopHoc.ngayBatDau}</td>
                 <td className="p-2 text-center">{lopHoc.ngayKetThuc}</td>
+                <td className="p-2 text-center">
+                  {lopHoc.giangVien.tenGiangVien}
+                </td>
                 <td className="p-2 text-center">{lopHoc.tinhTrang}</td>
                 <td className="p-2 text-center">
                   <button

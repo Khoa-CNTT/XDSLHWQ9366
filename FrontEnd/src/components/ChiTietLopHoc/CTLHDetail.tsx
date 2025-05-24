@@ -9,8 +9,8 @@ export default function CTLHDetail() {
   const [formData, setFormData] = useState<ChiTietLopHoc>(
     location.state?.ctlh || {
       maCtlh: "",
-      maHocVien: "",
-      maLopHoc: "",
+      hocVien: { maHocVien: "", tenHocVien: "" },
+      lopHoc: { maLopHoc: "", tenLopHoc: "" },
       hocPhi: "",
       mienGiamHocPhi: "",
       soTienThu: "",
@@ -106,7 +106,7 @@ export default function CTLHDetail() {
               <input
                 type="text"
                 name="maHocVien"
-                value={formData.maHocVien}
+                value={formData.hocVien?.maHocVien}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -118,7 +118,7 @@ export default function CTLHDetail() {
               <input
                 type="text"
                 name="maLopHoc"
-                value={formData.maLopHoc}
+                value={formData.lopHoc?.maLopHoc}
                 onChange={handleChange}
                 className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -179,7 +179,7 @@ export default function CTLHDetail() {
                 Ngày cấp chứng chỉ
               </label>
               <input
-                type="date"
+                type="text"
                 name="ngayCapChungChi"
                 value={formData.ngayCapChungChi}
                 onChange={handleChange}
