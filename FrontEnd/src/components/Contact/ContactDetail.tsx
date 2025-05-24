@@ -27,33 +27,33 @@ export default function ContactDetail() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async () => {
-    if (!formData.hoTen || !formData.soDienThoai || !formData.email) {
-      toast.warning("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email.");
-      return;
-    }
+  // const handleSave = async () => {
+  //   if (!formData.hoTen || !formData.soDienThoai || !formData.email) {
+  //     toast.warning("Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email.");
+  //     return;
+  //   }
 
-    try {
-      const res = await fetch(
-        `http://localhost:8080/lienhe/update/${formData.maKhach}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+  //   try {
+  //     const res = await fetch(
+  //       `http://localhost:8080/lienhe/update/${formData.maKhach}`,
+  //       {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(formData),
+  //       }
+  //     );
 
-      if (!res.ok) {
-        throw new Error("Cập nhật thất bại");
-      }
+  //     if (!res.ok) {
+  //       throw new Error("Cập nhật thất bại");
+  //     }
 
-      toast.success("✅ Cập nhật thành công!");
-      navigate(-1);
-    } catch (error) {
-      console.error("Lỗi cập nhật:", error);
-      toast.error("❌ Cập nhật thất bại!");
-    }
-  };
+  //     toast.success("✅ Cập nhật thành công!");
+  //     navigate(-1);
+  //   } catch (error) {
+  //     console.error("Lỗi cập nhật:", error);
+  //     toast.error("❌ Cập nhật thất bại!");
+  //   }
+  // };
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
@@ -123,6 +123,7 @@ export default function ContactDetail() {
               name="soDienThoai"
               value={formData.soDienThoai}
               onChange={handleChange}
+              readOnly
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />
           </div>
@@ -142,6 +143,7 @@ export default function ContactDetail() {
               name="hoTen"
               value={formData.hoTen}
               onChange={handleChange}
+              readOnly
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />
           </div>
@@ -159,6 +161,7 @@ export default function ContactDetail() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              readOnly
               className="form-input w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
             />
           </div>
@@ -176,9 +179,9 @@ export default function ContactDetail() {
           id="yKien"
           name="yKien"
           rows={4}
-          value={formData.yKien}
+          value={formData.ykien}
           onChange={handleChange}
-          placeholder="Nhập ý kiến..."
+          readOnly
           className="form-textarea w-full pl-1 bg-gray-200 rounded-md border border-gray-300"
         />
       </div>
@@ -190,13 +193,13 @@ export default function ContactDetail() {
       )}
 
       <div className="flex justify-center p-4 gap-4">
-        <button
+        {/* <button
           type="button"
           onClick={handleSave}
           className="w-32 p-2 bg-gray-300 text-gray-700 font-bold rounded-md hover:bg-orange-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
           Lưu
-        </button>
+        </button> */}
         <button
           type="button"
           onClick={handleDelete}

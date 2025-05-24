@@ -2,22 +2,40 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LienHe } from "../Type/Types";
-import { toast } from "react-toastify"; // 👈 Thêm dòng này
+import { toast } from "react-toastify";
 import { exportLienHeToExcel } from "../../Service.tsx/ExportExcel/ContactExp";
-import { useLienHeData } from "../../hooks/useLienHeData";
 
 export default function Contacts() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const { lienHes, refetch } = useLienHeData();
+  const [lienHes, setLienHes] = useState<LienHe[]>([]);
   const navigate = useNavigate();
 
   const itemsPerPage = 10;
 
-  const handleAdd = () => {
-    navigate("/lienhe/add-lienhe");
+  const fetchLienHe = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/lienhe/getAll");
+      if (res.data.status === 200) {
+        setLienHes(res.data.data);
+        setTotalPages(Math.ceil(res.data.data.length / itemsPerPage));
+      } else {
+        toast.error("Không lấy được danh sách liên hệ!");
+      }
+    } catch {
+      toast.error("Lỗi khi lấy danh sách liên hệ!");
+    }
   };
+
+  useEffect(() => {
+    fetchLienHe();
+    // eslint-disable-next-line
+  }, []);
+
+  // const handleAdd = () => {
+  //   navigate("/lienhe/add-lienhe");
+  // };
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -28,9 +46,8 @@ export default function Contacts() {
     try {
       await axios.delete(`http://localhost:8080/lienhe/delete/${id}`);
       toast.success("🗑️ Xóa liên hệ thành công!");
-      await refetch();
-    } catch (error) {
-      console.error("Lỗi khi xóa liên hệ:", error);
+      fetchLienHe();
+    } catch {
       toast.error("❌ Xóa liên hệ thất bại!");
     }
   };
@@ -39,24 +56,23 @@ export default function Contacts() {
     navigate(`/lienhe/get-lienhe/${lienhe.maKhach}`, { state: { lienhe } });
   };
 
-  //  10 items per page
   const filteredList = (lienHes || []).filter((c: LienHe) => {
     const matchSearch =
       c.maKhach.toLowerCase().includes(search.toLowerCase()) ||
       c.hoTen.toLowerCase().includes(search.toLowerCase());
     return matchSearch;
   });
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+    setTotalPages(Math.ceil(filteredList.length / itemsPerPage));
+    // eslint-disable-next-line
+  }, [search, lienHes]);
 
   const paginatedList = filteredList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  // if (loading) {
-  //   return <div>Đang tải dữ liệu...</div>;
-  // }
 
   return (
     <div className="h-full mt-2">
@@ -82,12 +98,12 @@ export default function Contacts() {
             )}
           </div>
 
-          <button
+          {/* <button
             className="inline-flex items-center font-medium bg-orange-400 text-white text-md py-2 px-4 rounded-md hover:bg-orange-600"
             onClick={handleAdd}
           >
             Thêm
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="bg-white  shadow-md h-auto">
@@ -100,6 +116,8 @@ export default function Contacts() {
               <th className="p-2 border">SĐT </th>
               <th className="p-2 border">Email</th>
               <th className="p-2 border">Ngày Liên Hệ</th>
+              <th className="p-2 border">Ý kiến</th>
+              <th className="p-2 border">Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -111,6 +129,7 @@ export default function Contacts() {
                 <td className="p-2 text-center">{lienhe.soDienThoai}</td>
                 <td className="p-2 text-center">{lienhe.email}</td>
                 <td className="p-2 text-center">{lienhe.ngayLienHe}</td>
+                <td className="p-2 text-center">{lienhe.ykien}</td>
                 <td className="p-2 text-center">
                   <button
                     onClick={() => handleView(lienhe)}
