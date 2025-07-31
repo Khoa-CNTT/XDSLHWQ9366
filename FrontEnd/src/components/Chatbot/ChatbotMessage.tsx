@@ -13,6 +13,29 @@ type ChatMessageProps = {
 const ChatMessage = ({ chat }: ChatMessageProps) => {
   const isBot = chat.role === "bot";
 
+  // Hàm chuyển URL thành thẻ <a> với chữ "xem chi tiết"
+  const renderMessage = (text: string) => {
+    if (!isBot) return text;
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, idx) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={idx}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline ml-1"
+          >
+            XEM CHI TIẾT
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div
       className={`flex ${isBot ? "gap-3 items-center" : "flex-col items-end"} ${
@@ -29,7 +52,7 @@ const ChatMessage = ({ chat }: ChatMessageProps) => {
             : "text-white bg-blue-800 rounded-[13px_13px_3px_13px]"
         }`}
       >
-        {chat.text}
+        {renderMessage(chat.text)}
       </p>
     </div>
   );

@@ -10,6 +10,10 @@ import {
   MdAccessTime,
   MdPeople,
   MdCheckCircle,
+  MdEvent,
+  MdPerson,
+  MdMeetingRoom,
+  MdInfo,
 } from "react-icons/md";
 import {
   FaCertificate,
@@ -24,12 +28,20 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { FadeUp } from "../Home/Hero/Hero";
-import { HiArrowNarrowRight } from "react-icons/hi";
+import { HiArrowNarrowRight, HiShoppingCart } from "react-icons/hi";
 import { useNotification } from "../../context/NotificationContext";
 import CountUp from "../../components/Animation/CountUp";
 import { useAuth } from "../../context/AuthContext";
+import Loading from "../../components/Loading/Loading";
 
 // Định nghĩa interface cho dữ liệu khóa học
+interface PhongHoc {
+  maPhongHoc: string;
+  tenPhongHoc: string;
+  soChoNgoi: number;
+  ghiChu: string;
+}
+
 interface LinhVuc {
   maLinhVuc: string;
   tenLinhVuc: string;
@@ -51,6 +63,65 @@ interface ApiResponse {
   message: string;
   data: Course;
 }
+interface GiangVien {
+  maGiangVien: string;
+  tenGiangVien: string;
+  ngaySinh: string;
+  gioiTinh: boolean;
+  soCMND: string;
+  soDienThoai: string;
+  email: string;
+  diaChi: string;
+  coQuanCongTac: string;
+  tinhTrangCongTac: string;
+  ghiChu: string | null;
+  linhVuc: LinhVuc;
+  urlHinhDaiDien: string;
+}
+
+interface ChucVu {
+  maChucVu: string;
+  tenChucVu: string;
+  trangThai: boolean;
+}
+
+interface NhanVien {
+  tenNhanVien: string;
+  ngaySinh: string;
+  gioiTinh: boolean;
+  soCMND: string;
+  soDienThoai: string;
+  email: string;
+  diaChi: string;
+  chucVu: ChucVu;
+  nguoiNhapThongTin: string;
+  ghiChu: string;
+  uriHinhDaiDien: string;
+}
+
+interface LopHoc {
+  maLopHoc: string;
+  tenLopHoc: string;
+  lichHoc: string;
+  tinhTrang: string;
+  ngayBatDau: string;
+  ngayKetThuc: string;
+  thuLao: number;
+  daThanhToan: number;
+  khoaHoc: Course;
+  phongHoc: PhongHoc;
+  giangVien: GiangVien;
+  nhanVien: NhanVien;
+  ghiChu: string | null;
+}
+interface CartItem {
+  maKhoaHoc: string;
+  tenKhoaHoc: string;
+  hocPhi: number;
+  linhVuc: LinhVuc;
+  soBuoi: number;
+  maLopHoc: string;
+}
 
 const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,9 +131,11 @@ const CourseDetail = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
+  const [lopHocs, setLopHocs] = useState<LopHoc[]>([]);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { notify } = useNotification();
+
   // Hàm lấy thông tin chi tiết khóa học
   const fetchCourse = async () => {
     setIsLoading(true);
@@ -115,9 +188,24 @@ const CourseDetail = () => {
     }
   };
 
+  //Hàm lấy lịch học
+  const fetchLopHocs = async () => {
+    try {
+      const response = await axios.get<{
+        status: number;
+        message: string;
+        data: LopHoc[];
+      }>("http://localhost:8080/lophoc/getAll");
+      setLopHocs(response.data.data);
+    } catch {
+      setLopHocs([]);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchCourse();
+      fetchLopHocs();
     }
   }, [id]);
 
@@ -136,10 +224,20 @@ const CourseDetail = () => {
       );
       return;
     }
+    const firstLopHoc = lopHocs.find(
+      (lh) => lh.khoaHoc.maKhoaHoc === course.maKhoaHoc
+    );
+    if (!firstLopHoc) {
+      notify(
+        "error",
+        "Khóa học này hiện chưa có lớp học nào để đăng ký. Vui lòng chọn khóa học khác!"
+      );
+      return;
+    }
 
     try {
       // Lấy giỏ hàng từ localStorage
-      let cart: Course[] = [];
+      let cart: CartItem[] = [];
       const cartData = localStorage.getItem("cart");
       if (cartData) {
         try {
@@ -158,21 +256,21 @@ const CourseDetail = () => {
       }
 
       // Kiểm tra khóa học đã tồn tại
-      const existingCourse = cart.find(
-        (item) => item.maKhoaHoc === course.maKhoaHoc
+      const exists = cart.some(
+        (item) =>
+          item.maKhoaHoc === course.maKhoaHoc &&
+          item.maLopHoc === firstLopHoc.maLopHoc
       );
 
-      if (!existingCourse) {
+      if (!exists) {
         // Tạo đối tượng khóa học với các trường cần thiết
-        const courseToAdd: Course = {
+        const courseToAdd: CartItem = {
           maKhoaHoc: course.maKhoaHoc,
           tenKhoaHoc: course.tenKhoaHoc,
           hocPhi: course.hocPhi,
           linhVuc: course.linhVuc || { maLinhVuc: "", tenLinhVuc: "" },
           soBuoi: course.soBuoi || 0,
-          noiDungTomTatKhoaHoc: course.noiDungTomTatKhoaHoc || "",
-          noiDungKhoaHoc: course.noiDungKhoaHoc || "",
-          ghiChu: course.ghiChu || "",
+          maLopHoc: firstLopHoc.maLopHoc,
         };
         cart.push(courseToAdd);
         localStorage.setItem("cart", JSON.stringify(cart));
@@ -195,13 +293,7 @@ const CourseDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-xl shadow-md">
-          <p className="text-gray-700 text-xl font-medium">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loading message="Đang tải dữ liệu khóa học..." />;
   }
 
   if (!course || error) {
@@ -224,25 +316,33 @@ const CourseDetail = () => {
   }
 
   // Format content for better display
-  const learningObjectives = [
-    course.noiDungTomTatKhoaHoc,
-    `Understand and apply the fundamental concepts of ${course.linhVuc.tenLinhVuc}`,
-    `Complete ${course.soBuoi} sessions with practical exercises`,
-    `Master ${course.noiDungKhoaHoc.split(".")[0]}`,
-    course.ghiChu
-      ? course.ghiChu
-      : "Receive a certificate upon course completion",
-  ];
+  const learningObjectives = course
+    ? [
+        course.noiDungTomTatKhoaHoc,
+        `Understand and apply the fundamental concepts of ${course.linhVuc.tenLinhVuc}`,
+        `Complete ${course.soBuoi} sessions with practical exercises`,
+        `Master ${course.noiDungKhoaHoc.split(".")[0]}`,
+        course.ghiChu
+          ? course.ghiChu
+          : "Receive a certificate upon course completion",
+      ]
+    : [];
 
-  const contentSections = course.noiDungKhoaHoc
-    .split(/\.\s+/)
-    .filter(Boolean)
-    .map((section, index) => ({
-      id: index + 1,
-      title: section.trim(),
-      duration: Math.floor(Math.random() * 40) + 20, // Random minutes for demo
-    }));
-
+  const contentSections =
+    course && course.noiDungKhoaHoc
+      ? course.noiDungKhoaHoc
+          .split(/\.\s+/)
+          .filter(Boolean)
+          .map((section, index) => ({
+            id: index + 1,
+            title: section.trim(),
+            duration: Math.floor(Math.random() * 40) + 20,
+          }))
+      : [];
+  const lopHocOfCourse =
+    course && lopHocs.length
+      ? lopHocs.filter((lh) => lh.khoaHoc.maKhoaHoc === course.maKhoaHoc)
+      : [];
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 pt-20">
       {/* Hero section */}
@@ -461,6 +561,59 @@ const CourseDetail = () => {
                       </div>
                     ))}
                   </div>
+                  {/* Thông tin lịch học của từng lớp học */}
+                  <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                    Thông tin chi tiết khóa học
+                  </h2>
+                  {lopHocOfCourse.length === 0 ? (
+                    <div className="text-gray-500 italic mb-4 flex items-center gap-2">
+                      <MdInfo className="text-gray-400" />
+                      Hiện chưa có lớp học nào cho khóa học này.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {lopHocOfCourse.map((lh) => (
+                        <div
+                          key={lh.maLopHoc}
+                          className="border border-blue-100 rounded-lg p-4 bg-gray-50"
+                        >
+                          <div className="font-semibold text-blue-800 text-xl flex items-center gap-2 mb-2">
+                            <MdCheckCircle className="text-green-500" />
+                            {lh.tenLopHoc}
+                          </div>
+                          <div className="space-y-1 text-gray-700 text-lg">
+                            <div className="flex items-center gap-2">
+                              <MdEvent className="text-blue-500" />
+                              <span className="font-medium">Lịch học:</span>
+                              <span>{lh.lichHoc}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MdAccessTime className="text-blue-500" />
+                              <span className="font-medium">Thời gian:</span>
+                              <span>
+                                {lh.ngayBatDau} - {lh.ngayKetThuc}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MdCheckCircle className="text-blue-500" />
+                              <span className="font-medium">Tình trạng:</span>
+                              <span>{lh.tinhTrang}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MdPerson className="text-blue-500" />
+                              <span className="font-medium">Giảng viên:</span>
+                              <span>{lh.giangVien?.tenGiangVien}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MdMeetingRoom className="text-blue-500" />
+                              <span className="font-medium">Phòng học:</span>
+                              <span>{lh.phongHoc?.tenPhongHoc}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -591,20 +744,13 @@ const CourseDetail = () => {
                 onClick={addToCart}
                 className="w-full bg-primary text-white text-center py-3 rounded-lg font-medium text-lg hover:bg-secondary transition mb-3 flex items-center justify-center gap-2"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z" />
-                </svg>
+                <HiShoppingCart className="h-5 w-5" />
                 Add to Cart
               </button>
 
-              <button className="w-full border-2 border-primary text-primary py-3 rounded-lg font-medium hover:text-secondary hover:border-secondary transition">
+              {/* <button className="w-full border-2 border-primary text-primary py-3 rounded-lg font-medium hover:text-secondary hover:border-secondary transition">
                 Buy Now
-              </button>
+              </button> */}
 
               <div className="text-center mt-3 mb-6">
                 <p className="text-sm text-gray-500">

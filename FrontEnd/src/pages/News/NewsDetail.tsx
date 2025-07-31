@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FiClock, FiEye } from "react-icons/fi";
 import { getBaiVietById, getAllBaiViet } from "../../api/newApi";
+import Loading from "../../components/Loading/Loading";
 
 interface ChucVu {
   maChucVu: string;
@@ -70,15 +71,8 @@ const NewsDetail = () => {
   }, [mabaiviet]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">
-        <p className="text-gray-600 text-lg font-medium animate-pulse">
-          Loading...
-        </p>
-      </div>
-    );
+    return <Loading message="Loading new detail..." />;
   }
-
   if (error || !article) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">

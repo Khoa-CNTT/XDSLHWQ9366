@@ -2,42 +2,50 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import QR from "../../assets/QR.jpg";
 import { useNotification } from "../../context/NotificationContext";
-
-// Define interfaces consistent with Cart and CourseDetail
+import axios from "axios";
+// Interface đồng bộ với Cart và CourseDetail
 interface LinhVuc {
   maLinhVuc: string;
   tenLinhVuc: string;
 }
 
-interface Course {
+interface CartItem {
   maKhoaHoc: string;
   tenKhoaHoc: string;
   hocPhi: number;
   linhVuc: LinhVuc;
   soBuoi: number;
-  noiDungTomTatKhoaHoc?: string;
-  noiDungKhoaHoc?: string;
-  ghiChu?: string;
+  maLopHoc: string;
 }
 
 const Checkout = () => {
-  const [cartItems, setCartItems] = useState<Course[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const navigate = useNavigate();
   const { notify } = useNotification();
+  const maHocVien = localStorage.getItem("maHocVien") || "";
 
   useEffect(() => {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        const value = localStorage.getItem(key);
+        console.log(`localStorage[${key}]:`, value);
+      }
+    }
     try {
       const rawCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const validCart: Course[] = rawCart.filter(
-        (item: Course) =>
+      const validCart: CartItem[] = rawCart.filter(
+        (item: CartItem) =>
           item &&
           typeof item.maKhoaHoc === "string" &&
           typeof item.tenKhoaHoc === "string" &&
           typeof item.linhVuc === "object" &&
-          typeof item.hocPhi === "number"
+          typeof item.hocPhi === "number" &&
+          typeof item.soBuoi === "number" &&
+          typeof item.maLopHoc === "string"
       );
       setCartItems(validCart);
     } catch (error) {
@@ -61,16 +69,71 @@ const Checkout = () => {
       setDiscount(0);
     }
   };
-
-  const handleConfirmCheckout = () => {
-    setIsSubmitting(true);
-    setTimeout(() => {
-      localStorage.removeItem("cart");
-      alert("You have successfully registered for the selected courses.");
-      navigate("/courses");
-    }, 1500);
+  const handleVnpayCheckout = async () => {
+    const maTaiKhoan1 = localStorage.getItem("maTaiKhoan");
+    console.log("maTaiKhoan from localStorage:", maTaiKhoan1);
+    if (!maTaiKhoan1 || cartItems.length === 0) {
+      notify("error", "Vui lòng đăng nhập và chọn khóa học!");
+      return;
+    }
+    const firstCourse = cartItems[0];
+    try {
+      // Truyền amount qua query string
+      const params = new URLSearchParams({
+        amount: discountedPrice.toString(),
+        bankCode: "NCB",
+        maHocVien: maTaiKhoan1,
+        maKhoaHoc: firstCourse.maKhoaHoc,
+        nguoiTao: "NV001",
+      });
+      const res = await axios.post(
+        `http://localhost:8080/api/vnpay/create?${params.toString()}`
+      );
+      if (res.data && res.data.code === 200 && res.data.data?.paymentUrl) {
+        window.open(res.data.data.paymentUrl, "_blank");
+      } else {
+        notify("error", res.data.message || "Không thể tạo thanh toán VNPAY!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo thanh toán VNPAY:", error);
+      notify("error", "Có lỗi khi tạo thanh toán VNPAY. Vui lòng thử lại!");
+    }
   };
 
+  const handleConfirmCheckout = async () => {
+    setIsSubmitting(true);
+    console.log("maHocVien", maHocVien);
+
+    // Gọi API cho từng khóa học trong cart
+    try {
+      for (const item of cartItems) {
+        const payload = {
+          maHocVien: maHocVien,
+          maLopHoc: item.maLopHoc,
+          hocPhi: item.hocPhi,
+          mienGiamHocPhi: discount,
+          daThuHocPhi: true,
+          soTienThu: item.hocPhi - discount,
+          diem: null,
+          ngayCapChungChi: null,
+          xepLoai: null,
+          diemDanh: null,
+          ghiChu: null,
+        };
+        await axios.post("http://localhost:8080/ctlh/add", payload);
+      }
+
+      localStorage.removeItem("cart");
+      notify("success", "Bạn đã đăng ký khóa học thành công!");
+      setTimeout(() => {
+        navigate("/courses");
+      }, 1000);
+    } catch (error) {
+      console.error("Lỗi khi đăng ký khóa học:", error);
+      notify("error", "Có lỗi khi đăng ký khóa học. Vui lòng thử lại!");
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
       <div className="max-w-6xl mx-auto px-4 py-10">
@@ -141,7 +204,7 @@ const Checkout = () => {
               <div className="divide-y">
                 {cartItems.map((item) => (
                   <div
-                    key={item.maKhoaHoc}
+                    key={item.maKhoaHoc + "-" + item.maLopHoc}
                     className="flex justify-between py-4"
                   >
                     <div>
@@ -151,6 +214,8 @@ const Checkout = () => {
                       <p className="text-sm text-gray-500">
                         {item.linhVuc.tenLinhVuc}
                       </p>
+                      {/* Nếu muốn hiển thị mã lớp học, bỏ comment dòng dưới */}
+                      {/* <p className="text-xs text-gray-400">Mã lớp: {item.maLopHoc}</p> */}
                     </div>
                     <span className="text-right font-semibold text-gray-800">
                       {typeof item.hocPhi === "number"
@@ -236,6 +301,15 @@ const Checkout = () => {
                   24048627
                 </p>
               </div>
+              <button
+                onClick={handleVnpayCheckout}
+                disabled={isSubmitting}
+                className={`w-full bg-green-600 text-white text-lg py-3 rounded-xl font-semibold hover:bg-green-700 transition ${
+                  isSubmitting ? "opacity-60 cursor-not-allowed" : ""
+                }`}
+              >
+                Thanh toán qua VNPAY
+              </button>
 
               <button
                 onClick={handleConfirmCheckout}

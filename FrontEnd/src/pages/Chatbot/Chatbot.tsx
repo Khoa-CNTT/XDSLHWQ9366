@@ -23,37 +23,31 @@ const Chatbot = () => {
 
   const generateBotResponse = async (history: ChatMessageType[]) => {
     const updateHistory = (text: string, isError: boolean) => {
-      setChatHistory((prev) => [
-        ...prev.filter((msg) => msg.text !== "Thinking..."),
-        { role: "bot", text, isError },
-      ]);
+      setChatHistory((prev) => [...prev, { role: "bot", text, isError }]);
     };
 
-    const formattedHistory = history.map(({ role, text }) => ({
-      role: role === "bot" ? "model" : "user",
-      parts: [{ text }],
-    }));
+    // Lấy message cuối cùng của user
+    const lastUserMsg = history
+      .slice()
+      .reverse()
+      .find((msg) => msg.role === "user")?.text;
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: formattedHistory }),
-    };
+    if (!lastUserMsg) {
+      updateHistory("Bạn chưa nhập nội dung.", true);
+      return;
+    }
 
     try {
-      const response = await fetch(
-        import.meta.env.VITE_API_URL,
-        requestOptions
-      );
+      const response = await fetch("http://localhost:8080/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: lastUserMsg }),
+      });
       const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.error.message || "Something went wrong");
+      if (!response.ok || !data.reply)
+        throw new Error(data.error || "Có lỗi xảy ra!");
 
-      const apiResponseText = data.candidates[0].content.parts[0].text
-        .replace(/\*\*(.*?)\*\*/g, "$1")
-        .trim();
-
-      updateHistory(apiResponseText, false);
+      updateHistory(data.reply, false);
     } catch (error) {
       const err = error as Error;
       updateHistory(err.message, true);

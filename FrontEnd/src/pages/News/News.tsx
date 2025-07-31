@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiClock, FiEye } from "react-icons/fi";
 import { getAllBaiViet } from "../../api/newApi";
 import { motion, AnimatePresence } from "framer-motion";
+import Loading from "../../components/Loading/Loading";
 interface ChucVu {
   maChucVu: string;
   tenChucVu: string;
@@ -59,18 +60,26 @@ const cardVariants = {
 
 const News = () => {
   const [filtered, setFiltered] = useState<BaiViet[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const data = await getAllBaiViet();
         setFiltered(data);
       } catch (error) {
         console.error("Lỗi khi tải bài viết:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  if (loading) {
+    return <Loading message="Loading news..." />;
+  }
 
   return (
     <motion.div

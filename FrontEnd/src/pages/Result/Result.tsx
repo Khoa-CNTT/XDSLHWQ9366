@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Loading from "../../components/Loading/Loading";
 
 interface LinhVuc {
   maLinhVuc: string;
@@ -92,9 +93,7 @@ const Results = () => {
         {/* Bảng khóa học */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
-            </div>
+            <Loading message="Loading learning results..." />
           ) : error ? (
             <div className="text-center py-12 text-red-600 font-medium">
               {error}

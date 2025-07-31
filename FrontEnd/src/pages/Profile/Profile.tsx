@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useProfileValidation } from "../../components/Validate/ValidateProfile";
+import Loading from "../../components/Loading/Loading";
 
 // Interfaces
 interface HocVien {
@@ -129,6 +130,8 @@ const Profile = () => {
               ghiChu: data.ghiChu,
               uriHinhDaiDien: data.uriHinhDaiDien,
             });
+            // Lưu mã học viên vào localStorage
+            localStorage.setItem("maHocVien", data.maHocVien);
           } else {
             setHocVien(null);
             setShowNotification({
@@ -261,9 +264,20 @@ const Profile = () => {
 
     try {
       const updatedHocVien = {
-        ...hocVien!,
-        ...formData,
+        maHocVien: hocVien!.maHocVien,
+        tenHocVien: hocVien!.tenHocVien,
+        ngaySinh: formData.ngaySinh,
+        gioiTinh: hocVien!.gioiTinh,
+        soCMND: formData.soCMND,
+        soDienThoai: formData.soDienThoai,
+        email: formData.email,
+        diaChi: formData.diaChi,
+        tinhTrangHocTap: hocVien!.tinhTrangHocTap,
+        nguoiNhapThongTin: hocVien!.nguoiNhapThongTin,
+        ghiChu: formData.ghiChu,
+        uriHinhDaiDien: formData.uriHinhDaiDien,
         ngayCapNhatGanNhat: new Date().toISOString(),
+        maTaiKhoan: hocVien!.maTaiKhoan,
       };
 
       const response = await axios.put<ApiResponse<HocVien>>(
@@ -298,26 +312,7 @@ const Profile = () => {
 
   // Rest of the component remains the same
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 pt-20">
-        <div className="p-8 bg-white rounded-3xl shadow-lg max-w-4xl w-full">
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="h-24 w-24 bg-neutral-200 rounded-full mx-auto mb-6"
-          ></motion.div>
-          <div className="h-8 bg-neutral-200 rounded-lg w-3/4 mb-6 mx-auto animate-pulse"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="h-14 bg-neutral-200 rounded-lg animate-pulse"
-              ></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading message="Loading profile..." />;
   }
 
   if (!hocVien) {

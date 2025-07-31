@@ -3,65 +3,64 @@ import { HiCheckCircle } from "react-icons/hi";
 import { MdArrowBack, MdDelete, MdShoppingCart } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-// Định nghĩa interface cho dữ liệu khóa học (đồng bộ với CourseDetail)
+// Interface đồng bộ với CourseDetail
 interface LinhVuc {
   maLinhVuc: string;
   tenLinhVuc: string;
 }
 
-interface Course {
+interface CartItem {
   maKhoaHoc: string;
   tenKhoaHoc: string;
   hocPhi: number;
   linhVuc: LinhVuc;
   soBuoi: number;
-  noiDungTomTatKhoaHoc?: string;
-  noiDungKhoaHoc?: string;
-  ghiChu?: string;
+  maLopHoc: string;
 }
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<Course[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Safe formatter for currency
+  // Định dạng tiền tệ
   const formatCurrency = (value?: number) =>
     typeof value === "number" ? value.toLocaleString() : "0";
 
-  // Load from localStorage
+  // Load cart từ localStorage (đúng định dạng như addToCart bên CourseDetail)
   useEffect(() => {
     try {
       const stored = localStorage.getItem("cart");
       const parsed = JSON.parse(stored || "[]");
-
-      // Validate that parsed is an array of courses
       if (Array.isArray(parsed)) {
-        const validCourses = parsed.filter(
+        // Chỉ nhận các item đúng định dạng CartItem
+        const validItems: CartItem[] = parsed.filter(
           (item) =>
             item &&
             typeof item.maKhoaHoc === "string" &&
-            typeof item.hocPhi === "number"
+            typeof item.tenKhoaHoc === "string" &&
+            typeof item.hocPhi === "number" &&
+            typeof item.linhVuc === "object" &&
+            typeof item.soBuoi === "number" &&
+            typeof item.maLopHoc === "string"
         );
-        setCartItems(validCourses);
+        setCartItems(validItems);
       } else {
-        console.warn("Cart data is not an array:", parsed);
         setCartItems([]);
       }
-    } catch (error) {
-      console.error("Failed to load cart from localStorage:", error);
+    } catch {
       setCartItems([]);
     }
   }, []);
 
-  // Remove course
-  const removeFromCart = (maKhoaHoc: string) => {
+  // Xóa khóa học khỏi giỏ hàng
+  const removeFromCart = (maKhoaHoc: string, maLopHoc: string) => {
     const updatedCart = cartItems.filter(
-      (item) => item.maKhoaHoc !== maKhoaHoc
+      (item) => !(item.maKhoaHoc === maKhoaHoc && item.maLopHoc === maLopHoc)
     );
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // Total price
+  // Tổng tiền
   const totalPrice = cartItems.reduce(
     (total, item) =>
       total + (typeof item.hocPhi === "number" ? item.hocPhi : 0),
@@ -113,33 +112,33 @@ const Cart = () => {
                 <div className="divide-y divide-gray-100">
                   {cartItems.map((item) => (
                     <div
-                      key={item.maKhoaHoc}
+                      key={item.maKhoaHoc + "-" + item.maLopHoc}
                       className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                     >
                       <div className="flex-1">
                         <h3 className="text-lg font-medium text-gray-900 mb-1">
                           {item.tenKhoaHoc}
                         </h3>
-                        <div className="flex flex-wrap gap-3 text-sm">
+                        <div className="flex flex-wrap gap-3 text-sm mb-2">
                           <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">
                             {item.linhVuc.tenLinhVuc || "Unknown"}
                           </span>
                           <span className="bg-green-50 text-green-700 px-2 py-1 rounded">
                             {item.soBuoi} sessions
                           </span>
+                          {/* <span className="bg-gray-50 text-gray-700 px-2 py-1 rounded">
+                            Mã lớp: {item.maLopHoc}
+                          </span> */}
                         </div>
-                        {item.noiDungTomTatKhoaHoc && (
-                          <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                            {item.noiDungTomTatKhoaHoc}
-                          </p>
-                        )}
                       </div>
                       <div className="flex items-center gap-4">
                         <span className="text-lg font-bold text-gray-900">
                           {formatCurrency(item.hocPhi)} VND
                         </span>
                         <button
-                          onClick={() => removeFromCart(item.maKhoaHoc)}
+                          onClick={() =>
+                            removeFromCart(item.maKhoaHoc, item.maLopHoc)
+                          }
                           className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition"
                           aria-label="Remove course"
                         >

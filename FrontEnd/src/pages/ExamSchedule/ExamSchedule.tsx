@@ -8,6 +8,7 @@ import {
   MdClose,
 } from "react-icons/md";
 import ExamApi from "../../api/examApi";
+import Loading from "../../components/Loading/Loading";
 
 const FadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -260,31 +261,7 @@ const ExamSchedule = () => {
                   Showing {filteredExams.length} exams
                 </div>
                 {isLoading ? (
-                  <div
-                    className={
-                      viewMode === "grid"
-                        ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
-                        : "space-y-6"
-                    }
-                  >
-                    {[1, 2, 3, 4].map((i) => (
-                      <div
-                        key={i}
-                        className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse"
-                      >
-                        <div className="w-full aspect-video bg-gray-200"></div>
-                        <div className="p-4">
-                          <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-                          <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-                          <div className="flex justify-between items-center">
-                            <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-                            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <Loading message="Loading exam schedule..." />
                 ) : filteredExams.length > 0 ? (
                   <motion.div
                     variants={FadeUp(0.9)}

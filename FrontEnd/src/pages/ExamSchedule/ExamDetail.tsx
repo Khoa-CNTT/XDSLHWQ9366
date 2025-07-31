@@ -22,6 +22,7 @@ import {
 } from "react-icons/fa";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import { useAuth } from "../../context/AuthContext";
+import Loading from "../../components/Loading/Loading";
 
 interface LinhVuc {
   maLinhVuc: string;
@@ -168,20 +169,7 @@ const ExamDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-24 bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-xl shadow-md max-w-4xl w-full">
-          <div className="h-10 bg-gray-200 rounded-lg w-3/4 mb-8 mx-auto"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <div className="h-20 bg-gray-200 rounded-lg"></div>
-            <div className="h-20 bg-gray-200 rounded-lg"></div>
-            <div className="h-20 bg-gray-200 rounded-lg"></div>
-          </div>
-          <div className="h-6 bg-gray-200 rounded w-full mb-4"></div>
-          <div className="h-12 bg-gray-200 rounded-lg w-1/2 mx-auto"></div>
-        </div>
-      </div>
-    );
+    <Loading message="Loading exam detail..." />;
   }
 
   if (error || !exam) {

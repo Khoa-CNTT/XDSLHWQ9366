@@ -104,7 +104,7 @@ const RegisterModal = ({ isOpen, onClose, examName }: RegisterModalProps) => {
     ngayCapChungChi: "",
     ghiChu: "",
   };
-  // Sửa hàm handleSubmit để gọi API backend
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) {

@@ -9,6 +9,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const { errors, validate, clearError } = useSignInValidation(
@@ -101,14 +102,40 @@ const SignUp = () => {
               </button>
             </div>
           </div>
+          {/* Confirm Password */}
+          <div className="space-y-1.5">
+            <label className="text-sm text-neutral-600 font-medium block">
+              Confirm Password
+            </label>
+            <div className="w-full relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`max-w-sm w-full rounded-lg px-3 h-12 bg-transparent focus:bg-sky-500/5 border ${
+                  confirmPassword && confirmPassword !== password
+                    ? "border-red-400"
+                    : "border-neutral-300"
+                } focus:border-sky-500 outline-none ease-in-out duration-300`}
+              />
+              {confirmPassword && confirmPassword !== password && (
+                <p className="text-xs text-red-500 mt-1">
+                  Passwords do not match
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* SignUp Button */}
-          <button
-            className="w-full rounded-lg h-12 px-8 cursor-pointer primary-btn"
-            onClick={handleSignUp}
-          >
-            Sign Up
-          </button>
+          {password && confirmPassword && password === confirmPassword && (
+            <button
+              className="w-full rounded-lg h-12 px-8 cursor-pointer primary-btn"
+              onClick={handleSignUp}
+            >
+              Sign Up
+            </button>
+          )}
 
           {/* Or */}
           <div className="w-full flex items-center justify-center ">
